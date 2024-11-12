@@ -1,8 +1,10 @@
 /* eslint-disable no-undef */
 import express from 'express'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { method } from 'cypress/types/bluebird'
 // import usersRouter from './routers/usersRoutes.js'
 // import incidentsRouter from './routers/incidentsRoutes.js'
 // import inventoryRouter from './routers/inventoryRoutes.js'
@@ -18,7 +20,14 @@ const envPath = path.resolve(__dirname, '.env.development')
 dotenv.config({ path: envPath })
 const PORT = process.env.PORT || 8021
 
-app.use(express.json())
+const corsOption = {
+  origin: ['http://localhost:8124'],
+  method: ['GET'],
+}
+
+app.use(express.json(corsOption))
+app.use(cors())
+
 // routes
 // app.use('/api/users', usersRouter)
 // app.use('/api/incidents', incidentsRouter)
