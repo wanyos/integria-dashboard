@@ -4,7 +4,6 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { method } from 'cypress/types/bluebird'
 // import usersRouter from './routers/usersRoutes.js'
 // import incidentsRouter from './routers/incidentsRoutes.js'
 // import inventoryRouter from './routers/inventoryRoutes.js'
@@ -21,7 +20,7 @@ dotenv.config({ path: envPath })
 const PORT = process.env.PORT || 8021
 
 const corsOption = {
-  origin: ['http://localhost:8124'],
+  origin: ['http://localhost:5173'],
   method: ['GET'],
 }
 

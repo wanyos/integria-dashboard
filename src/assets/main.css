@@ -1,6 +1,32 @@
-@import './base.css';
+/* @import './base.css'; */
 
-#app {
+html,
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Consolas', monospace;
+}
+
+.logo {
+  /* background: url('https://enertic.org/wp-content/uploads/2019/05/Plantilla-3-133x133.png')
+    no-repeat; */
+  background: url('../../public//image-logo.png') no-repeat;
+  /* border: 1px solid rgb(205, 199, 199); */
+  border-radius: 5px;
+  width: 100px;
+  height: 80px;
+}
+
+.main-container {
+  width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  border-radius: 5px;
+  background-color: #edf0f6;
+}
+
+/* #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -32,4 +58,4 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
-}
+} */
