@@ -4,36 +4,65 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
-// import usersRouter from './routers/usersRoutes.js'
-// import incidentsRouter from './routers/incidentsRoutes.js'
-// import inventoryRouter from './routers/inventoryRoutes.js'
+import usersRouter from './routers/usersRoutes.js'
+import incidentsRouter from './routers/incidentsRoutes.js'
+import inventoryRouter from './routers/inventoryRoutes.js'
 
 const app = express()
 
-// Configuración para obtener el directorio actual
+// Setting to get the current directory
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Construir la ruta al archivo .env.development de forma dinámica
+// Dynamically build the path to the .env.development file
 const envPath = path.resolve(__dirname, '.env.development')
 dotenv.config({ path: envPath })
 const PORT = process.env.PORT || 8021
 
 const corsOption = {
-  origin: ['http://localhost:5173'],
+  origin: [
+    'http://localhost:8022',
+    `http://127.0.0.1:8022`,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ],
   method: ['GET'],
+  credentials: true,
+  optionsSuccessStatus: 200,
 }
 
-app.use(express.json(corsOption))
-app.use(cors())
+if (process.env.NODE_ENV === 'test') {
+  app.use(cors())
+} else {
+  app.use(cors(corsOption))
+}
+
+app.use(express.json())
 
 // routes
-// app.use('/api/users', usersRouter)
-// app.use('/api/incidents', incidentsRouter)
-// app.use('/api/inventory', inventoryRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/incidents', incidentsRouter)
+app.use('/api/inventory', inventoryRouter)
 
 app.get('/', (req, res) => {
   res.send('ia m here...')
+})
+
+// Middleware managed errors (always to end)
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message })
+  }
+
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ error: 'Unauthorized access' })
+  }
+
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal server error',
+  })
 })
 
 function startServer(port) {

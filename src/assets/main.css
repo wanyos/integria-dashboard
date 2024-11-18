@@ -8,10 +8,16 @@ body {
   font-family: 'Consolas', monospace;
 }
 
+/* reset style */
+button,
+input {
+  all: unset;
+}
+
 .logo {
   /* background: url('https://enertic.org/wp-content/uploads/2019/05/Plantilla-3-133x133.png')
     no-repeat; */
-  background: url('../../public//image-logo.png') no-repeat;
+  background: url('../../image-logo.png') no-repeat;
   /* border: 1px solid rgb(205, 199, 199); */
   border-radius: 5px;
   width: 100px;
@@ -19,7 +25,7 @@ body {
 }
 
 .main-container {
-  width: 1200px;
+  max-width: 1200px;
   height: 100%;
   margin: 0 auto;
   border-radius: 5px;

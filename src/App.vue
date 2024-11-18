@@ -24,7 +24,7 @@
     </main>
 
     <footer>
-      <p>@ - CAU - @</p>
+      <p>CAU</p>
     </footer>
   </section>
 </template>
@@ -106,7 +106,7 @@ aside > nav {
 }
 
 main {
-  grid-column: 2/3;
+  grid-column: 2 / 3;
   grid-row: 2 / 3;
 }
 
