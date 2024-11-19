@@ -4,6 +4,8 @@ import IncidentsController from '../controllers/incidents/incidentsController.js
 
 const incidentsRouter = express.Router()
 
+incidentsRouter.get('/:startDate/:endDate', IncidentsController.getTotalIncidents);
 incidentsRouter.get('/', IncidentsController.getIncidents)
+
 
 export default incidentsRouter

@@ -4,7 +4,7 @@
       <v-icon name="bi-calendar2-check" class="icon-calendar" />
       <ComboBox :options="optCombo" v-model="selectedValue" />
     </div>
-    <div class="item item-label-date">{{ formattedDate }}</div>
+    <div class="item item-label-date">{{ getCurrentDate }}</div>
     <div class="item"><p>Incidents</p></div>
 
     <div class="item">
@@ -34,11 +34,15 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import dayjs from 'dayjs'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
 import ComboBox from '@/components/ComboBox.vue'
+import DateRange from '@/utils/dateRange.js'
+import { useIncidentsStore } from '@/stores/incidents.js'
+
+const storeIncidents = useIncidentsStore();
 
 const selectedValue = ref('')
 const optCombo = [
@@ -52,11 +56,26 @@ const optCombo = [
 ]
 
 const formattedDate = ref(dayjs().format('D MMM YYYY'))
+let dateRange = ref('');
 
 watch(selectedValue, (newValue) => {
-  console.log('Nuevo valor de date_filter:', newValue)
-  console.log('opt.value:', selectedValue.value)
+  dateRange.value = DateRange.getDateRange(newValue);
+  const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD');
+  const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD');
+  storeIncidents.fetchData(startDate, endDate);
 })
+
+const getCurrentDate = computed(() => {
+  if (!dateRange.value) return formattedDate.value;
+  const { startDate, endDate } = dateRange.value;
+  if (startDate && endDate && startDate.isSame(endDate, 'day')) {
+    return dayjs(startDate).format('D MMM YYYY');
+  }
+  const formattedStartDate = startDate ? dayjs(startDate).format('D MMM YYYY') : '';
+  const formattedEndDate = endDate ? dayjs(endDate).format('D MMM YYYY') : '';
+  return `${formattedStartDate} - ${formattedEndDate}`;
+});
+
 </script>
 
 <style scoped>

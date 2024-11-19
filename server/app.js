@@ -25,6 +25,7 @@ const corsOption = {
     `http://127.0.0.1:8022`,
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://10.10.14.37:5173'
   ],
   method: ['GET'],
   credentials: true,
@@ -43,10 +44,6 @@ app.use(express.json())
 app.use('/api/users', usersRouter)
 app.use('/api/incidents', incidentsRouter)
 app.use('/api/inventory', inventoryRouter)
-
-app.get('/', (req, res) => {
-  res.send('ia m here...')
-})
 
 // Middleware managed errors (always to end)
 app.use((err, req, res, next) => {
