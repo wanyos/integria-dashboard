@@ -30,14 +30,14 @@ const getBackground = computed(() => (props.name === 'error' ? 'error-badge' : '
   width: 35px;
   height: 20px;
   border-radius: 5px;
-  padding: 5px;
+  padding: 2px 5px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .container-badge > p {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 

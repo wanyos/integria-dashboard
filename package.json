@@ -17,6 +17,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "mysql2": "^3.11.4",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.2.6",
