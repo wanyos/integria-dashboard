@@ -6,9 +6,9 @@ class IncidentsApi extends ApiBase {
   }
 
   async getTotalIncidents(startDate, endDate) {
-    // const endpoint = `/api/incidents?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
-    const endpoint = `/api/incidents/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`;
-    return await this.get(endpoint);
+    // const endpoint = `/api/incidents?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;    // query
+    const endpoint = `/api/incidents/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    return await this.get(endpoint)
   }
 
   async createIncident(incidentData) {

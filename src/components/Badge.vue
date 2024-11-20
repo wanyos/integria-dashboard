@@ -9,7 +9,7 @@ import { computed } from 'vue'
 
 const props = defineProps({
   label: {
-    type: String,
+    type: [String, Number],
     required: true,
   },
   mainColor: {
@@ -22,15 +22,23 @@ const props = defineProps({
   },
 })
 
-const getBackground = computed(() => (props.name === 'error' ? 'error-badge' : 'success-badge'))
+// const getBackground = computed(() => (props.label < 0 ? 'error-badge' : 'success-badge'))
+
+const getBackground = computed(() => {
+  // Extraemos el número de props.label (sin el signo '+' o '%' y sin espacios)
+  const numericValue = parseFloat(props.label)
+
+  // Comprobamos si el valor es negativo
+  return numericValue < 0 ? 'error-badge' : 'success-badge'
+})
 </script>
 
 <style lang="css" scoped>
 .container-badge {
-  width: 35px;
+  min-width: 35px;
   height: 20px;
   border-radius: 5px;
-  padding: 2px 5px;
+  padding: 2px 8px;
   display: flex;
   justify-content: center;
   align-items: center;

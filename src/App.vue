@@ -62,6 +62,7 @@ header > p {
 
 header > h4 {
   margin-right: 3rem;
+  color: #0088cc;
 }
 
 aside {
@@ -121,5 +122,6 @@ footer {
 
 footer > p {
   margin-right: 3rem;
+  color: #0088cc;
 }
 </style>

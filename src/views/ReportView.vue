@@ -8,20 +8,32 @@
     <div class="item"><p>Incidents</p></div>
 
     <div class="item">
-      <InfoItem title="Open Incidents" subtitle="93" class="item-info">
-        <template #right-icon> <Badge label="-13%" name="success" /> </template>
+      <InfoItem
+        title="Open Incidents"
+        :subtitle="storeIncidents.totalIncidents.current.open"
+        class="item-info"
+      >
+        <template #right-icon> <Badge :label="getPercentOpen" name="success" /> </template>
       </InfoItem>
     </div>
 
     <div class="item">
-      <InfoItem title="Close Incidents" subtitle="12" class="item-info">
-        <template #right-icon> <Badge label="+7%" name="error" /> </template>
+      <InfoItem
+        title="Closed Incidents"
+        :subtitle="storeIncidents.totalIncidents.current.close"
+        class="item-info"
+      >
+        <template #right-icon> <Badge :label="getPercentClose" name="error" /> </template>
       </InfoItem>
     </div>
 
     <div class="item">
-      <InfoItem title="Update Incidents" subtitle="3" class="item-info">
-        <template #right-icon> <Badge label="-3%" name="success" /> </template>
+      <InfoItem
+        title="Pending Incidents"
+        :subtitle="storeIncidents.totalIncidents.current.pending"
+        class="item-info"
+      >
+        <template #right-icon> <Badge :label="getPercentPending" name="success" /> </template>
       </InfoItem>
     </div>
 
@@ -42,7 +54,7 @@ import ComboBox from '@/components/ComboBox.vue'
 import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
 
-const storeIncidents = useIncidentsStore();
+const storeIncidents = useIncidentsStore()
 
 const selectedValue = ref('')
 const optCombo = [
@@ -56,26 +68,62 @@ const optCombo = [
 ]
 
 const formattedDate = ref(dayjs().format('D MMM YYYY'))
-let dateRange = ref('');
+let dateRange = ref('')
 
-watch(selectedValue, (newValue) => {
-  dateRange.value = DateRange.getDateRange(newValue);
-  const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD');
-  const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD');
-  storeIncidents.fetchData(startDate, endDate);
+watch(selectedValue, async (newValue) => {
+  dateRange.value = DateRange.getDateRange(newValue)
+  const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD')
+  const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD')
+  await storeIncidents.fetchData(startDate, endDate)
 })
 
 const getCurrentDate = computed(() => {
-  if (!dateRange.value) return formattedDate.value;
-  const { startDate, endDate } = dateRange.value;
+  if (!dateRange.value) return formattedDate.value
+  const { startDate, endDate } = dateRange.value
   if (startDate && endDate && startDate.isSame(endDate, 'day')) {
-    return dayjs(startDate).format('D MMM YYYY');
+    return dayjs(startDate).format('D MMM YYYY')
   }
-  const formattedStartDate = startDate ? dayjs(startDate).format('D MMM YYYY') : '';
-  const formattedEndDate = endDate ? dayjs(endDate).format('D MMM YYYY') : '';
-  return `${formattedStartDate} - ${formattedEndDate}`;
-});
+  const formattedStartDate = startDate ? dayjs(startDate).format('D MMM YYYY') : ''
+  const formattedEndDate = endDate ? dayjs(endDate).format('D MMM YYYY') : ''
+  return `${formattedStartDate} - ${formattedEndDate}`
+})
 
+const getPercentOpen = computed(() => {
+  console.log('Open Current:', storeIncidents.totalIncidents.current.open)
+  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.open)
+  return calculatePercentage(
+    storeIncidents.totalIncidents.current.open,
+    storeIncidents.totalIncidents.lastYear.open,
+  )
+})
+
+const getPercentClose = computed(() => {
+  console.log('Open Current:', storeIncidents.totalIncidents.current.close)
+  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.close)
+  return calculatePercentage(
+    storeIncidents.totalIncidents.current.close,
+    storeIncidents.totalIncidents.lastYear.close,
+  )
+})
+
+const getPercentPending = computed(() => {
+  console.log('Open Current:', storeIncidents.totalIncidents.current.pending)
+  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.pending)
+  return calculatePercentage(
+    storeIncidents.totalIncidents.current.pending,
+    storeIncidents.totalIncidents.lastYear.pending,
+  )
+})
+
+const calculatePercentage = (current, lastYear) => {
+  if (lastYear === 0) {
+    return current === 0 ? '0%' : '+100%'
+  }
+  const percentage = ((current - lastYear) / lastYear) * 100
+  const formattedPercentage = parseFloat(percentage.toFixed(2))
+  const sign = formattedPercentage > 0 ? '+' : formattedPercentage < 0 ? '-' : ''
+  return `${sign}${Math.abs(formattedPercentage)}%`
+}
 </script>
 
 <style scoped>
