@@ -8,11 +8,19 @@ export const useIncidentsStore = defineStore('incidents', () => {
       open: 0,
       close: 0,
       pending: 0,
+      avg: {
+        hour: 0,
+        minute: 0
+      }
     },
     lastYear: {
       open: 0,
       close: 0,
       pending: 0,
+      avg: {
+        hour: 0,
+        minute: 0
+      }
     },
   })
 

@@ -12,9 +12,7 @@ export default class IncidentsController {
   }
 
   static async getTotalIncidents(req, res, next) {
-    // console.log('params', req);
     const { startDate, endDate } = req.params
-    // console.log('date controller', startDate, endDate)
     if (!startDate || !endDate) {
       const error = new Error('startDate and endDate are required')
       error.status = 400

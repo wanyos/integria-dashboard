@@ -38,10 +38,20 @@
     </div>
 
     <div class="item">
-      <InfoItem title="Average Incident Management" subtitle="09h 42m" class="item-info">
-        <template #right-icon> <Badge label="-41%" name="success" /> </template>
+      <InfoItem
+        title="Average Incident Management"
+        :subtitle="formattedCurrentAvg"
+        class="item-info"
+      >
+        <template #right-icon> <Badge :label="getPercentAvg" name="success" /> </template>
       </InfoItem>
     </div>
+
+    <template>
+      <div>
+        <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
+      </div>
+    </template>
   </section>
 </template>
 
@@ -53,6 +63,21 @@ import Badge from '@/components/Badge.vue'
 import ComboBox from '@/components/ComboBox.vue'
 import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
+
+const chartOptions = ref({
+        chart: {
+          id: "vuechart-example",
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+        },
+        series: [
+        {
+          name: "series-1",
+          data: [30, 40, 35, 50, 49, 60, 70, 91],
+        },
+      ],
+      })
 
 const storeIncidents = useIncidentsStore()
 
@@ -89,8 +114,8 @@ const getCurrentDate = computed(() => {
 })
 
 const getPercentOpen = computed(() => {
-  console.log('Open Current:', storeIncidents.totalIncidents.current.open)
-  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.open)
+  // console.log('Open Current:', storeIncidents.totalIncidents.current.open)
+  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.open)
   return calculatePercentage(
     storeIncidents.totalIncidents.current.open,
     storeIncidents.totalIncidents.lastYear.open,
@@ -98,8 +123,8 @@ const getPercentOpen = computed(() => {
 })
 
 const getPercentClose = computed(() => {
-  console.log('Open Current:', storeIncidents.totalIncidents.current.close)
-  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.close)
+  // console.log('Open Current:', storeIncidents.totalIncidents.current.close)
+  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.close)
   return calculatePercentage(
     storeIncidents.totalIncidents.current.close,
     storeIncidents.totalIncidents.lastYear.close,
@@ -107,8 +132,8 @@ const getPercentClose = computed(() => {
 })
 
 const getPercentPending = computed(() => {
-  console.log('Open Current:', storeIncidents.totalIncidents.current.pending)
-  console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.pending)
+  // console.log('Open Current:', storeIncidents.totalIncidents.current.pending)
+  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.pending)
   return calculatePercentage(
     storeIncidents.totalIncidents.current.pending,
     storeIncidents.totalIncidents.lastYear.pending,
@@ -116,14 +141,39 @@ const getPercentPending = computed(() => {
 })
 
 const calculatePercentage = (current, lastYear) => {
-  if (lastYear === 0) {
-    return current === 0 ? '0%' : '+100%'
+  if(current === 0 || lastYear === 0){
+    return '0%'
   }
   const percentage = ((current - lastYear) / lastYear) * 100
   const formattedPercentage = parseFloat(percentage.toFixed(2))
   const sign = formattedPercentage > 0 ? '+' : formattedPercentage < 0 ? '-' : ''
   return `${sign}${Math.abs(formattedPercentage)}%`
 }
+
+
+const formattedCurrentAvg = computed(() => {
+      const horas = storeIncidents.totalIncidents.current.avg.hour || 0;
+      const minutos = storeIncidents.totalIncidents.current.avg.minute || 0;
+      const totalHorasDecimal = horas + minutos / 60;
+      return convertirHoras(totalHorasDecimal);
+    });
+
+
+function convertirHoras(horasDecimal) {
+    const dias = Math.floor(horasDecimal / 24);
+    const horas = Math.floor(horasDecimal % 24);
+    const minutos = Math.round((horasDecimal % 1) * 60);
+    return `${dias}d ${horas}h ${minutos}m`;
+}
+
+
+const getPercentAvg = computed(() => {
+      const currentAvgDecimal = storeIncidents.totalIncidents.current.avg.hour +
+                                storeIncidents.totalIncidents.current.avg.minute / 60;
+      const lastYearAvgDecimal = storeIncidents.totalIncidents.lastYear.avg.hour +
+                                 storeIncidents.totalIncidents.lastYear.avg.minute / 60;
+      return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal);
+    });
 </script>
 
 <style scoped>
