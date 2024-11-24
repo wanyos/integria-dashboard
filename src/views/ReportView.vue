@@ -80,15 +80,11 @@
     <!-- <div class="item pa">
       <p>bar chart</p>
     </div> -->
-
-    <!-- <div class="item chart2">
-      <VueApexCharts type="bar" height="250" :options="chartOptions" :series="series" />
-    </div> -->
   </section>
 </template>
 
 <script setup>
-import { ref, watch, computed, reactive, onMounted } from 'vue'
+import { ref, watch, computed, onMounted, onBeforeUnmount } from 'vue'
 import dayjs from 'dayjs'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
@@ -97,67 +93,6 @@ import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import HeatMap from '@/components/HeatMap.vue'
 import Distribution from '@/components/Distribution.vue'
-
-// const series = ref([
-//   {
-//     name: 'First Responses',
-//     data: [13, 5, 1, 7, 2, 3, 8],
-//     color: '#1a1a1a',
-//   },
-// ])
-
-// const chartOptions = reactive({
-//   chart: {
-//     type: 'bar',
-//   },
-//   plotOptions: {
-//     bar: {
-//       borderRadius: 8,
-//       columnWidth: '70%',
-//     },
-//   },
-//   dataLabels: {
-//     enabled: false,
-//   },
-//   stroke: {
-//     width: 0,
-//   },
-//   grid: {
-//     // row: {
-//     //   colors: ['#fff', '#f2f2f2']
-//     // }
-//   },
-//   xaxis: {
-//     type: 'category',
-//     categories: ['< 15m', '1h', '4h', '12h', '1d', '2d', '> 2d'],
-//     labels: {
-//       rotate: -45,
-//       rotateAlways: true,
-//       style: {
-//         fontSize: '12px',
-//         colors: ['#1a1a1a'],
-//       },
-//     },
-//   },
-//   yaxis: {
-//     // title: {
-//     //   text: 'Servings'
-//     // }
-//   },
-//   fill: {
-//     type: 'gradient',
-//     gradient: {
-//       shade: 'light',
-//       type: 'horizontal',
-//       shadeIntensity: 0.25,
-//       gradientToColors: undefined,
-//       inverseColors: true,
-//       opacityFrom: 0.85,
-//       opacityTo: 0.85,
-//       stops: [50, 0, 100],
-//     },
-//   },
-// })
 
 const storeIncidents = useIncidentsStore()
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
@@ -194,7 +129,18 @@ const getDataStore = async () => {
 }
 
 watch([selectedRange, selectedYear], getDataStore)
-onMounted(getDataStore)
+onMounted(() => {
+  window.addEventListener('wheel', handleWheel, { passive: true })
+  getDataStore()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('wheel', handleWheel)
+})
+
+function handleWheel(event) {
+  // Handle the wheel event
+}
 
 const heatmapOpenInc = computed(() => storeIncidents.allIncidentsYear.openInc)
 const heatmapCloseInc = computed(() => storeIncidents.allIncidentsYear.closeInc)
@@ -314,19 +260,7 @@ const getPercentAvg = computed(() => {
 
 .distribution {
   grid-column: 1 / 5;
-  /* height: 450px;
-  width: 100%;
-  display: flex;
-  border: 1px solid red; */
 }
-
-/* .pa {
-  grid-column: 1 / 3;
-  border: 1px solid red;
-}
-.pa > p {
-  border: 1px solid black;
-} */
 
 .item {
   background-color: #fff;

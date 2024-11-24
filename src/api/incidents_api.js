@@ -18,6 +18,11 @@ class IncidentsApi extends ApiBase {
     return await this.get(endpoint)
   }
 
+  async getOpenIncidentsGroup() {
+    const endpoint = '/api/incidents/open'
+    return await this.get(endpoint)
+  }
+
   async createIncident(incidentData) {
     return await this.post('/api/incident', incidentData)
   }

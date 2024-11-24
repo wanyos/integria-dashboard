@@ -98,4 +98,14 @@ export default class UsersService {
       throw new Error('Failed to fetch incidents from the database')
     }
   }
+
+  static async getOpenIncidentsGroup() {
+    try {
+      const [rows] = await pool.query(QUERIES.openIncidentsGroup)
+      return { status: 200, incidents: rows }
+    } catch (error) {
+      console.error('Database error getIncidentsGroup:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
 }

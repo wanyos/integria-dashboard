@@ -15,7 +15,6 @@ import { ref, computed, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
-
 const props = defineProps({
   title: {
     type: String,
@@ -34,11 +33,9 @@ const props = defineProps({
     default: () => [],
   },
 })
-
 const chartRef = ref(null)
 const seriesHeat = ref([])
 const isLoading = ref(false)
-
 const handleMouseLeave = () => {
   // Obtiene la instancia del chart
   const chartInstance = chartRef.value?.chart
@@ -49,7 +46,6 @@ const handleMouseLeave = () => {
     }
   }
 }
-
 function generateHeatmapData(incidents) {
   const months = [
     'Jan',
@@ -65,29 +61,23 @@ function generateHeatmapData(incidents) {
     'Nov',
     'Dec',
   ]
-
   // Agrupar datos por meses y días
   const groupedData = {}
-
   incidents.forEach(({ date, count }) => {
     const incidentDate = new Date(date)
     const month = months[incidentDate.getMonth()] // Nombre del mes
     const day = incidentDate.getDate().toString() // Día del mes como string
-
     if (!groupedData[month]) {
       groupedData[month] = []
     }
-
     groupedData[month].push({ x: day, y: count }) // Formato requerido por el heatmap
   })
-
   // Transformar a un array de series para el heatmap
   return months.map((month) => ({
     name: month,
     data: groupedData[month] || [],
   }))
 }
-
 // Actualizar los datos cuando cambien las props
 watch(
   () => props.incidents,
@@ -98,7 +88,6 @@ watch(
   },
   { immediate: true },
 )
-
 const chartOptionsHeat = ref({
   chart: {
     type: 'heatmap',
@@ -135,6 +124,7 @@ const chartOptionsHeat = ref({
   },
   xaxis: {
     type: 'category',
+    categories: Array.from({ length: 31 }, (_, i) => (i + 1).toString()),
     labels: {
       show: true,
       style: {
@@ -167,7 +157,7 @@ const chartOptionsHeat = ref({
   },
   subtitle: {
     text: `Year: ${props.subtitle}`,
-    align: 'cener',
+    align: 'center',
     style: {
       fontSize: '14px',
       fontWeight: 'normal',
@@ -179,19 +169,21 @@ const chartOptionsHeat = ref({
   },
   tooltip: {
     enabled: true,
-    shared: true, // Habilita la visualización de varios datos compartidos
+    shared: true,
     followCursor: false,
     intersect: false,
     x: {
       show: true,
-      format: 'dd MMM yyyy', // Mes y día (por ejemplo, Apr 17)
+      formatter: (value, { seriesIndex, dataPointIndex, w }) => {
+        // Obtén el mes desde el nombre de la serie
+        const month = w.config.series[seriesIndex].name
+        return `${month} ${value}` // Ejemplo: "Apr 17"
+      },
     },
     y: {
-      formatter: function (val) {
-        return `Inc: ${val}` // Muestra el total de incidencias
-      },
+      formatter: (val) => `Inc: ${val}`,
       title: {
-        formatter: () => '', // Evita que el título de y sea mostrado
+        formatter: () => '', // No muestra título para "y"
       },
     },
     marker: {
@@ -199,7 +191,6 @@ const chartOptionsHeat = ref({
     },
   },
 })
-
 watch(
   () => props.subtitle,
   (newValue) => {
@@ -213,7 +204,6 @@ watch(
   },
 )
 </script>
-
 <style lang="css" scoped>
 .div__heatmap {
   width: 100%;

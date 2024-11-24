@@ -1,11 +1,11 @@
 <template>
   <section class="container-info-item">
-    <label :class="getTitleClass">{{ props.title }}</label>
+    <span :class="getTitleClass">{{ props.title }}</span>
     <div class="div-subtitle">
       <div class="left-content">
         <slot name="left-icon"></slot>
       </div>
-      <label :class="getSubtitleClass">{{ props.subtitle }}</label>
+      <span :class="getSubtitleClass">{{ props.subtitle }}</span>
       <div class="right-content">
         <slot name="right-icon"></slot>
       </div>
@@ -75,7 +75,6 @@ const getSubtitleClass = computed(() => props.subtitleClass || 'default-subtitle
 
 .div-subtitle {
   display: flex;
-
   align-items: center;
 }
 </style>

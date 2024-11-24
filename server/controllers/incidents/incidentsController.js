@@ -42,4 +42,14 @@ export default class IncidentsController {
       next(error)
     }
   }
+
+  static async getOpenIncidentsGroup(req, res, next) {
+    try {
+      const { status, incidents } = await IncidentsService.getOpenIncidentsGroup()
+      return res.status(status).json(incidents)
+    } catch (error) {
+      console.error(error)
+      next(error)
+    }
+  }
 }

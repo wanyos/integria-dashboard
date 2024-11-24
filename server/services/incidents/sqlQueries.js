@@ -31,6 +31,9 @@ const QUERIES = {
       WHERE YEAR(cierre) = ?
       GROUP BY DATE(cierre);
     `,
+
+  // Incidencias abiertas por id_grupo 2=operadores, 7=tecnicos, 8=administradores, 148=ciberseguridad
+  openIncidentsGroup: `SELECT * FROM tincidencia WHERE cierre < "0001-01-01" AND id_grupo IN (2, 7, 8, 148);`,
 }
 
 export default QUERIES

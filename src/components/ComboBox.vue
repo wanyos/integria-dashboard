@@ -6,6 +6,7 @@
         class="ComboboxInput"
         placeholder="Select..."
         :style="{ width: props.customWidth }"
+        name="combobox-input"
       />
       <ComboboxTrigger class="ComboboxIcon">
         <v-icon name="bi-chevron-down" />
