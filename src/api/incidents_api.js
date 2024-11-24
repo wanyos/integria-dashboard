@@ -5,9 +5,16 @@ class IncidentsApi extends ApiBase {
     return await this.get('/api/incidents')
   }
 
-  async getTotalIncidents(startDate, endDate) {
+  async getIncidentsRange(startDate, endDate) {
     // const endpoint = `/api/incidents?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;    // query
-    const endpoint = `/api/incidents/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    // console.log('dates range in api', startDate, endDate)
+    // const endpoint = `/api/incidents/range/${encodeURIComponent(startDate)}/${encodeURIComponent()}`
+    const endpoint = `/api/incidents/range/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    return await this.get(endpoint)
+  }
+
+  async getAllIncidentsYear(currentYear) {
+    const endpoint = `/api/incidents/year/${currentYear}`
     return await this.get(endpoint)
   }
 

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import usersRouter from './routers/usersRoutes.js'
 import incidentsRouter from './routers/incidentsRoutes.js'
 import inventoryRouter from './routers/inventoryRoutes.js'
+import { globalMiddleware } from './middelware.js'
 
 const app = express()
 
@@ -25,7 +26,7 @@ const corsOption = {
     `http://127.0.0.1:8022`,
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    'http://10.10.14.37:5173'
+    'http://10.10.14.37:5173',
   ],
   method: ['GET'],
   credentials: true,
@@ -45,22 +46,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/incidents', incidentsRouter)
 app.use('/api/inventory', inventoryRouter)
 
-// Middleware managed errors (always to end)
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({ error: err.message })
-  }
-
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({ error: 'Unauthorized access' })
-  }
-
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-  })
-})
+app.use(globalMiddleware)
 
 function startServer(port) {
   let actualPort = ''

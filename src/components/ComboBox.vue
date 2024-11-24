@@ -1,12 +1,17 @@
 <template>
   <ComboboxRoot v-model="selectedValue" class="ComboboxRoot">
     <ComboboxAnchor class="ComboboxAnchor">
-      <ComboboxInput class="ComboboxInput" placeholder="Choose an option..." />
-      <ComboboxTrigger>
+      <v-icon name="bi-calendar2-check" class="icon-calendar" />
+      <ComboboxInput
+        class="ComboboxInput"
+        placeholder="Select..."
+        :style="{ width: props.customWidth }"
+      />
+      <ComboboxTrigger class="ComboboxIcon">
         <v-icon name="bi-chevron-down" />
       </ComboboxTrigger>
     </ComboboxAnchor>
-    <ComboboxContent class="ComboboxContent">
+    <ComboboxContent data-align="center" class="ComboboxContent">
       <ComboboxViewport class="ComboboxViewport">
         <ComboboxGroup>
           <ComboboxItem
@@ -47,6 +52,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  customWidth: {
+    type: String,
+    default: '100px',
+  },
 })
 
 const selectedValue = ref('')
@@ -58,14 +67,11 @@ const selectedValue = ref('')
 }
 
 .ComboboxAnchor {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  line-height: 1;
-  height: 35px;
-  padding: 0 15px;
-  gap: 5px;
+  font-size: 12px;
+  height: 30px;
+  padding: 0 8px;
   background-color: white;
   color: #1a1a1a;
   border-radius: 4px;
@@ -82,13 +88,13 @@ const selectedValue = ref('')
 .ComboboxIcon {
   width: 16px;
   height: 16px;
+  margin-right: 2px;
+  cursor: pointer;
 }
 
 .ComboboxContent {
   z-index: 10;
-  width: 100%;
   position: absolute;
-  left: 0px;
   overflow: hidden;
   background-color: white;
   border-radius: 6px;
@@ -116,8 +122,6 @@ const selectedValue = ref('')
   line-height: 1;
   border-radius: 5px;
   width: 70%;
-  margin-left: 10px;
-  margin-right: 20px;
   display: flex;
   align-items: center;
   height: 25px;
@@ -149,5 +153,9 @@ const selectedValue = ref('')
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.icon-calendar {
+  margin-right: 15px;
 }
 </style>

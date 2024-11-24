@@ -41,7 +41,7 @@ const getSubtitleClass = computed(() => props.subtitleClass || 'default-subtitle
 
 <style lang="css" scoped>
 .container-info-item {
-  padding: 15px 25px;
+  padding: 6px 12px;
 }
 
 .default-title-class {
@@ -52,7 +52,7 @@ const getSubtitleClass = computed(() => props.subtitleClass || 'default-subtitle
 
 .default-subtitle-class {
   color: #030712;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 400;
   margin-top: 5px;
 }
@@ -65,17 +65,17 @@ const getSubtitleClass = computed(() => props.subtitleClass || 'default-subtitle
 
 .left-content {
   margin-top: 5px;
-  margin-right: 10px;
+  margin-right: 6px;
 }
 
 .right-content {
   margin-top: 5px;
-  margin-left: 10px;
+  margin-left: 6px;
 }
 
 .div-subtitle {
   display: flex;
-  justify-content: center;
+
   align-items: center;
 }
 </style>

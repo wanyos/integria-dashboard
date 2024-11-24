@@ -1,87 +1,173 @@
 <template>
   <section class="main-container container-report">
+    <div class="no__item">
+      <ComboBox :options="rangeYears" v-model="selectedYear" custom-width="50px" />
+    </div>
     <div class="item div__select">
-      <v-icon name="bi-calendar2-check" class="icon-calendar" />
-      <ComboBox :options="optCombo" v-model="selectedValue" />
+      <ComboBox :options="optCombo" v-model="selectedRange" />
     </div>
+
     <div class="item item-label-date">{{ getCurrentDate }}</div>
-    <div class="item"><p>Incidents</p></div>
+
+    <div class="item item__title"><p>Incidents</p></div>
 
     <div class="item">
       <InfoItem
-        title="Open Incidents"
-        :subtitle="storeIncidents.totalIncidents.current.open"
+        title="Open Inc"
+        :subtitle="storeIncidents.incidentsRange.current.open"
         class="item-info"
       >
-        <template #right-icon> <Badge :label="getPercentOpen" name="success" /> </template>
+        <template #right-icon> <Badge :label="getPercentOpen" /> </template>
+      </InfoItem>
+    </div>
+
+    <div class="item">
+      <InfoItem title="Open Avg Day" :subtitle="getAvgDayOpen" class="item-info">
+        <template #right-icon> <Badge :label="getAvgPercentDayOpen" /> </template>
       </InfoItem>
     </div>
 
     <div class="item">
       <InfoItem
-        title="Closed Incidents"
-        :subtitle="storeIncidents.totalIncidents.current.close"
+        title="Closed Inc"
+        :subtitle="storeIncidents.incidentsRange.current.close"
         class="item-info"
       >
-        <template #right-icon> <Badge :label="getPercentClose" name="error" /> </template>
+        <template #right-icon> <Badge :label="getPercentClose" /> </template>
+      </InfoItem>
+    </div>
+
+    <div class="item">
+      <InfoItem title="Closed Avg Day" :subtitle="getAvgDayClose" class="item-info">
+        <template #right-icon> <Badge :label="getAvgPercentDayClose" /> </template>
       </InfoItem>
     </div>
 
     <div class="item">
       <InfoItem
-        title="Pending Incidents"
-        :subtitle="storeIncidents.totalIncidents.current.pending"
+        title="Pending Inc"
+        :subtitle="storeIncidents.incidentsRange.current.pending"
         class="item-info"
       >
-        <template #right-icon> <Badge :label="getPercentPending" name="success" /> </template>
+        <template #right-icon> <Badge :label="getPercentPending" /> </template>
       </InfoItem>
     </div>
 
     <div class="item">
-      <InfoItem
-        title="Average Incident Management"
-        :subtitle="formattedCurrentAvg"
-        class="item-info"
-      >
-        <template #right-icon> <Badge :label="getPercentAvg" name="success" /> </template>
+      <InfoItem title="Avg Inc Management" :subtitle="formattedCurrentAvg" class="item-info">
+        <template #right-icon> <Badge :label="getPercentAvg" /> </template>
       </InfoItem>
     </div>
 
-    <template>
-      <div>
-        <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
-      </div>
-    </template>
+    <HeatMap
+      title="Open incidents by day"
+      :subtitle="selectedYear"
+      :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
+      :incidents="heatmapOpenInc"
+      class="heatmap-open"
+    />
+
+    <HeatMap
+      title="Closed incidents by day"
+      :subtitle="selectedYear"
+      :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
+      :incidents="heatmapCloseInc"
+      class="heatmap-close"
+    />
+
+    <Distribution class="item distribution" />
+
+    <!-- <div class="item pa">
+      <p>bar chart</p>
+    </div> -->
+
+    <!-- <div class="item chart2">
+      <VueApexCharts type="bar" height="250" :options="chartOptions" :series="series" />
+    </div> -->
   </section>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, reactive, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
 import ComboBox from '@/components/ComboBox.vue'
 import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
+import HeatMap from '@/components/HeatMap.vue'
+import Distribution from '@/components/Distribution.vue'
 
-const chartOptions = ref({
-        chart: {
-          id: "vuechart-example",
-        },
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-        },
-        series: [
-        {
-          name: "series-1",
-          data: [30, 40, 35, 50, 49, 60, 70, 91],
-        },
-      ],
-      })
+// const series = ref([
+//   {
+//     name: 'First Responses',
+//     data: [13, 5, 1, 7, 2, 3, 8],
+//     color: '#1a1a1a',
+//   },
+// ])
+
+// const chartOptions = reactive({
+//   chart: {
+//     type: 'bar',
+//   },
+//   plotOptions: {
+//     bar: {
+//       borderRadius: 8,
+//       columnWidth: '70%',
+//     },
+//   },
+//   dataLabels: {
+//     enabled: false,
+//   },
+//   stroke: {
+//     width: 0,
+//   },
+//   grid: {
+//     // row: {
+//     //   colors: ['#fff', '#f2f2f2']
+//     // }
+//   },
+//   xaxis: {
+//     type: 'category',
+//     categories: ['< 15m', '1h', '4h', '12h', '1d', '2d', '> 2d'],
+//     labels: {
+//       rotate: -45,
+//       rotateAlways: true,
+//       style: {
+//         fontSize: '12px',
+//         colors: ['#1a1a1a'],
+//       },
+//     },
+//   },
+//   yaxis: {
+//     // title: {
+//     //   text: 'Servings'
+//     // }
+//   },
+//   fill: {
+//     type: 'gradient',
+//     gradient: {
+//       shade: 'light',
+//       type: 'horizontal',
+//       shadeIntensity: 0.25,
+//       gradientToColors: undefined,
+//       inverseColors: true,
+//       opacityFrom: 0.85,
+//       opacityTo: 0.85,
+//       stops: [50, 0, 100],
+//     },
+//   },
+// })
 
 const storeIncidents = useIncidentsStore()
+const selectedRange = ref(dayjs().format('DD MMM YYYY'))
+const selectedYear = ref(dayjs().year())
+const formattedDate = ref(dayjs().format('D MMM YYYY'))
+let dateRange = ref('')
 
-const selectedValue = ref('')
+let startDateAvg = null
+let endDateAvg = null
+
 const optCombo = [
   'Yesterday',
   'This Week',
@@ -92,16 +178,28 @@ const optCombo = [
   'This Year',
 ]
 
-const formattedDate = ref(dayjs().format('D MMM YYYY'))
-let dateRange = ref('')
-
-watch(selectedValue, async (newValue) => {
-  dateRange.value = DateRange.getDateRange(newValue)
-  const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD')
-  const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD')
-  await storeIncidents.fetchData(startDate, endDate)
+const rangeYears = computed(() => {
+  let years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+  years.push(dayjs().year())
+  return years
 })
 
+const getDataStore = async () => {
+  dateRange.value = DateRange.getDateRange(selectedRange.value, selectedYear.value)
+  const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD')
+  const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD')
+  startDateAvg = startDate
+  endDateAvg = endDate
+  await storeIncidents.fetchData(startDate, endDate, selectedYear.value)
+}
+
+watch([selectedRange, selectedYear], getDataStore)
+onMounted(getDataStore)
+
+const heatmapOpenInc = computed(() => storeIncidents.allIncidentsYear.openInc)
+const heatmapCloseInc = computed(() => storeIncidents.allIncidentsYear.closeInc)
+
+// label date select
 const getCurrentDate = computed(() => {
   if (!dateRange.value) return formattedDate.value
   const { startDate, endDate } = dateRange.value
@@ -114,34 +212,55 @@ const getCurrentDate = computed(() => {
 })
 
 const getPercentOpen = computed(() => {
-  // console.log('Open Current:', storeIncidents.totalIncidents.current.open)
-  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.open)
   return calculatePercentage(
-    storeIncidents.totalIncidents.current.open,
-    storeIncidents.totalIncidents.lastYear.open,
+    storeIncidents.incidentsRange.current.open,
+    storeIncidents.incidentsRange.lastYear.open,
   )
 })
 
+const getAvgDayOpen = computed(() => calculateAvgDay(storeIncidents.incidentsRange.current.open))
+const getAvgDayClose = computed(() => calculateAvgDay(storeIncidents.incidentsRange.current.close))
+
+const getAvgPercentDayOpen = computed(() => {
+  const totalLast = calculateAvgDay(storeIncidents.incidentsRange.lastYear.open)
+  return calculatePercentage(getAvgDayOpen.value, totalLast)
+})
+
+const getAvgPercentDayClose = computed(() => {
+  const totalLast = calculateAvgDay(storeIncidents.incidentsRange.lastYear.close)
+  return calculatePercentage(getAvgDayClose.value, totalLast)
+})
+
+// calculate avg days this dates and last year date
+const calculateAvgDay = (totalInc) => {
+  let formateResult = 0
+  const start = dayjs(startDateAvg)
+  const end = dayjs(endDateAvg)
+  const totalDays = end.diff(start, 'day') + 1
+  if (totalDays <= 0 || totalInc === 0) {
+    return 0
+  }
+  const result = totalInc / totalDays
+  formateResult = parseFloat(result.toFixed(2))
+  return formateResult
+}
+
 const getPercentClose = computed(() => {
-  // console.log('Open Current:', storeIncidents.totalIncidents.current.close)
-  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.close)
   return calculatePercentage(
-    storeIncidents.totalIncidents.current.close,
-    storeIncidents.totalIncidents.lastYear.close,
+    storeIncidents.incidentsRange.current.close,
+    storeIncidents.incidentsRange.lastYear.close,
   )
 })
 
 const getPercentPending = computed(() => {
-  // console.log('Open Current:', storeIncidents.totalIncidents.current.pending)
-  // console.log('Open Last Year:', storeIncidents.totalIncidents.lastYear.pending)
   return calculatePercentage(
-    storeIncidents.totalIncidents.current.pending,
-    storeIncidents.totalIncidents.lastYear.pending,
+    storeIncidents.incidentsRange.current.pending,
+    storeIncidents.incidentsRange.lastYear.pending,
   )
 })
 
 const calculatePercentage = (current, lastYear) => {
-  if(current === 0 || lastYear === 0){
+  if (current === 0 || lastYear === 0) {
     return '0%'
   }
   const percentage = ((current - lastYear) / lastYear) * 100
@@ -150,40 +269,64 @@ const calculatePercentage = (current, lastYear) => {
   return `${sign}${Math.abs(formattedPercentage)}%`
 }
 
-
 const formattedCurrentAvg = computed(() => {
-      const horas = storeIncidents.totalIncidents.current.avg.hour || 0;
-      const minutos = storeIncidents.totalIncidents.current.avg.minute || 0;
-      const totalHorasDecimal = horas + minutos / 60;
-      return convertirHoras(totalHorasDecimal);
-    });
+  const horas = storeIncidents.incidentsRange.current.avg.hour || 0
+  const minutos = storeIncidents.incidentsRange.current.avg.minute || 0
+  const totalHorasDecimal = horas + minutos / 60
+  return convertirHoras(totalHorasDecimal)
+})
 
-
+// return string with day:hours:minutes
 function convertirHoras(horasDecimal) {
-    const dias = Math.floor(horasDecimal / 24);
-    const horas = Math.floor(horasDecimal % 24);
-    const minutos = Math.round((horasDecimal % 1) * 60);
-    return `${dias}d ${horas}h ${minutos}m`;
+  const dias = Math.floor(horasDecimal / 24)
+  const horas = Math.floor(horasDecimal % 24)
+  const minutos = Math.round((horasDecimal % 1) * 60)
+  return `${dias}d ${horas}h ${minutos}m`
 }
 
-
 const getPercentAvg = computed(() => {
-      const currentAvgDecimal = storeIncidents.totalIncidents.current.avg.hour +
-                                storeIncidents.totalIncidents.current.avg.minute / 60;
-      const lastYearAvgDecimal = storeIncidents.totalIncidents.lastYear.avg.hour +
-                                 storeIncidents.totalIncidents.lastYear.avg.minute / 60;
-      return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal);
-    });
+  const currentAvgDecimal =
+    storeIncidents.incidentsRange.current.avg.hour +
+    storeIncidents.incidentsRange.current.avg.minute / 60
+  const lastYearAvgDecimal =
+    storeIncidents.incidentsRange.lastYear.avg.hour +
+    storeIncidents.incidentsRange.lastYear.avg.minute / 60
+  return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal)
+})
 </script>
 
 <style scoped>
 .container-report {
   padding: 10px 15px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: 40px 30px 100px;
+  grid-template-columns: repeat(6, minmax(150px, 1fr));
+  grid-template-rows: 30px 30px 100px 450px 450px;
   gap: 10px;
 }
+
+.heatmap-open {
+  grid-column: 1 / 4;
+}
+
+.heatmap-close {
+  grid-column: 4 / 7;
+}
+
+.distribution {
+  grid-column: 1 / 5;
+  /* height: 450px;
+  width: 100%;
+  display: flex;
+  border: 1px solid red; */
+}
+
+/* .pa {
+  grid-column: 1 / 3;
+  border: 1px solid red;
+}
+.pa > p {
+  border: 1px solid black;
+} */
 
 .item {
   background-color: #fff;
@@ -193,49 +336,46 @@ const getPercentAvg = computed(() => {
   align-items: center;
 }
 
+.no__item {
+  display: flex;
+  justify-content: end;
+}
+
 .item-label-date {
+  grid-column: 3 / -1;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
 }
 
-.container-report > :nth-child(1) {
-  align-self: center;
-  justify-self: center;
+.div__select {
+  grid-column: 2 / 3;
 }
 
-/* .container-report > :nth-child(1) > select {
-  border-radius: 5px;
-  padding: 6px 20px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  cursor: pointer;
-} */
-
-.container-report > :nth-child(3) {
-  grid-column: 1/-1;
+.item__title {
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.container-report > :nth-child(4) {
-  grid-column: 1 / 2;
+/* @media (width < 1150px) {
+  .container-report {
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+  }
 }
 
-.div__select {
-  position: relative;
-}
-
-.icon-calendar {
-  margin-left: 15px;
-}
-
-@media (width < 1150px) {
+@media (width < 900px) {
   .container-report {
     grid-template-columns: repeat(2, minmax(150px, 1fr));
   }
 }
+
+@media (width < 600px) {
+  .container-report {
+    grid-template-columns: repeat(1, minmax(150px, 1fr));
+  }
+} */
 </style>

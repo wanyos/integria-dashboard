@@ -1,32 +1,10 @@
 import { pool } from '../../db/mysql.js'
-
-const allIncidents = 'select * from tincidencia limit 100'
-const totalIncidents = 'SELECT * FROM tincidencia WHERE inicio BETWEEN ? AND ?'
-
-const openIncidents = 'SELECT COUNT(*) AS count FROM tincidencia WHERE inicio BETWEEN ? AND ?'
-const closeIncidents =
-  'SELECT COUNT(*) AS count FROM tincidencia WHERE inicio BETWEEN ? AND ? AND cierre > "0001-01-01"'
-const pendingIncidents =
-  'SELECT COUNT(*) AS count FROM tincidencia WHERE inicio BETWEEN ? AND ? AND cierre < "0001-01-01"'
-
-  // const avgIncidents = "SELECT FLOOR(media_horas) AS horas, ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos FROM (SELECT AVG( CASE WHEN cierre > '0001-01-01' THEN TIMESTAMPDIFF(HOUR, inicio, cierre) ELSE TIMESTAMPDIFF(HOUR, inicio, NOW()) END) AS media_horas FROM tincidencia WHERE inicio BETWEEN ? AND ?) AS subquery;"   // count incidents no closed
-
-  const avgIncidents = `
-  SELECT
-    FLOOR(media_horas) AS horas,
-    ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos
-  FROM (
-    SELECT
-      AVG(TIMESTAMPDIFF(HOUR, inicio, cierre)) AS media_horas
-    FROM tincidencia
-    WHERE cierre > '0001-01-01' AND inicio BETWEEN ? AND ?
-  ) AS subquery;
-`;
+import QUERIES from './sqlQueries.js'
 
 export default class UsersService {
   static async getIncidents() {
     try {
-      const [rows] = await pool.query(allIncidents)
+      const [rows] = await pool.query(QUERIES.allIncidents)
       return { status: 200, incidents: rows }
     } catch (error) {
       console.error(error)
@@ -35,7 +13,7 @@ export default class UsersService {
     }
   }
 
-  static async getTotalIncidents(startDate, endDate) {
+  static async getIncidentsRange(startDate, endDate) {
     try {
       const startDateLastYear = new Date(startDate)
       startDateLastYear.setFullYear(startDateLastYear.getFullYear() - 1)
@@ -46,15 +24,24 @@ export default class UsersService {
       const startLastYear = startDateLastYear.toISOString().split('T')[0]
       const endLastYear = endDateLastYear.toISOString().split('T')[0]
 
-      const [openInc] = await pool.query(openIncidents, [startDate, endDate])
-      const [closeInc] = await pool.query(closeIncidents, [startDate, endDate])
-      const [pendingInc] = await pool.query(pendingIncidents, [startDate, endDate])
-      const [avgInc] = await pool.query(avgIncidents, [startDate, endDate])
+      const [openInc] = await pool.query(QUERIES.openIncidents, [startDate, endDate])
+      const [closeInc] = await pool.query(QUERIES.closeIncidents, [startDate, endDate])
+      const [pendingInc] = await pool.query(QUERIES.pendingIncidents, [startDate, endDate])
+      const [avgInc] = await pool.query(QUERIES.avgIncidents, [startDate, endDate])
 
-      const [openIncLastYear] = await pool.query(openIncidents, [startLastYear, endLastYear])
-      const [closeIncLastYear] = await pool.query(closeIncidents, [startLastYear, endLastYear])
-      const [pendingIncLastYear] = await pool.query(pendingIncidents, [startLastYear, endLastYear])
-      const [avgIncLastYear] = await pool.query(avgIncidents, [startLastYear, endLastYear])
+      const [openIncLastYear] = await pool.query(QUERIES.openIncidents, [
+        startLastYear,
+        endLastYear,
+      ])
+      const [closeIncLastYear] = await pool.query(QUERIES.closeIncidents, [
+        startLastYear,
+        endLastYear,
+      ])
+      const [pendingIncLastYear] = await pool.query(QUERIES.pendingIncidents, [
+        startLastYear,
+        endLastYear,
+      ])
+      const [avgIncLastYear] = await pool.query(QUERIES.avgIncidents, [startLastYear, endLastYear])
 
       const incidentsSummary = {
         current: {
@@ -63,8 +50,8 @@ export default class UsersService {
           pending: pendingInc[0]?.count || 0,
           avg: {
             hour: avgInc[0]?.horas || 0,
-            minute: avgInc[1]?.minutos || 0
-          }
+            minute: avgInc[1]?.minutos || 0,
+          },
         },
         lastYear: {
           open: openIncLastYear[0]?.count || 0,
@@ -72,14 +59,42 @@ export default class UsersService {
           pending: pendingIncLastYear[0]?.count || 0,
           avg: {
             hour: avgIncLastYear[0]?.horas || 0,
-            minute: avgIncLastYear[1]?.minutos || 0
-          }
+            minute: avgIncLastYear[1]?.minutos || 0,
+          },
         },
       }
 
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
-      console.error('Database error:', error)
+      console.error('Database error getIncidentsRange:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  static async getIncidentsYear(currentYear) {
+    try {
+      const [openInc] = await pool.query(QUERIES.allIncidentsYearOpen, [currentYear])
+      const [closeInc] = await pool.query(QUERIES.allIncidentsYearClose, [currentYear])
+      const incidentsSummary = {
+        openInc: [],
+        closeInc: [],
+      }
+
+      // Procesa las incidencias abiertas
+      openInc.forEach((incident) => {
+        const { date, count } = incident
+        incidentsSummary.openInc.push({ date, count })
+      })
+
+      // Procesa las incidencias cerradas
+      closeInc.forEach((incident) => {
+        const { date, count } = incident
+        incidentsSummary.closeInc.push({ date, count })
+      })
+
+      return { status: 200, incidents: incidentsSummary }
+    } catch (error) {
+      console.error('Database error getIncidentsYear:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
