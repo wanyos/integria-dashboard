@@ -13,6 +13,11 @@ class IncidentsApi extends ApiBase {
     return await this.get(endpoint)
   }
 
+  async getAllIncidentsGroup(startDate, endDate) {
+    const endpoint = `/api/incidents/group/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    return await this.get(endpoint)
+  }
+
   async getAllIncidentsYear(currentYear) {
     const endpoint = `/api/incidents/year/${currentYear}`
     return await this.get(endpoint)

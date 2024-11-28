@@ -1,11 +1,16 @@
 <template>
-  <div class="chart">
-    <v-chart :option="option" autoresize />
+  <div class="div__chart">
+    <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="'#1565C0'"
+    />
+    <v-chart :option="option" class="chart" autoresize />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
@@ -17,8 +22,10 @@ import {
   GridComponent,
 } from 'echarts/components'
 import VChart, { THEME_KEY } from 'vue-echarts'
-import { ref, provide } from 'vue'
+import { ref, provide, watch, reactive, computed } from 'vue'
 import { buildChartData } from '../utils/dataProcessor'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
 use([
   CanvasRenderer,
@@ -32,32 +39,49 @@ use([
 
 provide(THEME_KEY, 'light')
 
-// Mock data for incidencias
-const incidencias = [
-  { id_grupo: 'Operadores', id_incidencia: '67987', inicio: '2023-01-01' },
-  { id_grupo: 'Operadores', id_incidencia: '43210', inicio: '2023-02-01' },
-  { id_grupo: 'Técnicos', id_incidencia: '57894', inicio: '2022-12-01' },
-  { id_grupo: 'Técnicos', id_incidencia: '23456', inicio: '2023-03-01' },
-  { id_grupo: 'Técnicos', id_incidencia: '12345', inicio: '2023-04-01' },
-  { id_grupo: 'Administradores', id_incidencia: '48765', inicio: '2023-05-01' },
-  { id_grupo: 'Administradores', id_incidencia: '67890', inicio: '2023-06-01' },
-  { id_grupo: 'Ciberseguridad', id_incidencia: '57765', inicio: '2023-07-01' },
-  { id_grupo: 'Ciberseguridad', id_incidencia: '67890', inicio: '2023-08-01' },
-  { id_grupo: 'Ciberseguridad', id_incidencia: '12345', inicio: '2023-09-01' },
-]
+const props = defineProps({
+  allIncidents: {
+    type: Array,
+    default: () => [],
+  },
+})
 
-const chartData = buildChartData(incidencias)
+const isLoading = ref(false)
+const chartData = reactive({})
+
+// Watch for changes in allIncidents and update chartData
+watch(
+  () => props.allIncidents,
+  (newIncidents) => {
+    isLoading.value = true
+    Object.assign(chartData, buildChartData(newIncidents))
+    isLoading.value = false
+  },
+  { immediate: true },
+)
 
 const option = ref({
   title: {
     text: 'Days of open incidents',
     subtext: 'Distribution by department',
+    left: 'left', // Center the title horizontally
+    textStyle: {
+      fontSize: 16,
+      fontWeight: 'normal',
+      color: '#1a1a1a',
+      padding: [0, 0, 0, 20], // [Arriba, Derecha, Abajo, Izquierda]
+    },
+    subtextStyle: {
+      fontSize: 12,
+      color: '#666',
+      padding: [0, 0, 0, 20], // Espaciado adicional para el subtítulo
+    },
   },
   grid: {
     top: '20%', // Ajusta el espacio entre el título y el chart
     left: '5%',
     right: '5%',
-    bottom: '15%', // Ajusta el espacio inferior para la leyenda
+    bottom: '10%', // Ajusta el espacio inferior para la leyenda
     containLabel: true,
   },
   tooltip: {
@@ -99,22 +123,26 @@ const option = ref({
     },
     data: [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250], // Rangos personalizados más pequeños
   },
-  series: Object.keys(chartData).map((group) => ({
-    name: group,
-    type: 'scatter',
-    data: chartData[group].map((item) => [item[0], item[1] > 250 ? 250 : item[1], item[1]]), // Store original value
-    symbolSize: 10,
-    itemStyle: {
-      color:
-        group === 'Operadores'
-          ? '#FF6F61'
-          : group === 'Técnicos'
-            ? '#6B8E23'
-            : group === 'Administradores'
-              ? '#20B2AA'
-              : '#20B2BB',
-    },
-  })),
+  series: computed(() =>
+    Object.keys(chartData).map((group) => ({
+      name: group,
+      type: 'scatter',
+      data: chartData[group].map((item) => [item[0], item[1] > 250 ? 250 : item[1], item[1]]), // Store original value
+      symbolSize: 10,
+      itemStyle: {
+        color:
+          group === 'Operadores'
+            ? '#FF6F61'
+            : group === 'Técnicos'
+              ? '#6B8E23'
+              : group === 'Administradores'
+                ? '#20B2AA'
+                : group === 'Ciberseguridad'
+                  ? '#9460ba'
+                  : '#20B2BB',
+      },
+    })),
+  ),
   toolbox: {
     show: true, // Muestra el toolbox
     feature: {
@@ -134,22 +162,10 @@ const option = ref({
     bottom: 0, // Posiciona la leyenda en la parte inferior
   },
 })
-
-onMounted(() => {
-  window.addEventListener('wheel', handleWheel, { passive: true })
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('wheel', handleWheel)
-})
-
-function handleWheel(event) {
-  // Handle the wheel event
-}
 </script>
 
 <style scoped>
-.chart {
-  padding: 25px;
+.div__chart {
+  padding: 10px;
 }
 </style>

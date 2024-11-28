@@ -13,6 +13,7 @@ export default class UsersService {
     }
   }
 
+  // incidencias por rango de fechas, año en curso y mismo rango año anterior. Cantidad de ellas
   static async getIncidentsRange(startDate, endDate) {
     try {
       const startDateLastYear = new Date(startDate)
@@ -71,6 +72,7 @@ export default class UsersService {
     }
   }
 
+  // todas las incidencias de un año. Cantidad de ellas
   static async getIncidentsYear(currentYear) {
     try {
       const [openInc] = await pool.query(QUERIES.allIncidentsYearOpen, [currentYear])
@@ -99,10 +101,76 @@ export default class UsersService {
     }
   }
 
+  // incidencias abiertas por cada grupo de cualquier fecha
   static async getOpenIncidentsGroup() {
     try {
       const [rows] = await pool.query(QUERIES.openIncidentsGroup)
       return { status: 200, incidents: rows }
+    } catch (error) {
+      console.error('Database error getIncidentsGroup:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // incidencias abiertas y cerradas por rango de fechas y grupo, solo cantidades
+  static async getAllIncidentsGroup(startDate, endDate) {
+    try {
+      const [openOperadores] = await pool.query(QUERIES.allIncOpenOperadores, [startDate, endDate])
+      const [openTecnicos] = await pool.query(QUERIES.allIncOpenTecnicos, [startDate, endDate])
+      const [openAdministradores] = await pool.query(QUERIES.allIncOpenAdministradores, [
+        startDate,
+        endDate,
+      ])
+      const [openCiberseguridad] = await pool.query(QUERIES.allIncOpenCiberseguridad, [
+        startDate,
+        endDate,
+      ])
+      const [openHorizontales] = await pool.query(QUERIES.allIncOpenHorizontales, [
+        startDate,
+        endDate,
+      ])
+      const [openNegocio] = await pool.query(QUERIES.allIncOpenNegocio, [startDate, endDate])
+      const [openExterno] = await pool.query(QUERIES.allIncOpenExterno, [startDate, endDate])
+      const [closeOperadores] = await pool.query(QUERIES.allIncCloseOperadores, [
+        startDate,
+        endDate,
+      ])
+      const [closeTecnicos] = await pool.query(QUERIES.allIncCloseTecnicos, [startDate, endDate])
+      const [closeAdministradores] = await pool.query(QUERIES.allIncCloseAdministradores, [
+        startDate,
+        endDate,
+      ])
+      const [closeCiberseguridad] = await pool.query(QUERIES.allIncCloseCiberseguridad, [
+        startDate,
+        endDate,
+      ])
+      const [closeHorizontales] = await pool.query(QUERIES.allIncCloseHorizontales, [
+        startDate,
+        endDate,
+      ])
+      const [closeNegocio] = await pool.query(QUERIES.allIncCloseNegocio, [startDate, endDate])
+      const [closeExterno] = await pool.query(QUERIES.allIncCloseExterno, [startDate, endDate])
+      const incidentsSummary = {
+        open: {
+          operadores: openOperadores[0]?.count || 0,
+          tecnicos: openTecnicos[0].count || 0,
+          administradores: openAdministradores[0]?.count || 0,
+          ciberseguridad: openCiberseguridad[0]?.count || 0,
+          horizontales: openHorizontales[0]?.count || 0,
+          negocio: openNegocio[0]?.count || 0,
+          externo: openExterno[0]?.count || 0,
+        },
+        close: {
+          operadores: closeOperadores[0]?.count || 0,
+          tecnicos: closeTecnicos[0]?.count || 0,
+          administradores: closeAdministradores[0]?.count || 0,
+          ciberseguridad: closeCiberseguridad[0]?.count || 0,
+          horizontales: closeHorizontales[0]?.count || 0,
+          negocio: closeNegocio[0]?.count || 0,
+          externo: closeExterno[0]?.count || 0,
+        },
+      }
+      return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getIncidentsGroup:', error)
       throw new Error('Failed to fetch incidents from the database')

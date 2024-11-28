@@ -1,20 +1,29 @@
 <template>
-  <div @mouseleave="handleMouseLeave" class="div__heatmap">
+  <div>
     <loading
       v-model:active="isLoading"
       :can-cancel="true"
       :is-full-page="false"
       :color="'#1565C0'"
     />
-    <VueApexCharts ref="chartRef" :options="chartOptionsHeat" :series="seriesHeat" />
+    <VueApexCharts
+      ref="chartRef"
+      width="100%"
+      :options="chartOptionsHeat"
+      :series="seriesHeat"
+      @mouse-leave="handleMouseLeave"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
+import { generateHeatmapData } from '@/utils/dataProcessor'
+import { useChartUtils } from '@/composables/useChartUtils'
+
 const props = defineProps({
   title: {
     type: String,
@@ -33,69 +42,17 @@ const props = defineProps({
     default: () => [],
   },
 })
-const chartRef = ref(null)
+
+const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesHeat = ref([])
 const isLoading = ref(false)
-const handleMouseLeave = () => {
-  // Obtiene la instancia del chart
-  const chartInstance = chartRef.value?.chart
-  if (chartInstance?.toolbar) {
-    const menu = chartInstance.toolbar.elMenu
-    if (menu && menu.classList.contains('apexcharts-menu-open')) {
-      chartInstance.toolbar.toggleMenu()
-    }
-  }
-}
-function generateHeatmapData(incidents) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  // Agrupar datos por meses y días
-  const groupedData = {}
-  incidents.forEach(({ date, count }) => {
-    const incidentDate = new Date(date)
-    const month = months[incidentDate.getMonth()] // Nombre del mes
-    const day = incidentDate.getDate().toString() // Día del mes como string
-    if (!groupedData[month]) {
-      groupedData[month] = []
-    }
-    groupedData[month].push({ x: day, y: count }) // Formato requerido por el heatmap
-  })
-  // Transformar a un array de series para el heatmap
-  return months.map((month) => ({
-    name: month,
-    data: groupedData[month] || [],
-  }))
-}
-// Actualizar los datos cuando cambien las props
-watch(
-  () => props.incidents,
-  (newIncidents) => {
-    isLoading.value = true
-    seriesHeat.value = generateHeatmapData(newIncidents)
-    isLoading.value = false
-  },
-  { immediate: true },
-)
+
 const chartOptionsHeat = ref({
   chart: {
     type: 'heatmap',
     toolbar: {
       show: true,
     },
-    height: 250,
-    width: '100%',
   },
   grid: {
     padding: {
@@ -131,6 +88,9 @@ const chartOptionsHeat = ref({
         fontSize: '12px',
         colors: '#1a1a1a',
       },
+    },
+    tooltip: {
+      enabled: false, // Desactiva la etiqueta adicional del eje X
     },
   },
   yaxis: {
@@ -191,24 +151,22 @@ const chartOptionsHeat = ref({
     },
   },
 })
+
 watch(
-  () => props.subtitle,
-  (newValue) => {
+  () => props.incidents,
+  (newIncidents) => {
+    isLoading.value = true
     if (chartRef.value) {
       chartRef.value.updateOptions({
         subtitle: {
-          text: `Year: ${String(newValue)}`,
+          text: `Year: ${String(props.subtitle)}`,
         },
       })
     }
+    seriesHeat.value = generateHeatmapData(newIncidents)
+    isLoading.value = false
   },
+  { immediate: true },
 )
 </script>
-<style lang="css" scoped>
-.div__heatmap {
-  width: 100%;
-  background-color: #fff;
-  border-radius: 5px;
-  padding-top: 10px;
-}
-</style>
+<style lang="css" scoped></style>

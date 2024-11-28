@@ -14,7 +14,7 @@
     <div class="item">
       <InfoItem
         title="Open Inc"
-        :subtitle="storeIncidents.incidentsRange.current.open"
+        :subtitle="storeIncidents.currentIncidentsRange.open"
         class="item-info"
       >
         <template #right-icon> <Badge :label="getPercentOpen" /> </template>
@@ -30,7 +30,7 @@
     <div class="item">
       <InfoItem
         title="Closed Inc"
-        :subtitle="storeIncidents.incidentsRange.current.close"
+        :subtitle="storeIncidents.currentIncidentsRange.close"
         class="item-info"
       >
         <template #right-icon> <Badge :label="getPercentClose" /> </template>
@@ -46,7 +46,7 @@
     <div class="item">
       <InfoItem
         title="Pending Inc"
-        :subtitle="storeIncidents.incidentsRange.current.pending"
+        :subtitle="storeIncidents.currentIncidentsRange.pending"
         class="item-info"
       >
         <template #right-icon> <Badge :label="getPercentPending" /> </template>
@@ -59,32 +59,42 @@
       </InfoItem>
     </div>
 
-    <HeatMap
-      title="Open incidents by day"
-      :subtitle="selectedYear"
-      :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
-      :incidents="heatmapOpenInc"
-      class="heatmap-open"
-    />
+    <div class="chart-base heatmap-open">
+      <HeatMap
+        title="Open incidents by day"
+        :subtitle="selectedYear"
+        :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
+        :incidents="heatmapOpenInc"
+      />
+    </div>
 
-    <HeatMap
-      title="Closed incidents by day"
-      :subtitle="selectedYear"
-      :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
-      :incidents="heatmapCloseInc"
-      class="heatmap-close"
-    />
+    <div class="chart-base heatmap-close">
+      <HeatMap
+        title="Closed incidents by day"
+        :subtitle="selectedYear"
+        :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
+        :incidents="heatmapCloseInc"
+      />
+    </div>
 
-    <Distribution class="item distribution" />
+    <div class="chart-base distribution-group">
+      <ScatterGroup :all-incidents="distributionData" />
+    </div>
 
-    <!-- <div class="item pa">
-      <p>bar chart</p>
-    </div> -->
+    <div class="chart-base staked-group">
+      <StakedBar :all-incidents-group="allIncidentsGroup" />
+    </div>
+
+    <div class="chart-base histogram">
+      <AreaChart :year="selectedYear" />
+    </div>
+
+    <!-- <Distribution :all-incidents="distributionData" class="item " /> -->
   </section>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
@@ -92,7 +102,10 @@ import ComboBox from '@/components/ComboBox.vue'
 import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import HeatMap from '@/components/HeatMap.vue'
-import Distribution from '@/components/Distribution.vue'
+// import Distribution from '@/components/Distribution.vue'
+import StakedBar from '@/components/StakedBar.vue'
+import ScatterGroup from '@/components/ScatterGroup.vue'
+import AreaChart from '@/components/AreaChart.vue'
 
 const storeIncidents = useIncidentsStore()
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
@@ -130,20 +143,13 @@ const getDataStore = async () => {
 
 watch([selectedRange, selectedYear], getDataStore)
 onMounted(() => {
-  window.addEventListener('wheel', handleWheel, { passive: true })
   getDataStore()
 })
 
-onBeforeUnmount(() => {
-  window.removeEventListener('wheel', handleWheel)
-})
-
-function handleWheel(event) {
-  // Handle the wheel event
-}
-
-const heatmapOpenInc = computed(() => storeIncidents.allIncidentsYear.openInc)
-const heatmapCloseInc = computed(() => storeIncidents.allIncidentsYear.closeInc)
+const heatmapOpenInc = computed(() => storeIncidents.openIncidentsYear)
+const heatmapCloseInc = computed(() => storeIncidents.closedIncidentsYear)
+const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
+const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
 
 // label date select
 const getCurrentDate = computed(() => {
@@ -159,21 +165,21 @@ const getCurrentDate = computed(() => {
 
 const getPercentOpen = computed(() => {
   return calculatePercentage(
-    storeIncidents.incidentsRange.current.open,
-    storeIncidents.incidentsRange.lastYear.open,
+    storeIncidents.currentIncidentsRange.open,
+    storeIncidents.lastYearIncidentsRange.open,
   )
 })
 
-const getAvgDayOpen = computed(() => calculateAvgDay(storeIncidents.incidentsRange.current.open))
-const getAvgDayClose = computed(() => calculateAvgDay(storeIncidents.incidentsRange.current.close))
+const getAvgDayOpen = computed(() => calculateAvgDay(storeIncidents.currentIncidentsRange.open))
+const getAvgDayClose = computed(() => calculateAvgDay(storeIncidents.currentIncidentsRange.close))
 
 const getAvgPercentDayOpen = computed(() => {
-  const totalLast = calculateAvgDay(storeIncidents.incidentsRange.lastYear.open)
+  const totalLast = calculateAvgDay(storeIncidents.lastYearIncidentsRange.open)
   return calculatePercentage(getAvgDayOpen.value, totalLast)
 })
 
 const getAvgPercentDayClose = computed(() => {
-  const totalLast = calculateAvgDay(storeIncidents.incidentsRange.lastYear.close)
+  const totalLast = calculateAvgDay(storeIncidents.lastYearIncidentsRange.close)
   return calculatePercentage(getAvgDayClose.value, totalLast)
 })
 
@@ -193,15 +199,15 @@ const calculateAvgDay = (totalInc) => {
 
 const getPercentClose = computed(() => {
   return calculatePercentage(
-    storeIncidents.incidentsRange.current.close,
-    storeIncidents.incidentsRange.lastYear.close,
+    storeIncidents.currentIncidentsRange.close,
+    storeIncidents.lastYearIncidentsRange.close,
   )
 })
 
 const getPercentPending = computed(() => {
   return calculatePercentage(
-    storeIncidents.incidentsRange.current.pending,
-    storeIncidents.incidentsRange.lastYear.pending,
+    storeIncidents.currentIncidentsRange.pending,
+    storeIncidents.lastYearIncidentsRange.pending,
   )
 })
 
@@ -216,8 +222,8 @@ const calculatePercentage = (current, lastYear) => {
 }
 
 const formattedCurrentAvg = computed(() => {
-  const horas = storeIncidents.incidentsRange.current.avg.hour || 0
-  const minutos = storeIncidents.incidentsRange.current.avg.minute || 0
+  const horas = storeIncidents.currentIncidentsRange.avg.hour || 0
+  const minutos = storeIncidents.currentIncidentsRange.avg.minute || 0
   const totalHorasDecimal = horas + minutos / 60
   return convertirHoras(totalHorasDecimal)
 })
@@ -232,11 +238,11 @@ function convertirHoras(horasDecimal) {
 
 const getPercentAvg = computed(() => {
   const currentAvgDecimal =
-    storeIncidents.incidentsRange.current.avg.hour +
-    storeIncidents.incidentsRange.current.avg.minute / 60
+    storeIncidents.currentIncidentsRange.avg.hour +
+    storeIncidents.currentIncidentsRange.avg.minute / 60
   const lastYearAvgDecimal =
-    storeIncidents.incidentsRange.lastYear.avg.hour +
-    storeIncidents.incidentsRange.lastYear.avg.minute / 60
+    storeIncidents.lastYearIncidentsRange.avg.hour +
+    storeIncidents.lastYearIncidentsRange.avg.minute / 60
   return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal)
 })
 </script>
@@ -246,8 +252,14 @@ const getPercentAvg = computed(() => {
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 30px 30px 100px 450px 450px;
+  grid-template-rows: 30px 30px 100px 450px 300px 300px;
   gap: 10px;
+}
+
+.chart-base {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 15px;
 }
 
 .heatmap-open {
@@ -258,8 +270,29 @@ const getPercentAvg = computed(() => {
   grid-column: 4 / 7;
 }
 
-.distribution {
-  grid-column: 1 / 5;
+.distribution-group {
+  grid-column: 1 / 3;
+  grid-row: 5 / 7;
+}
+
+.staked-group {
+  grid-column: 3 / 7;
+  grid-row: 5 / 6;
+}
+
+.histogram {
+  grid-column: 3 / 7;
+  grid-row: 6 / 7;
+}
+
+.pa2 {
+  grid-column: 4/7;
+  grid-row: 6 / 7;
+}
+
+.pa3 {
+  grid-column: 1 / 3;
+  grid-row: 7 / 8;
 }
 
 .item {
