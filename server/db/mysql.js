@@ -48,14 +48,14 @@ export const closePool = async () => {
   }
 }
 
-export const getAll = async (table) => {
-  try {
-    const [rows] = await pool.query(`SELECT * FROM ${table}`)
-    // console.log(rows[0])
-    return rows
-  } catch (err) {
-    console.log(err)
-  }
-}
+// export const getAll = async (table) => {
+//   try {
+//     const [rows] = await pool.query(`SELECT * FROM ${table}`)
+//     // console.log(rows[0])
+//     return rows
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
 
 export { pool }

@@ -86,10 +86,12 @@
     </div>
 
     <div class="chart-base histogram">
-      <AreaChart :year="selectedYear" />
+      <AreaChart :year="selectedYear" :incidents="heatmapOpenInc" />
     </div>
 
-    <!-- <Distribution :all-incidents="distributionData" class="item " /> -->
+    <div class="chart-base donnut-places">
+      <DonnutChart />
+    </div>
   </section>
 </template>
 
@@ -102,10 +104,10 @@ import ComboBox from '@/components/ComboBox.vue'
 import DateRange from '@/utils/dateRange.js'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import HeatMap from '@/components/HeatMap.vue'
-// import Distribution from '@/components/Distribution.vue'
 import StakedBar from '@/components/StakedBar.vue'
 import ScatterGroup from '@/components/ScatterGroup.vue'
 import AreaChart from '@/components/AreaChart.vue'
+import DonnutChart from '@/components/DonnutChart.vue'
 
 const storeIncidents = useIncidentsStore()
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
@@ -252,7 +254,7 @@ const getPercentAvg = computed(() => {
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 30px 30px 100px 450px 300px 300px;
+  grid-template-rows: 30px 30px 100px 450px 300px 300px 250px;
   gap: 10px;
 }
 
@@ -285,14 +287,8 @@ const getPercentAvg = computed(() => {
   grid-row: 6 / 7;
 }
 
-.pa2 {
-  grid-column: 4/7;
-  grid-row: 6 / 7;
-}
-
-.pa3 {
+.donnut-places {
   grid-column: 1 / 3;
-  grid-row: 7 / 8;
 }
 
 .item {

@@ -72,7 +72,7 @@ export default class UsersService {
     }
   }
 
-  // todas las incidencias de un año. Cantidad de ellas
+  // todas las incidencias de un año, abiertas y cerradas. Cantidad de ellas
   static async getIncidentsYear(currentYear) {
     try {
       const [openInc] = await pool.query(QUERIES.allIncidentsYearOpen, [currentYear])
