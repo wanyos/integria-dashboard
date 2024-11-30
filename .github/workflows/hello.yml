@@ -1,16 +1,12 @@
-name: Say hello
+name: CI
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  hello_world:
-    runs-on: ubuntu-18.04
+  build:
+    runs-on: self-hosted
+
     steps:
-      - name: Echo the message
-        run: echo "Hello world"
-      - name: Dime la fecha
-        run: date
-      - run: ls -l
+      - uses: actions/checkout@v2
+      - name: Run a one-line script
+        run: echo Hello, world!
