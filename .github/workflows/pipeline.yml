@@ -20,12 +20,12 @@ jobs:
         run: npm ci
       - name: Linter
         run: npm run lint
-      - name: Build 
-        run: npm run build 
+      - name: Build
+        run: npm run build
       - name: Test
         run: npm run test:all
       - name: E2E Test
-        uses: cypress-io/github-action@v2 
+        uses: cypress-io/github-action@v2
         with:
           command: npm run test:e2e
           start: npm run start:cypress
