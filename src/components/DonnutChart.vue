@@ -21,7 +21,7 @@ const chartOptions = ref({
     type: 'donut',
   },
   labels: ['Pacifico', 'Carabacnhel', 'Entrevias', 'Sanchinarro', 'La Elipa', 'Fuencarral'],
-  colors: ['#0096FB', '#8DBCFD', '#CCEAFE', '#0096FB', '#8DBCFD', '#CCEAFE'],
+  colors: ['#0096FB', '#8DBCFD', '#CCEAFE', '#A3E4D7', '#F9E79F', '#F5CBA7', '#D7BDE2', '#AED6F1'],
   grid: {
     padding: {
       top: 30,
