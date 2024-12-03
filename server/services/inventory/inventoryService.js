@@ -2,7 +2,7 @@ import { pool } from '../../db/mysql.js'
 
 const allInventory = 'select * from tinventory limit 100'
 
-export default class UsersService {
+export default class InventoryService {
   static async getInventory() {
     try {
       const [rows] = await pool.query(allInventory)

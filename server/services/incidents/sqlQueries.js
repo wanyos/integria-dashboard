@@ -50,7 +50,8 @@ const QUERIES = {
   allIncCloseExterno: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (22,24,28,31,56,154,50,52,59,32);`,
 
   // Total de incidencias por rango de fechas y su localización
-  allIncLocationRange: `  SELECT count(*) as total FROM tincident_field_data R
+
+  allIncLocationRange: `SELECT count(*) as total FROM tincident_field_data R
 LEFT JOIN
     tincidencia I
     ON R.id_incident = I.id_incidencia
@@ -71,7 +72,7 @@ LEFT JOIN
     tincident_type T
     ON I.id_incident_type = T.id
 WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
-       AND R.data IN (?);`
+       AND R.data IN(?);`,
 }
 
 export default QUERIES

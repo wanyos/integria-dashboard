@@ -90,7 +90,7 @@
     </div>
 
     <div class="chart-base donnut-places">
-      <DonnutChart />
+      <DonnutChart :incidents="allIncLocationRange" />
     </div>
   </section>
 </template>
@@ -152,6 +152,7 @@ const heatmapOpenInc = computed(() => storeIncidents.openIncidentsYear)
 const heatmapCloseInc = computed(() => storeIncidents.closedIncidentsYear)
 const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
 const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
+const allIncLocationRange = computed(() => storeIncidents.allIncLocationRangeData)
 
 // label date select
 const getCurrentDate = computed(() => {

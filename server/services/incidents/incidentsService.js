@@ -1,17 +1,17 @@
 import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
 
-export default class UsersService {
-  static async getIncidents() {
-    try {
-      const [rows] = await pool.query(QUERIES.allIncidents)
-      return { status: 200, incidents: rows }
-    } catch (error) {
-      console.error(error)
-      console.error('Database error:', error.message)
-      throw new Error('Failed to fetch incidents from the database')
-    }
-  }
+export default class IncidentsService {
+  // static async getIncidents() {
+  //   try {
+  //     const [rows] = await pool.query(QUERIES.allIncidents)
+  //     return { status: 200, incidents: rows }
+  //   } catch (error) {
+  //     console.error(error)
+  //     console.error('Database error:', error.message)
+  //     throw new Error('Failed to fetch incidents from the database')
+  //   }
+  // }
 
   // incidencias por rango de fechas, año en curso y mismo rango año anterior. Cantidad de ellas
   static async getIncidentsRange(startDate, endDate) {
@@ -112,7 +112,7 @@ export default class UsersService {
     }
   }
 
-  // incidencias abiertas y cerradas por rango de fechas y grupo, solo cantidades
+  // incidencias abiertas / cerradas por rango de fechas y grupo, solo cantidades
   static async getAllIncidentsGroup(startDate, endDate) {
     try {
       const [openOperadores] = await pool.query(QUERIES.allIncOpenOperadores, [startDate, endDate])
@@ -169,6 +169,63 @@ export default class UsersService {
           negocio: closeNegocio[0]?.count || 0,
           externo: closeExterno[0]?.count || 0,
         },
+      }
+      return { status: 200, incidents: incidentsSummary }
+    } catch (error) {
+      console.error('Database error getIncidentsGroup:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // incidencias abiertas en rango de fechas por localizacion, cantidad de cada localización
+  static async getAllIncLocationRange(startDate, endDate) {
+    const locations = {
+      pacifico: ['PACIFICO', 'CERRO PLATA'],
+      fuencarral: 'FUENCARRAL',
+      la_elipa: 'LA ELIPA',
+      carabanchel: 'CARABANCHEL',
+      entrevias: 'ENTREVIAS',
+      sanchinarro: 'SANCHINARRO',
+    }
+
+    const selectedGroup = locations.pacifico
+    const placeholders = selectedGroup.map(() => '?').join(', ')
+    const query = QUERIES.allIncLocationRange.replace('%IN_PLACEHOLDER%', placeholders)
+
+    try {
+      const [incPacifico] = await pool.query(query, [startDate, endDate, ...selectedGroup])
+      const [incFuencarral] = await pool.query(QUERIES.allIncLocationRange, [
+        startDate,
+        endDate,
+        locations.fuencarral,
+      ])
+      const [incLaElipa] = await pool.query(QUERIES.allIncLocationRange, [
+        startDate,
+        endDate,
+        locations.la_elipa,
+      ])
+      const [incCarabanchel] = await pool.query(QUERIES.allIncLocationRange, [
+        startDate,
+        endDate,
+        locations.carabanchel,
+      ])
+      const [incEntrevias] = await pool.query(QUERIES.allIncLocationRange, [
+        startDate,
+        endDate,
+        locations.entrevias,
+      ])
+      const [incSanchinarro] = await pool.query(QUERIES.allIncLocationRange, [
+        startDate,
+        endDate,
+        locations.sanchinarro,
+      ])
+      const incidentsSummary = {
+        pacifico: incPacifico[0]?.total || 0,
+        fuencarral: incFuencarral[0]?.total || 0,
+        la_elipa: incLaElipa[0]?.total || 0,
+        carabanchel: incCarabanchel[0]?.total || 0,
+        entrevias: incEntrevias[0]?.total || 0,
+        sanchinarro: incSanchinarro[0]?.total || 0,
       }
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {

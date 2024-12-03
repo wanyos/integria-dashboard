@@ -184,3 +184,7 @@ export const generateAreapData = (incidents) => {
     },
   ]
 }
+
+export const generateDataDonnut = (incidents) => {
+  console.log('incidents process', incidents)
+}

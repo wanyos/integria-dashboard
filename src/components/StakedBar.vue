@@ -37,7 +37,6 @@ const groups = [
 
 const { chartRef, handleMouseLeave } = useChartUtils()
 const isLoading = ref(false)
-// const chartRef = ref(null)
 const seriesData = ref([])
 
 // const seriesDataMock = ref([
@@ -52,6 +51,7 @@ const seriesData = ref([])
 // ])
 
 // Watch for changes in allIncidentsGroup and update seriesData
+
 watch(
   () => props.allIncidentsGroup,
   (newIncidents) => {

@@ -28,6 +28,13 @@ class IncidentsApi extends ApiBase {
     return await this.get(endpoint)
   }
 
+  async getIncLocationRange(startDate, endDate) {
+    const endpoint = `/api/incidents/location/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    return await this.get(endpoint)
+  }
+
+  /**  */
+
   async createIncident(incidentData) {
     return await this.post('/api/incident', incidentData)
   }

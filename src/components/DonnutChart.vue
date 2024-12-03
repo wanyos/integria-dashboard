@@ -9,12 +9,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
+import { generateDataDonnut } from '../utils/dataProcessor'
 
-const props = defineProps({})
+const props = defineProps({
+  incidents: {
+    type: Object,
+    default: () => {},
+  },
+})
 
 const series = ref([14, 32, 12, 9, 5, 23])
+
+watch(
+  () => props.incidents,
+  (newIncidents) => {
+    // isLoading.value = true
+    const groupsData = generateDataDonnut(newIncidents)
+    // seriesData.value = groupsData.incidents
+    // isLoading.value = false
+  },
+  { immediate: true },
+)
 
 const chartOptions = ref({
   chart: {
