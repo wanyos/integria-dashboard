@@ -1,5 +1,4 @@
 <template>
-  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="false" :color="'#1565C0'" />
   <VueApexCharts
     ref="chartRef"
     width="100%"
@@ -11,17 +10,20 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { generateDataStakedBar } from '../utils/dataProcessor'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
+
 import { useChartUtils } from '@/composables/useChartUtils'
 
 const props = defineProps({
   allIncidentsGroup: {
     type: Object,
     default: () => ({}),
+  },
+  subtitle: {
+    type: String,
+    default: '',
   },
 })
 
@@ -36,7 +38,6 @@ const groups = [
 ]
 
 const { chartRef, handleMouseLeave } = useChartUtils()
-const isLoading = ref(false)
 const seriesData = ref([])
 
 // const seriesDataMock = ref([
@@ -50,20 +51,7 @@ const seriesData = ref([])
 //   },
 // ])
 
-// Watch for changes in allIncidentsGroup and update seriesData
-
-watch(
-  () => props.allIncidentsGroup,
-  (newIncidents) => {
-    isLoading.value = true
-    const groupsData = generateDataStakedBar(newIncidents)
-    seriesData.value = groupsData.incidents
-    isLoading.value = false
-  },
-  { immediate: true },
-)
-
-const chartOptions = reactive({
+const chartOptions = ref({
   chart: {
     type: 'bar',
     stacked: true,
@@ -94,6 +82,15 @@ const chartOptions = reactive({
   },
   title: {
     text: 'Incidents by group and status',
+  },
+  subtitle: {
+    text: 'no data...',
+    align: 'left',
+    style: {
+      fontSize: '14px',
+      fontWeight: 'normal',
+      color: '#1a1a1a',
+    },
   },
   xaxis: {
     type: 'logarithmic',
@@ -137,7 +134,7 @@ const chartOptions = reactive({
   grid: {
     show: false,
     padding: {
-      top: -10,
+      top: 10,
       right: 0,
       bottom: 0,
       left: 10,
@@ -156,6 +153,22 @@ const chartOptions = reactive({
     },
   },
 })
+
+watch(
+  () => props.allIncidentsGroup,
+  (newIncidents) => {
+    const groupsData = generateDataStakedBar(newIncidents)
+    seriesData.value = groupsData.incidents
+    if (chartRef.value) {
+      chartRef.value.updateOptions({
+        subtitle: {
+          text: `Date filter: ${String(props.subtitle)}`,
+        },
+      })
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style lang="css" scoped></style>

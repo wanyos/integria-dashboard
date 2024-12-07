@@ -1,5 +1,11 @@
 <template>
   <section class="main-container container-report">
+    <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="'#1565C0'"
+    />
     <div class="no__item">
       <ComboBox :options="rangeYears" v-model="selectedYear" custom-width="50px" />
     </div>
@@ -82,21 +88,37 @@
     </div>
 
     <div class="chart-base staked-group">
-      <StakedBar :all-incidents-group="allIncidentsGroup" />
+      <StakedBar :all-incidents-group="allIncidentsGroup" :subtitle="getCurrentDate" />
     </div>
 
-    <div class="chart-base histogram">
-      <AreaChart :year="selectedYear" :incidents="heatmapOpenInc" />
+    <div class="chart-base histogram-open">
+      <AreaChart
+        id="open-area"
+        title="Open incidents by month in the year"
+        color="#6CBC6C"
+        :year="selectedYear"
+        :incidents="heatmapOpenInc"
+      />
     </div>
 
     <div class="chart-base donnut-places">
-      <DonnutChart :incidents="allIncLocationRange" />
+      <DonnutChart :incidents="allIncLocationRange" :subtitle="getCurrentDate" />
+    </div>
+
+    <div class="chart-base histogram-close">
+      <AreaChart
+        id="close-area"
+        title="Close incidents by month in the year"
+        color="#EE7E7E"
+        :year="selectedYear"
+        :incidents="heatmapCloseInc"
+      />
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, watch, computed, onMounted, nextTick } from 'vue'
 import dayjs from 'dayjs'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
@@ -108,12 +130,15 @@ import StakedBar from '@/components/StakedBar.vue'
 import ScatterGroup from '@/components/ScatterGroup.vue'
 import AreaChart from '@/components/AreaChart.vue'
 import DonnutChart from '@/components/DonnutChart.vue'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
 const storeIncidents = useIncidentsStore()
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
 const selectedYear = ref(dayjs().year())
 const formattedDate = ref(dayjs().format('D MMM YYYY'))
 let dateRange = ref('')
+const isLoading = ref(false)
 
 let startDateAvg = null
 let endDateAvg = null
@@ -135,16 +160,19 @@ const rangeYears = computed(() => {
 })
 
 const getDataStore = async () => {
+  isLoading.value = true
   dateRange.value = DateRange.getDateRange(selectedRange.value, selectedYear.value)
   const startDate = dayjs(dateRange.value.startDate).format('YYYY-MM-DD')
   const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD')
   startDateAvg = startDate
   endDateAvg = endDate
   await storeIncidents.fetchData(startDate, endDate, selectedYear.value)
+  await nextTick()
+  isLoading.value = false
 }
 
 watch([selectedRange, selectedYear], getDataStore)
-onMounted(() => {
+onMounted(async () => {
   getDataStore()
 })
 
@@ -283,13 +311,19 @@ const getPercentAvg = computed(() => {
   grid-row: 5 / 6;
 }
 
-.histogram {
+.histogram-open {
   grid-column: 3 / 7;
   grid-row: 6 / 7;
 }
 
 .donnut-places {
   grid-column: 1 / 3;
+  grid-row: 7 / 8;
+}
+
+.histogram-close {
+  grid-column: 3 / 7;
+  grid-row: 7 / 8;
 }
 
 .item {

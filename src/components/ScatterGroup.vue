@@ -1,5 +1,4 @@
 <template>
-  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="false" :color="'#1565C0'" />
   <VueApexCharts
     ref="chartRef"
     width="100%"
@@ -15,8 +14,6 @@ import { ref, reactive, watch } from 'vue'
 import { generateDataScatterGroup } from '../utils/dataProcessor'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
 
 const props = defineProps({
   allIncidents: {
@@ -48,24 +45,12 @@ const props = defineProps({
 
 const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesData = ref([])
-const isLoading = ref(false)
-
-// Watch for changes in allIncidents and update chartData
-watch(
-  () => props.allIncidents,
-  (newIncidents) => {
-    isLoading.value = true
-    seriesData.value = generateDataScatterGroup(newIncidents)
-    isLoading.value = false
-  },
-  { immediate: true },
-)
 
 const chartOptions = reactive({
   chart: {
     type: 'scatter',
     zoom: {
-      enabled: true,
+      enabled: false,
       type: 'xy',
     },
     toolbar: {
@@ -104,18 +89,17 @@ const chartOptions = reactive({
   },
   xaxis: {
     type: 'category',
+    categories: ['Operadores', 'Técnicos', 'Administradores', 'Ciberseguridad'],
+    tickPlacement: 'between', // Place ticks between categories
+    offsetX: 0, // Move the x-axis labels to the right
+    range: 3, // Adjust the range to bring the columns closer
+    tickAmount: undefined,
     labels: {
-      show: true, // Oculta las etiquetas del eje x
-      rotate: 0, // Rotate labels by -45 degrees
+      // show: true, // Oculta las etiquetas del eje x
+      // rotate: 0, // Rotate labels by -45 degrees
       formatter: function (value) {
-        // Use abbreviations for the labels
-        const abbreviations = {
-          Operadores: 'Op',
-          Técnicos: 'Tec',
-          Administradores: 'Adm',
-          Ciberseguridad: 'Cib',
-        }
-        return abbreviations[value] || value
+        const abbreviations = ['Ope', 'Tec', 'Adm', 'Cib']
+        return abbreviations[value] || ''
       },
     },
     tooltip: {
@@ -127,11 +111,6 @@ const chartOptions = reactive({
     axisBorder: {
       show: true, // Oculta la línea del eje x
     },
-    categories: ['Operadores', 'Técnicos', 'Administradores', 'Ciberseguridad'],
-    tickPlacement: 'between', // Place ticks between categories
-    offsetX: 0, // Move the x-axis labels to the right
-    range: 3, // Adjust the range to bring the columns closer
-    tickAmount: undefined,
   },
   yaxis: {
     min: 0, // Valor mínimo del eje Y
@@ -190,6 +169,14 @@ const chartOptions = reactive({
     },
   },
 })
+
+watch(
+  () => props.allIncidents,
+  (newIncidents) => {
+    seriesData.value = generateDataScatterGroup(newIncidents)
+  },
+  { immediate: true },
+)
 </script>
 
 <style lang="css" scoped></style>

@@ -185,6 +185,16 @@ export const generateAreapData = (incidents) => {
   ]
 }
 
+/****************        generate objects serie for chart donnut places incidents      ******************/
 export const generateDataDonnut = (incidents) => {
-  console.log('incidents process', incidents)
+  const labels = []
+  const values = []
+  Object.entries(incidents).forEach(([key, value]) => {
+    labels.push(key)
+    values.push(value)
+  })
+  return {
+    labels,
+    values,
+  }
 }

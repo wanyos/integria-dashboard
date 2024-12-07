@@ -1,5 +1,4 @@
 <template>
-  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="false" :color="'#1565C0'" />
   <VueApexCharts
     ref="chartRef"
     width="100%"
@@ -13,12 +12,22 @@
 <script setup>
 import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
+
 import { useChartUtils } from '@/composables/useChartUtils'
 import { generateAreapData } from '../utils/dataProcessor'
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: 'areachart',
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  color: {
+    type: String,
+  },
   year: {
     type: [String, Number],
     default: '',
@@ -31,8 +40,6 @@ const props = defineProps({
 
 const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesArea = ref([])
-const isLoading = ref(false)
-const currentYear = ref(null)
 
 // const seriesData = [
 //   {
@@ -54,34 +61,18 @@ const currentYear = ref(null)
 //   },
 // ]
 
-watch(
-  [() => props.incidents, () => props.year],
-  ([newIncidents, newYear]) => {
-    isLoading.value = true
-    currentYear.value = newYear
-    seriesArea.value = generateAreapData(newIncidents)
-    if (chartRef.value) {
-      chartRef.value.updateOptions({
-        title: {
-          text: `Incidents month of the year ${newYear}`,
-        },
-      })
-    }
-    isLoading.value = false
-  },
-  { immediate: true },
-)
-
 const chartOptions = ref({
   chart: {
-    id: 'area-datetime',
+    id: `${props.id}`,
+    group: 'histogram',
     type: 'area',
     zoom: {
+      enabled: false,
       autoScaleYaxis: true,
     },
   },
   title: {
-    text: `Incidents month of the year ${currentYear.value}`,
+    text: '',
     align: 'left',
     style: {
       fontSize: '16px',
@@ -92,14 +83,20 @@ const chartOptions = ref({
   stroke: {
     curve: 'smooth',
     width: 1,
-    colors: ['#0096FB'],
+    colors: [`${props.color}`],
   },
   dataLabels: {
     enabled: false,
   },
   markers: {
-    size: 0,
     style: 'hollow',
+    size: 4, // Tamaño del punto
+    colors: [`${props.color}`], // Color del punto
+    strokeColors: '#fff', // Color del borde del punto
+    strokeWidth: 2, // Ancho del borde
+    hover: {
+      size: 6, // Tamaño del punto al pasar el cursor
+    },
   },
   xaxis: {
     type: 'category',
@@ -121,6 +118,10 @@ const chartOptions = ref({
   tooltip: {
     shared: true,
     intersect: false,
+    marker: {
+      show: true, // Muestra el marcador en el tooltip
+      fillColors: [`${props.color}`], // Color del marcador en el tooltip
+    },
   },
   fill: {
     type: 'gradient',
@@ -132,13 +133,28 @@ const chartOptions = ref({
       colorStops: [
         {
           offset: 0,
-          color: '#0096FB',
+          color: `${props.color}`,
           opacity: 0.5,
         },
       ],
     },
   },
 })
+
+watch(
+  [() => props.incidents],
+  ([newIncidents]) => {
+    seriesArea.value = generateAreapData(newIncidents)
+    if (chartRef.value) {
+      chartRef.value.updateOptions({
+        title: {
+          text: `${props.title} ${props.year}`,
+        },
+      })
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped></style>

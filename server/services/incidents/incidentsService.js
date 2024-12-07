@@ -104,7 +104,8 @@ export default class IncidentsService {
   // incidencias abiertas por cada grupo de cualquier fecha
   static async getOpenIncidentsGroup() {
     try {
-      const [rows] = await pool.query(QUERIES.openIncidentsGroup)
+      // const [rows] = await pool.query(QUERIES.openIncidentsGroup)
+      const [rows] = await pool.query(QUERIES.openIncidentsGr)
       return { status: 200, incidents: rows }
     } catch (error) {
       console.error('Database error getIncidentsGroup:', error)

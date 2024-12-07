@@ -1,11 +1,5 @@
 <template>
   <div class="div__chart">
-    <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-      :is-full-page="false"
-      :color="'#1565C0'"
-    />
     <v-chart :option="option" class="chart" autoresize />
   </div>
 </template>
@@ -24,8 +18,6 @@ import {
 import VChart, { THEME_KEY } from 'vue-echarts'
 import { ref, provide, watch, reactive, computed } from 'vue'
 import { buildChartData } from '../utils/dataProcessor'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
 
 use([
   CanvasRenderer,
@@ -53,9 +45,7 @@ const chartData = reactive({})
 watch(
   () => props.allIncidents,
   (newIncidents) => {
-    isLoading.value = true
     Object.assign(chartData, buildChartData(newIncidents))
-    isLoading.value = false
   },
   { immediate: true },
 )

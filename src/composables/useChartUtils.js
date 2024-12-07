@@ -4,7 +4,7 @@ export const useChartUtils = () => {
   const chartRef = ref(null)
 
   const handleMouseLeave = () => {
-    // Obtiene la instancia del chart
+    // Gets the chart instance
     const chartInstance = chartRef.value?.chart
     if (chartInstance?.toolbar) {
       const menu = chartInstance.toolbar.elMenu

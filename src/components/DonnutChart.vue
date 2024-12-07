@@ -11,6 +11,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
+import { useChartUtils } from '@/composables/useChartUtils'
 import { generateDataDonnut } from '../utils/dataProcessor'
 
 const props = defineProps({
@@ -18,30 +19,25 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  subtitle: {
+    type: String,
+    default: '',
+  },
 })
 
-const series = ref([14, 32, 12, 9, 5, 23])
-
-watch(
-  () => props.incidents,
-  (newIncidents) => {
-    // isLoading.value = true
-    const groupsData = generateDataDonnut(newIncidents)
-    // seriesData.value = groupsData.incidents
-    // isLoading.value = false
-  },
-  { immediate: true },
-)
+// const series = ref([14, 32, 12, 9, 5, 23])
+const { chartRef } = useChartUtils()
+const series = ref([])
 
 const chartOptions = ref({
   chart: {
     type: 'donut',
   },
-  labels: ['Pacifico', 'Carabacnhel', 'Entrevias', 'Sanchinarro', 'La Elipa', 'Fuencarral'],
+  labels: [],
   colors: ['#0096FB', '#8DBCFD', '#CCEAFE', '#A3E4D7', '#F9E79F', '#F5CBA7', '#D7BDE2', '#AED6F1'],
   grid: {
     padding: {
-      top: 30,
+      top: 5,
       right: 0,
       bottom: 0,
       left: 0,
@@ -64,7 +60,15 @@ const chartOptions = ref({
       color: '#1a1a1a',
     },
   },
-
+  subtitle: {
+    text: `no data...`,
+    align: 'left',
+    style: {
+      fontSize: '14px',
+      fontWeight: 'normal',
+      color: '#1a1a1a',
+    },
+  },
   //   fill: {
   //     colors: ['#08B545', '#CEF0DA'], // Colores predeterminados
   //     hover: {
@@ -90,6 +94,35 @@ const chartOptions = ref({
     show: true,
   },
 })
+
+const defaultLabels = [
+  'Pacifico',
+  'Carabacnhel',
+  'Entrevias',
+  'Sanchinarro',
+  'La Elipa',
+  'Fuencarral',
+]
+const defaulValues = [0, 0, 0, 0, 0, 0]
+
+watch(
+  () => props.incidents,
+  (newIncidents) => {
+    const { labels, values } = generateDataDonnut(newIncidents)
+
+    if (chartRef.value) {
+      chartRef.value.updateOptions({
+        subtitle: {
+          text: `Date filter: ${String(props.subtitle)}`,
+        },
+      })
+    }
+
+    chartOptions.value.labels = labels.length ? labels : defaultLabels
+    series.value = values.length ? values : defaulValues
+  },
+  { immediate: true },
+)
 </script>
 
 <style lang="css" scoped></style>

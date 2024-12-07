@@ -1,11 +1,5 @@
 <template>
   <div>
-    <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-      :is-full-page="false"
-      :color="'#1565C0'"
-    />
     <VueApexCharts
       ref="chartRef"
       width="100%"
@@ -19,8 +13,6 @@
 <script setup>
 import { ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
 import { generateHeatmapData } from '@/utils/dataProcessor'
 import { useChartUtils } from '@/composables/useChartUtils'
 
@@ -45,7 +37,6 @@ const props = defineProps({
 
 const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesHeat = ref([])
-const isLoading = ref(false)
 
 const chartOptionsHeat = ref({
   chart: {
@@ -154,8 +145,7 @@ const chartOptionsHeat = ref({
 
 watch(
   () => props.incidents,
-  (newIncidents) => {
-    isLoading.value = true
+  async (newIncidents) => {
     if (chartRef.value) {
       chartRef.value.updateOptions({
         subtitle: {
@@ -164,7 +154,6 @@ watch(
       })
     }
     seriesHeat.value = generateHeatmapData(newIncidents)
-    isLoading.value = false
   },
   { immediate: true },
 )
