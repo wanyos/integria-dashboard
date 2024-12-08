@@ -82,6 +82,11 @@ const chartOptions = ref({
   },
   title: {
     text: 'Incidents by group and status',
+    style: {
+      fontSize: '16px',
+      fontWeight: 'normal',
+      color: '#1a1a1a',
+    },
   },
   subtitle: {
     text: 'no data...',
@@ -89,7 +94,7 @@ const chartOptions = ref({
     style: {
       fontSize: '14px',
       fontWeight: 'normal',
-      color: '#1a1a1a',
+      color: '#666',
     },
   },
   xaxis: {

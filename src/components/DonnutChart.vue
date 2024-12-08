@@ -66,7 +66,7 @@ const chartOptions = ref({
     style: {
       fontSize: '14px',
       fontWeight: 'normal',
-      color: '#1a1a1a',
+      color: '#666',
     },
   },
   //   fill: {
