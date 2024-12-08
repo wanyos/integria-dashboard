@@ -17,6 +17,10 @@ import { generateHeatmapData } from '@/utils/dataProcessor'
 import { useChartUtils } from '@/composables/useChartUtils'
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: 'heatmap',
+  },
   title: {
     type: String,
     default: '',

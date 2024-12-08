@@ -2,16 +2,16 @@ import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
 
 export default class IncidentsService {
-  // static async getIncidents() {
-  //   try {
-  //     const [rows] = await pool.query(QUERIES.allIncidents)
-  //     return { status: 200, incidents: rows }
-  //   } catch (error) {
-  //     console.error(error)
-  //     console.error('Database error:', error.message)
-  //     throw new Error('Failed to fetch incidents from the database')
-  //   }
-  // }
+  static async getIncidents() {
+    try {
+      const [rows] = await pool.query(QUERIES.allIncidents)
+      return { status: 200, incidents: rows }
+    } catch (error) {
+      console.error(error)
+      console.error('Database error:', error.message)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
 
   // incidencias por rango de fechas, año en curso y mismo rango año anterior. Cantidad de ellas
   static async getIncidentsRange(startDate, endDate) {

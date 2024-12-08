@@ -67,6 +67,7 @@
 
     <div class="chart-base heatmap-open">
       <HeatMap
+        id="heatmap-open"
         title="Open incidents by day"
         :subtitle="selectedYear"
         :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
@@ -76,6 +77,7 @@
 
     <div class="chart-base heatmap-close">
       <HeatMap
+        id="heatmap-close"
         title="Closed incidents by day"
         :subtitle="selectedYear"
         :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
