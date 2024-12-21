@@ -1,8 +1,19 @@
 <template>
   <section class="container">
+    <LoginModal :show="showModalLogin" @reset-modal="showModalLogin = false" :title="titleModal" />
     <header>
       <p>{{ routeName }}</p>
-      <h4>Integria Dashboard</h4>
+      <article>
+        <h4>Integria Dashboard</h4>
+
+        <div v-if="!authStore.isAuthenticated" class="header__login-div">
+          <button @click="openModal('Sing Up')">Sing up</button>
+          <button @click="openModal('Sing In')">Sing in</button>
+        </div>
+        <div v-else class="header__login-div">
+          <button @click="authStore.logout">LogOut</button>
+        </div>
+      </article>
     </header>
 
     <aside>
@@ -31,12 +42,22 @@
 
 <script setup>
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import LoginModal from './components/modals/LoginModal.vue'
+import { useAuthenticationStore } from '@/stores/authentication.js'
 
 const route = useRoute()
+const authStore = useAuthenticationStore()
 
+const showModalLogin = ref(false)
+const titleModal = ref('')
 const routeName = computed(() => route.name)
 const showMenu = computed(() => routeName.value === 'Report')
+
+const openModal = (title) => {
+  showModalLogin.value = true
+  titleModal.value = title
+}
 </script>
 
 <style scoped>
@@ -44,7 +65,8 @@ const showMenu = computed(() => routeName.value === 'Report')
   height: 100vh;
   display: grid;
   grid-template-columns: 10rem 1fr;
-  grid-template-rows: 35px 1fr 35px;
+  grid-template-rows: 50px 1fr 50px;
+  overflow-y: auto;
 }
 
 header {
@@ -58,11 +80,34 @@ header {
 
 header > p {
   margin-left: 3rem;
+  color: var(--color-text);
 }
 
-header > h4 {
+header > article {
   margin-right: 3rem;
-  color: #0088cc;
+  display: flex;
+  align-items: center;
+}
+
+header > article > h4 {
+  color: var(--color-text);
+}
+
+.header__login-div {
+  padding: 5px 25px;
+}
+
+.header__login-div > button {
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+  padding: 5px 15px;
+  border-radius: 5px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.header__login-div > button:hover {
+  background-color: var(--hover-button);
 }
 
 aside {
@@ -85,10 +130,11 @@ aside {
   margin-top: 5px;
   text-align: center;
   border-radius: 5px;
+  color: var(--color-text);
 }
 
 .nav-link:hover {
-  background-color: #e1e5ed;
+  background-color: var(--hover-button);
 }
 
 aside > nav {
@@ -122,6 +168,6 @@ footer {
 
 footer > p {
   margin-right: 3rem;
-  color: #0088cc;
+  color: var(--color-text);
 }
 </style>

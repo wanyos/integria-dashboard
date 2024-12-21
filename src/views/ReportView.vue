@@ -96,9 +96,9 @@
     <div class="chart-base histogram-open">
       <AreaChart
         id="open-area"
-        title="Open incidents by month in the year"
+        title="Open incidents by month"
+        :subtitle="selectedYear"
         color="#6CBC6C"
-        :year="selectedYear"
         :incidents="heatmapOpenInc"
       />
     </div>
@@ -110,9 +110,9 @@
     <div class="chart-base histogram-close">
       <AreaChart
         id="close-area"
-        title="Close incidents by month in the year"
+        title="Close incidents by month"
+        :subtitle="selectedYear"
         color="#EE7E7E"
-        :year="selectedYear"
         :incidents="heatmapCloseInc"
       />
     </div>

@@ -1,4 +1,3 @@
-
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
@@ -7,7 +6,8 @@ import { fileURLToPath } from 'url'
 import usersRouter from './routers/usersRoutes.js'
 import incidentsRouter from './routers/incidentsRoutes.js'
 import inventoryRouter from './routers/inventoryRoutes.js'
-import { globalMiddleware } from './middelware.js'
+import loginRouter from './routers/loginRoutes.js'
+import { globalMiddleware, authMiddleware } from './middelware.js'
 
 const app = express()
 
@@ -16,7 +16,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Dynamically build the path to the .env.development file
-const envPath = path.resolve(__dirname, '.env.development')
+const envFile = `.env.${process.env.NODE_ENV || 'development'}`
+const envPath = path.resolve(__dirname, envFile)
 dotenv.config({ path: envPath })
 const PORT = process.env.PORT || 8021
 
@@ -41,10 +42,13 @@ if (process.env.NODE_ENV === 'test') {
 
 app.use(express.json())
 
+//login
+app.use('/api', loginRouter)
+
 // routes
-app.use('/api/users', usersRouter)
+app.use('/api/users', authMiddleware, usersRouter)
 app.use('/api/incidents', incidentsRouter)
-app.use('/api/inventory', inventoryRouter)
+app.use('/api/inventory', authMiddleware, inventoryRouter)
 
 app.use(globalMiddleware)
 

@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 import { useChartUtils } from '@/composables/useChartUtils'
@@ -25,12 +25,12 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  color: {
-    type: String,
-  },
-  year: {
+  subtitle: {
     type: [String, Number],
     default: '',
+  },
+  color: {
+    type: String,
   },
   incidents: {
     type: Array,
@@ -72,10 +72,19 @@ const chartOptions = ref({
     },
   },
   title: {
-    text: '',
+    text: `${props.title}`,
     align: 'left',
     style: {
       fontSize: '16px',
+      fontWeight: 'normal',
+      color: '#1a1a1a',
+    },
+  },
+  subtitle: {
+    text: `Year: ${props.subtitle}`,
+    align: 'center',
+    style: {
+      fontSize: '14px',
       fontWeight: 'normal',
       color: '#1a1a1a',
     },
@@ -142,16 +151,20 @@ const chartOptions = ref({
 })
 
 watch(
-  [() => props.incidents],
-  ([newIncidents]) => {
+  () => props.incidents,
+  async (newIncidents) => {
     seriesArea.value = generateAreapData(newIncidents)
-    if (chartRef.value) {
-      chartRef.value.updateOptions({
-        title: {
-          text: `${props.title} ${props.year}`,
-        },
-      })
-    }
+
+    await nextTick()
+    // chartOptions.value = {
+    //   ...chartOptions.value,
+    //   title: {
+    //     text: `${props.title}`,
+    //   },
+    //   subtitle: {
+    //     text: `Year: ${props.subtitle}`,
+    //   },
+    // }
   },
   { immediate: true },
 )

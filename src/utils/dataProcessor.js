@@ -137,25 +137,6 @@ export function generateDataStakedBar(allIncidentsGroup) {
 
 /****************        generate objects serie for chart areabar incidents by months      ******************/
 export const generateAreapData = (incidents) => {
-  const totalMonths = {
-    0: { count: 0 },
-    1: { count: 0 },
-    2: { count: 0 },
-    3: { count: 0 },
-    4: { count: 0 },
-    5: { count: 0 },
-    6: { count: 0 },
-    7: { count: 0 },
-    8: { count: 0 },
-    9: { count: 0 },
-    10: { count: 0 },
-    11: { count: 0 },
-  }
-  for (const key in incidents) {
-    let month = dayjs(incidents[key].date).month()
-    totalMonths[month].count += Number(incidents[key].count)
-  }
-
   // Convertir el objeto totalMonths a un array de objetos para el gráfico
   const monthNames = [
     'January',
@@ -171,6 +152,26 @@ export const generateAreapData = (incidents) => {
     'November',
     'December',
   ]
+
+  const totalMonths = {
+    0: { count: 0 },
+    1: { count: 0 },
+    2: { count: 0 },
+    3: { count: 0 },
+    4: { count: 0 },
+    5: { count: 0 },
+    6: { count: 0 },
+    7: { count: 0 },
+    8: { count: 0 },
+    9: { count: 0 },
+    10: { count: 0 },
+    11: { count: 0 },
+  }
+
+  for (const key in incidents) {
+    let month = dayjs(incidents[key].date).month()
+    totalMonths[month].count += Number(incidents[key].count)
+  }
 
   const seriesData = Object.keys(totalMonths).map((month) => ({
     x: monthNames[month],

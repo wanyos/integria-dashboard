@@ -1,17 +1,16 @@
 <template>
-  <div>
-    <VueApexCharts
-      ref="chartRef"
-      width="100%"
-      :options="chartOptionsHeat"
-      :series="seriesHeat"
-      @mouse-leave="handleMouseLeave"
-    />
-  </div>
+  <VueApexCharts
+    ref="chartRef"
+    width="100%"
+    height="100%"
+    :options="chartOptionsHeat"
+    :series="seriesHeat"
+    @mouse-leave="handleMouseLeave"
+  />
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick, onMounted, onUpdated, computed, reactive } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { generateHeatmapData } from '@/utils/dataProcessor'
 import { useChartUtils } from '@/composables/useChartUtils'
@@ -150,14 +149,15 @@ const chartOptionsHeat = ref({
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    if (chartRef.value) {
-      chartRef.value.updateOptions({
-        subtitle: {
-          text: `Year: ${String(props.subtitle)}`,
-        },
-      })
-    }
     seriesHeat.value = generateHeatmapData(newIncidents)
+    await nextTick()
+
+    chartOptionsHeat.value = {
+      ...chartOptionsHeat.value,
+      subtitle: {
+        text: `Year: ${props.subtitle}`,
+      },
+    }
   },
   { immediate: true },
 )

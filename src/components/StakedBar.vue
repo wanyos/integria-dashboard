@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { generateDataStakedBar } from '../utils/dataProcessor'
 
@@ -161,17 +161,19 @@ const chartOptions = ref({
 
 watch(
   () => props.allIncidentsGroup,
-  (newIncidents) => {
+  async (newIncidents) => {
     const groupsData = generateDataStakedBar(newIncidents)
     seriesData.value = groupsData.incidents
-    if (chartRef.value) {
-      chartRef.value.updateOptions({
-        subtitle: {
-          text: `Date filter: ${String(props.subtitle)}`,
-        },
-      })
+    await nextTick()
+
+    chartOptions.value = {
+      ...chartOptions.value,
+      subtitle: {
+        text: `Year: ${props.subtitle}`,
+      },
     }
   },
+
   { immediate: true },
 )
 </script>

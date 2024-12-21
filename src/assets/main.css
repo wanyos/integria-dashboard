@@ -1,5 +1,12 @@
 /* @import './base.css'; */
 
+:root {
+  --color-text: #0088cc;
+  --hover-button: #c7d8fa;
+  --close-button: #e05e5e;
+  --close-button-hover: #ee8888;
+}
+
 html,
 body {
   box-sizing: border-box;

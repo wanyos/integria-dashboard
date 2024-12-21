@@ -2,9 +2,27 @@
 const API_BASE_URL = import.meta.env.VITE_ENDPOINT_BACKEND
 
 export default class ApiBase {
-  async get(endpoint) {
+  static token = null
+
+  static _setToken(tk) {
+    this.token = tk
+  }
+
+  static _getHeaders(includeToken = true) {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+    if (includeToken && this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`
+    }
+    return headers
+  }
+
+  async get(endpoint, includeToken) {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`)
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers: ApiBase._getHeaders(includeToken),
+      })
       if (!response.ok) {
         throw new Error(`Failed to fetch from ${endpoint}`)
       }
@@ -15,13 +33,11 @@ export default class ApiBase {
     }
   }
 
-  async post(endpoint, data) {
+  async post(endpoint, includeToken, data) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: ApiBase._getHeaders(includeToken),
         body: JSON.stringify(data),
       })
 
@@ -36,13 +52,11 @@ export default class ApiBase {
   }
 
   // all data update
-  async put(endpoint, data) {
+  async put(endpoint, includeToken, data) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: ApiBase._getHeaders(includeToken),
         body: JSON.stringify(data),
       })
 
@@ -56,13 +70,11 @@ export default class ApiBase {
     }
   }
 
-  async patch(endpoint, data) {
+  async patch(endpoint, includeToken, data) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: ApiBase._getHeaders(includeToken),
         body: JSON.stringify(data),
       })
 

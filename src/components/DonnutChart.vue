@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
 import { generateDataDonnut } from '../utils/dataProcessor'
@@ -107,18 +107,27 @@ const defaulValues = [0, 0, 0, 0, 0, 0]
 
 watch(
   () => props.incidents,
-  (newIncidents) => {
+  async (newIncidents) => {
     const { labels, values } = generateDataDonnut(newIncidents)
+    await nextTick()
 
-    if (chartRef.value) {
-      chartRef.value.updateOptions({
-        subtitle: {
-          text: `Date filter: ${String(props.subtitle)}`,
-        },
-      })
-    }
+    // if (chartRef.value) {
+    //   chartRef.value.updateOptions({
+    //     subtitle: {
+    //       text: `Date filter: ${String(props.subtitle)}`,
+    //     },
+    //   })
+    // }
+
+    // chartOptions.value = {
+    //   ...chartOptions.value,
+    //   subtitle: {
+    //     text: `Date filter: ${String(props.subtitle)}`,
+    //   },
+    // }
 
     chartOptions.value.labels = labels.length ? labels : defaultLabels
+    chartOptions.value.subtitle.text = `Date filter: ${String(props.subtitle)}`
     series.value = values.length ? values : defaulValues
   },
   { immediate: true },
