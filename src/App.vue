@@ -3,6 +3,9 @@
     <LoginModal :show="showModalLogin" @reset-modal="showModalLogin = false" :title="titleModal" />
     <header>
       <p>{{ routeName }}</p>
+      <div class="header__userlogin-div">
+        <p>{{ authStore.userLogin.email }}</p>
+      </div>
       <article>
         <h4>Integria Dashboard</h4>
 
@@ -41,7 +44,7 @@
 </template>
 
 <script setup>
-import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import LoginModal from './components/modals/LoginModal.vue'
 import { useAuthenticationStore } from '@/stores/authentication.js'
@@ -60,7 +63,7 @@ const openModal = (title) => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="css">
 .container {
   height: 100vh;
   display: grid;
@@ -80,6 +83,10 @@ header {
 
 header > p {
   margin-left: 3rem;
+  color: var(--color-text);
+}
+
+.header__userlogin-div {
   color: var(--color-text);
 }
 

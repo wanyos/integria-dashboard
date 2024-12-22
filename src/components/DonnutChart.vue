@@ -15,13 +15,25 @@ import { useChartUtils } from '@/composables/useChartUtils'
 import { generateDataDonnut } from '../utils/dataProcessor'
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: 'areachart',
+  },
   incidents: {
     type: Object,
     default: () => {},
   },
+  title: {
+    type: String,
+    default: '',
+  },
   subtitle: {
     type: String,
     default: '',
+  },
+  labels: {
+    type: Array,
+    default: () => [],
   },
 })
 
@@ -31,9 +43,10 @@ const series = ref([])
 
 const chartOptions = ref({
   chart: {
+    id: `${props.id}`,
     type: 'donut',
   },
-  labels: [],
+  labels: props.labels,
   colors: ['#0096FB', '#8DBCFD', '#CCEAFE', '#A3E4D7', '#F9E79F', '#F5CBA7', '#D7BDE2', '#AED6F1'],
   grid: {
     padding: {
@@ -52,7 +65,7 @@ const chartOptions = ref({
     },
   },
   title: {
-    text: `Incidents by place`,
+    text: `${props.title}`,
     align: 'left',
     style: {
       fontSize: '16px',
@@ -95,14 +108,6 @@ const chartOptions = ref({
   },
 })
 
-const defaultLabels = [
-  'Pacifico',
-  'Carabacnhel',
-  'Entrevias',
-  'Sanchinarro',
-  'La Elipa',
-  'Fuencarral',
-]
 const defaulValues = [0, 0, 0, 0, 0, 0]
 
 watch(
@@ -111,23 +116,12 @@ watch(
     const { labels, values } = generateDataDonnut(newIncidents)
     await nextTick()
 
-    // if (chartRef.value) {
-    //   chartRef.value.updateOptions({
-    //     subtitle: {
-    //       text: `Date filter: ${String(props.subtitle)}`,
-    //     },
-    //   })
-    // }
-
-    // chartOptions.value = {
-    //   ...chartOptions.value,
-    //   subtitle: {
-    //     text: `Date filter: ${String(props.subtitle)}`,
-    //   },
-    // }
-
-    chartOptions.value.labels = labels.length ? labels : defaultLabels
-    chartOptions.value.subtitle.text = `Date filter: ${String(props.subtitle)}`
+    chartOptions.value = {
+      ...chartOptions.value,
+      subtitle: {
+        text: `Date filter: ${String(props.subtitle)}`,
+      },
+    }
     series.value = values.length ? values : defaulValues
   },
   { immediate: true },

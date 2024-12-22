@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { createRouter, createWebHistory } from 'vue-router'
 import ReportView from '../views/ReportView.vue'
+import { toast } from 'vue3-toastify'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,7 @@ router.beforeEach((to, from, next) => {
   const token = $cookies.get('token')
 
   if (to.meta.requireLogin && !token) {
+    toast.error('You need login to use this view...')
     next({ name: 'Report' })
   } else {
     next()

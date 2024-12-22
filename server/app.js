@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import usersRouter from './routers/usersRoutes.js'
 import incidentsRouter from './routers/incidentsRoutes.js'
 import inventoryRouter from './routers/inventoryRoutes.js'
+import reportRouter from './routers/reportRoutes.js'
 import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
 
@@ -46,8 +47,9 @@ app.use(express.json())
 app.use('/api', loginRouter)
 
 // routes
+app.use('/api/report', reportRouter)
 app.use('/api/users', authMiddleware, usersRouter)
-app.use('/api/incidents', incidentsRouter)
+app.use('/api/incidents', authMiddleware, incidentsRouter)
 app.use('/api/inventory', authMiddleware, inventoryRouter)
 
 app.use(globalMiddleware)

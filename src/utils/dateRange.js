@@ -8,8 +8,8 @@ export default class DateRangeCalculator {
     'Last 30 Days': 'last30Days',
     'Last Month': 'lastMonth',
     'This Month': 'thisMonth',
-    'Last 6 Months': 'last6Months',
-    'Last 3 Months': 'last3Months',
+    'Last 7 Months': 'last6Months',
+    'Last 4 Months': 'last3Months',
     'This Year': 'thisYear',
   }
 

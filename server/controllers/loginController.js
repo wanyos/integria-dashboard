@@ -6,14 +6,20 @@ export default class LoginController {
     const { username, password } = req.body
     try {
       const { status, user } = await LoginService.postLogin(username, password)
+      // timestamp expire
+      const expiresIn = '1h'
       const token = jwt.sign(
         { username: user.username, email: user.email },
         process.env.SECRET_JWT_KEY,
-        {
-          expiresIn: '1h',
-        },
+        { expiresIn },
       )
-      return res.status(status).json({ status, token })
+      return res.status(status).json({
+        status,
+        token,
+        username: user.username,
+        email: user.email,
+        expirationTime: expiresIn,
+      })
     } catch (error) {
       return res.status(401).json({ message: 'error login...' })
     }

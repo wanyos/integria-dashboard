@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-// import ReportApi from '@/api/report_api'
-import IncidentsApi from '@/api/incidents_api'
+import ReportApi from '@/api/report_api'
+// import IncidentsApi from '@/api/incidents_api'
 
 export const useIncidentsStore = defineStore('incidents', () => {
   const allIncidentsYear = ref({ openInc: [], closeInc: [] })
@@ -12,14 +12,22 @@ export const useIncidentsStore = defineStore('incidents', () => {
   const openIncidentsGroup = ref([])
   const allIncidentsGroup = ref([])
   const allIncLocationRange = ref([])
+  const allIncBasesRange = ref([])
 
   const fetchData = async (startDate, endDate, yearValue) => {
     // console.log('year value store', yearValue)
-    incidentsRange.value = await IncidentsApi.getIncidentsRange(startDate, endDate)
-    allIncidentsYear.value = await IncidentsApi.getAllIncidentsYear(yearValue)
-    openIncidentsGroup.value = await IncidentsApi.getOpenIncidentsGroup()
-    allIncidentsGroup.value = await IncidentsApi.getAllIncidentsGroup(startDate, endDate)
-    allIncLocationRange.value = await IncidentsApi.getIncLocationRange(startDate, endDate)
+    // incidentsRange.value = await IncidentsApi.getIncidentsRange(startDate, endDate)
+    // allIncidentsYear.value = await IncidentsApi.getAllIncidentsYear(yearValue)
+    // openIncidentsGroup.value = await IncidentsApi.getOpenIncidentsGroup()
+    // allIncidentsGroup.value = await IncidentsApi.getAllIncidentsGroup(startDate, endDate)
+    // allIncLocationRange.value = await IncidentsApi.getIncLocationRange(startDate, endDate)
+
+    incidentsRange.value = await ReportApi.getIncidentsRange(startDate, endDate)
+    allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
+    openIncidentsGroup.value = await ReportApi.getOpenIncidentsGroup()
+    allIncidentsGroup.value = await ReportApi.getAllIncidentsGroup(startDate, endDate)
+    allIncLocationRange.value = await ReportApi.getIncLocationRange(startDate, endDate)
+    allIncBasesRange.value = await ReportApi.getIncBasesRange(startDate, endDate)
 
     // console.log('store range', incidentsRange.value)
     // console.log('store year', allIncidentsYear.value)
@@ -35,7 +43,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
   const lastYearIncidentsRange = computed(() => incidentsRange.value.lastYear)
   const allOpenIncidentsGroup = computed(() => openIncidentsGroup.value)
   const allIncidentsGroupData = computed(() => allIncidentsGroup.value)
-
   const allIncLocationRangeData = computed(() => allIncLocationRange.value)
 
   return {
@@ -47,5 +54,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allOpenIncidentsGroup,
     allIncidentsGroupData,
     allIncLocationRangeData,
+    allIncBasesRange,
   }
 })

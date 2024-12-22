@@ -108,7 +108,7 @@ export default class IncidentsService {
       const [rows] = await pool.query(QUERIES.openIncidentsGr)
       return { status: 200, incidents: rows }
     } catch (error) {
-      console.error('Database error getIncidentsGroup:', error)
+      console.error('Database error getOpenIncidentsGroup:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
@@ -173,7 +173,7 @@ export default class IncidentsService {
       }
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
-      console.error('Database error getIncidentsGroup:', error)
+      console.error('Database error getAllIncidentsGroup:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
@@ -230,7 +230,79 @@ export default class IncidentsService {
       }
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
-      console.error('Database error getIncidentsGroup:', error)
+      console.error('Database error getAllIncLocationRange:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // incidencias abiertas en rango de fechas por bases, cantidad de cada base
+  static async getAllIncBasesRange(startDate, endDate) {
+    const bases = {
+      Colon: ['%Colon%', '%%'],
+      Escuadron: ['%Escuadron%', '%%'],
+      Mediodia2: ['%Mediodia%', '%2%'],
+      Mediodia3: ['%Mediodia%', '%3%'],
+      Recuerdo: ['%Ntra%', '%Recuerdo%'],
+      Imperial: ['%Imperial%', '%%'],
+      Vicalvaro: ['%Vicalvaro%', '%%'],
+    }
+
+    try {
+      const [incColon] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Colon[0],
+        bases.Colon[1],
+      ])
+      const [incEscuadron] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Escuadron[0],
+        bases.Escuadron[1],
+      ])
+      const [incMediodia2] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Mediodia2[0],
+        bases.Mediodia2[1],
+      ])
+      const [incMediodia3] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Mediodia3[0],
+        bases.Mediodia3[1],
+      ])
+      const [incRecuerdo] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Recuerdo[0],
+        bases.Recuerdo[1],
+      ])
+      const [incImperial] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Imperial[0],
+        bases.Imperial[1],
+      ])
+      const [incVicalvaro] = await pool.query(QUERIES.allIncBasesRange, [
+        startDate,
+        endDate,
+        bases.Vicalvaro[0],
+        bases.Vicalvaro[1],
+      ])
+
+      const incidentsSummary = {
+        colon: incColon[0]?.total || 0,
+        escuadron: incEscuadron[0]?.total || 0,
+        mediodia2: incMediodia2[0]?.total || 0,
+        mediodia3: incMediodia3[0]?.total || 0,
+        recuerdo: incRecuerdo[0]?.total || 0,
+        imperial: incImperial[0]?.total || 0,
+        vicalvaro: incVicalvaro[0]?.total || 0,
+      }
+      return { status: 200, incidents: incidentsSummary }
+    } catch (error) {
+      console.error('Database error getAllIncBasesRange:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }

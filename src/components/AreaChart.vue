@@ -64,7 +64,7 @@ const seriesArea = ref([])
 const chartOptions = ref({
   chart: {
     id: `${props.id}`,
-    group: 'histogram',
+    // group: 'histogram',
     type: 'area',
     zoom: {
       enabled: false,
@@ -125,8 +125,8 @@ const chartOptions = ref({
     ],
   },
   tooltip: {
-    shared: true,
-    intersect: false,
+    // shared: true,
+    // intersect: false,
     marker: {
       show: true, // Muestra el marcador en el tooltip
       fillColors: [`${props.color}`], // Color del marcador en el tooltip
@@ -156,15 +156,35 @@ watch(
     seriesArea.value = generateAreapData(newIncidents)
 
     await nextTick()
-    // chartOptions.value = {
-    //   ...chartOptions.value,
-    //   title: {
-    //     text: `${props.title}`,
-    //   },
-    //   subtitle: {
-    //     text: `Year: ${props.subtitle}`,
-    //   },
-    // }
+    chartOptions.value = {
+      ...chartOptions.value,
+      title: {
+        text: `${props.title}`,
+      },
+      subtitle: {
+        text: `Year: ${props.subtitle}`,
+      },
+      stroke: {
+        colors: [`${props.color}`],
+      },
+      markers: {
+        colors: [`${props.color}`],
+      },
+      tooltip: {
+        marker: {
+          fillColors: [`${props.color}`],
+        },
+      },
+      fill: {
+        gradient: {
+          colorStops: [
+            {
+              color: `${props.color}`,
+            },
+          ],
+        },
+      },
+    }
   },
   { immediate: true },
 )

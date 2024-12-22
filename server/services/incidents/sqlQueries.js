@@ -74,6 +74,29 @@ LEFT JOIN
     ON I.id_incident_type = T.id
 WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
        AND R.data IN(?);`,
+
+  allIncBasesRange: `SELECT count(*) as total FROM tincident_field_data R
+LEFT JOIN
+    tincidencia I
+    ON R.id_incident = I.id_incidencia
+    AND R.id_incident_field IN (98, 103, 109, 114)
+LEFT JOIN
+    tincident_status S
+    ON I.estado = S.id
+LEFT JOIN
+    tusuario U
+    ON I.id_creator = U.id_usuario
+LEFT JOIN
+    tusuario E
+    ON I.id_usuario = E.id_usuario
+LEFT JOIN
+    tgrupo G
+    ON I.id_grupo = G.id_grupo
+LEFT JOIN
+    tincident_type T
+    ON I.id_incident_type = T.id
+WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+        AND R.data LIKE ? AND R.data LIKE ?;`,
 }
 
 export default QUERIES

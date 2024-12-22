@@ -10,7 +10,7 @@
       <ComboBox :options="rangeYears" v-model="selectedYear" custom-width="50px" />
     </div>
     <div class="item div__select">
-      <ComboBox :options="optCombo" v-model="selectedRange" />
+      <ComboBox :options="SELECT_PERIOD" v-model="selectedRange" />
     </div>
 
     <div class="item item-label-date">{{ getCurrentDate }}</div>
@@ -93,18 +93,34 @@
       <StakedBar :all-incidents-group="allIncidentsGroup" :subtitle="getCurrentDate" />
     </div>
 
+    <div class="chart-base donnut-places">
+      <DonnutChart
+        id="location"
+        :incidents="allIncLocationRange"
+        title="Incident by place"
+        :subtitle="getCurrentDate"
+        :labels="LOCATION"
+      />
+    </div>
+
+    <div class="chart-base donnut-bases">
+      <DonnutChart
+        id="bases"
+        :incidents="allIncBasesRange"
+        title="Incident bases"
+        :subtitle="getCurrentDate"
+        :labels="BASES"
+      />
+    </div>
+
     <div class="chart-base histogram-open">
       <AreaChart
         id="open-area"
         title="Open incidents by month"
         :subtitle="selectedYear"
-        color="#6CBC6C"
+        color="#98d498"
         :incidents="heatmapOpenInc"
       />
-    </div>
-
-    <div class="chart-base donnut-places">
-      <DonnutChart :incidents="allIncLocationRange" :subtitle="getCurrentDate" />
     </div>
 
     <div class="chart-base histogram-close">
@@ -112,7 +128,7 @@
         id="close-area"
         title="Close incidents by month"
         :subtitle="selectedYear"
-        color="#EE7E7E"
+        color="#f4a8a8"
         :incidents="heatmapCloseInc"
       />
     </div>
@@ -122,6 +138,7 @@
 <script setup>
 import { ref, watch, computed, onMounted, nextTick } from 'vue'
 import dayjs from 'dayjs'
+import { SELECT_PERIOD, LOCATION, BASES } from '@/constants/constants'
 import InfoItem from '@/components/InfoItem.vue'
 import Badge from '@/components/Badge.vue'
 import ComboBox from '@/components/ComboBox.vue'
@@ -144,16 +161,6 @@ const isLoading = ref(false)
 
 let startDateAvg = null
 let endDateAvg = null
-
-const optCombo = [
-  'Yesterday',
-  'This Week',
-  'Last Week',
-  'Last 30 Days',
-  'Last 3 Months',
-  'Last 6 Months',
-  'This Year',
-]
 
 const rangeYears = computed(() => {
   let years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
@@ -183,6 +190,7 @@ const heatmapCloseInc = computed(() => storeIncidents.closedIncidentsYear)
 const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
 const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
 const allIncLocationRange = computed(() => storeIncidents.allIncLocationRangeData)
+const allIncBasesRange = computed(() => storeIncidents.allIncBasesRange)
 
 // label date select
 const getCurrentDate = computed(() => {
@@ -285,7 +293,7 @@ const getPercentAvg = computed(() => {
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 30px 30px 100px 450px 300px 300px 250px;
+  grid-template-rows: 30px 30px 100px 450px 300px 300px 300px 300px 300px;
   gap: 10px;
 }
 
@@ -314,18 +322,23 @@ const getPercentAvg = computed(() => {
 }
 
 .histogram-open {
-  grid-column: 3 / 7;
-  grid-row: 6 / 7;
-}
-
-.donnut-places {
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   grid-row: 7 / 8;
 }
 
 .histogram-close {
-  grid-column: 3 / 7;
+  grid-column: 4 / 7;
   grid-row: 7 / 8;
+}
+
+.donnut-places {
+  grid-column: 3 / 5;
+  grid-row: 6 / 7;
+}
+
+.donnut-bases {
+  grid-column: 5 / 7;
+  grid-row: 6 / 7;
 }
 
 .item {
