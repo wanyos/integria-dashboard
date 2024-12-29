@@ -11,6 +11,7 @@ import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
 
 const app = express()
+app.disable('x-powered-by')
 
 // Setting to get the current directory
 const __filename = fileURLToPath(import.meta.url)

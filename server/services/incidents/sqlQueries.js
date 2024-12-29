@@ -5,16 +5,20 @@ const QUERIES = {
   openIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
   closeIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'`,
   pendingIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre < '0001-01-01'`,
-  avgIncidents: `
-     SELECT
-      FLOOR(media_horas) AS horas,
-      ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos
-      FROM (
-      SELECT
-      AVG(TIMESTAMPDIFF(HOUR, inicio, cierre)) AS media_horas
-      FROM tincidencia
-      WHERE cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
-      ) AS subquery`,
+  //   avgIncidents: `
+  //      SELECT
+  //       FLOOR(media_horas) AS horas,
+  //       ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos
+  //       FROM (
+  //       SELECT
+  //       AVG(TIMESTAMPDIFF(HOUR, inicio, cierre)) AS media_horas
+  //       FROM tincidencia
+  //       WHERE cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+  //       ) AS subquery`,
+
+  avgIncidents: `SELECT AVG(TIMESTAMPDIFF(MINUTE, inicio, cierre)) AS minutos
+            FROM tincidencia WHERE cierre IS NOT NULL AND cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+
   // Consultas para obtener incidentes por año
   allIncidentsYearOpen: `
       SELECT DATE(inicio) as date, COUNT(*) as count
@@ -51,7 +55,6 @@ const QUERIES = {
   allIncCloseExterno: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (22,24,28,31,56,154,50,52,59,32);`,
 
   // Total de incidencias por rango de fechas y su localización
-
   allIncLocationRange: `SELECT count(*) as total FROM tincident_field_data R
 LEFT JOIN
     tincidencia I

@@ -263,11 +263,19 @@ const calculatePercentage = (current, lastYear) => {
 }
 
 const formattedCurrentAvg = computed(() => {
-  const horas = storeIncidents.currentIncidentsRange.avg.hour || 0
+  // const horas = storeIncidents.currentIncidentsRange.avg.hour || 0
   const minutos = storeIncidents.currentIncidentsRange.avg.minute || 0
-  const totalHorasDecimal = horas + minutos / 60
-  return convertirHoras(totalHorasDecimal)
+  // const totalHorasDecimal = horas + minutos / 60
+  return convertirMinutos(minutos)
+  // return convertirHoras(totalHorasDecimal)
 })
+
+function convertirMinutos(minutosDecimal) {
+  const dias = Math.floor(minutosDecimal / 1440) // 1440 minutos en un día
+  const horas = Math.floor((minutosDecimal % 1440) / 60) // 60 minutos en una hora
+  const minutos = Math.round(minutosDecimal % 60)
+  return `${dias}d ${horas}h ${minutos}m`
+}
 
 // return string with day:hours:minutes
 function convertirHoras(horasDecimal) {

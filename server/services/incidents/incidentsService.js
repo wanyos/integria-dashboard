@@ -50,8 +50,8 @@ export default class IncidentsService {
           close: closeInc[0]?.count || 0,
           pending: pendingInc[0]?.count || 0,
           avg: {
-            hour: avgInc[0]?.horas || 0,
-            minute: avgInc[1]?.minutos || 0,
+            // hour: avgInc[0]?.horas || 0,
+            minute: avgInc[0]?.minutos || 0,
           },
         },
         lastYear: {
@@ -59,8 +59,8 @@ export default class IncidentsService {
           close: closeIncLastYear[0]?.count || 0,
           pending: pendingIncLastYear[0]?.count || 0,
           avg: {
-            hour: avgIncLastYear[0]?.horas || 0,
-            minute: avgIncLastYear[1]?.minutos || 0,
+            // hour: avgIncLastYear[0]?.horas || 0,
+            minute: avgIncLastYear[0]?.minutos || 0,
           },
         },
       }
