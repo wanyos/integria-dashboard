@@ -8,7 +8,7 @@ export default class LoginController {
       const { status, message, user } = await LoginService.postLogin(username, password)
       if (!user) return res.status(status).json({ status, message })
 
-      const expiresIn = '1h'
+      const expiresIn = 60 * 60 // 1 hora en segundos
       const token = jwt.sign(
         { username: user.username, email: user.email },
         process.env.SECRET_JWT_KEY,
@@ -32,7 +32,7 @@ export default class LoginController {
       const { status, message, user } = await LoginService.postRegister(username, password, email)
       if (!user) return res.status(status).json({ status, message })
 
-      const expiresIn = '1h'
+      const expiresIn = 60 * 60 // 1 hora en segundos
       const token = jwt.sign(
         { username: user.username, email: user.email },
         process.env.SECRET_JWT_KEY,

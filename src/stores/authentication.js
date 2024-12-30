@@ -38,7 +38,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     userLogin.username = res.username
     userLogin.email = res.email
     // Crear una fecha de expiración en formato Date
-    const expirationDate = dayjs.unix(res.expirationTime).toDate()
+    const expirationDate = dayjs().add(res.expirationTime, 'second').toDate()
     tokenExpiration.value = expirationDate
     $cookies.set('token', token.value, expirationDate)
   }
