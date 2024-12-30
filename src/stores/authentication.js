@@ -17,7 +17,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   })
 
   const errorMsg = reactive([])
-  const tokenExpiration = ref(null)
+  const tokenExpiration = ref($cookies.get('tokenExpiration') || null)
   const token = ref($cookies.get('token') || null)
 
   const isAuthenticated = computed(() => !!token.value)
@@ -25,7 +25,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   const getValidToken = computed(() => {
     console.log('expiration token: ', tokenExpiration.value)
     const expiration = dayjs().isAfter(dayjs(tokenExpiration.value))
-    if (expiration) {
+    if (expiration || tokenExpiration.value === null) {
       logout()
       return null
     }
@@ -39,8 +39,8 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     userLogin.email = res.email
     // Crear una fecha de expiración en formato Date
     const expirationDate = dayjs().add(res.expirationTime, 'second').toDate()
-    tokenExpiration.value = expirationDate
-    $cookies.set('token', token.value, expirationDate)
+    $cookies.set('tokenExpiration', expirationDate)
+    $cookies.set('token', token.value)
   }
 
   const login = async () => {
@@ -75,6 +75,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     token.value = null
     userLogin.username = null
     userLogin.email = null
+    $cookies.remove('tokenExpiration')
     $cookies.remove('token')
   }
 

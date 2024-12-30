@@ -17,7 +17,9 @@ onMounted(async () => {
   try {
     const token = authStore.getValidToken
     console.log('token incidents', token)
-    incidents.value = await IncidentsApi.getIncidents(token)
+    if (token) {
+      incidents.value = await IncidentsApi.getIncidents(token)
+    }
   } catch (error) {
     console.error('Error fetching incidents:', error)
   }
