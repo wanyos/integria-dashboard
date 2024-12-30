@@ -8,12 +8,15 @@
 <script setup>
 import UsersApi from '@/api/users_api'
 import { onMounted, ref } from 'vue'
+import { useAuthenticationStore } from '@/stores/authentication'
 
 const users = ref([])
+const authStore = useAuthenticationStore()
 
 onMounted(async () => {
   try {
-    users.value = await UsersApi.getUsers()
+    const token = authStore.getValidToken
+    users.value = await UsersApi.getUsers(token)
   } catch (error) {
     console.error('Error fetching users:', error)
   }

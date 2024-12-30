@@ -8,12 +8,15 @@
 <script setup>
 import InventoryApi from '@/api/inventory_api'
 import { onMounted, ref } from 'vue'
+import { useAuthenticationStore } from '@/stores/authentication'
 
 const inventory = ref([])
+const authStore = useAuthenticationStore()
 
 onMounted(async () => {
   try {
-    inventory.value = await InventoryApi.getInventory()
+    const token = authStore.getValidToken
+    inventory.value = await InventoryApi.getInventory(token)
   } catch (error) {
     console.error('Error fetching inventory:', error)
   }

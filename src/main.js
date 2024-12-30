@@ -12,6 +12,7 @@ import {
   RiLockPasswordLine,
   BiEyeSlash,
   BiEye,
+  MdAlternateemailSharp,
 } from 'oh-vue-icons/icons'
 import VueCookies from 'vue-cookies'
 import App from './App.vue'
@@ -29,6 +30,7 @@ addIcons(
   RiLockPasswordLine,
   BiEyeSlash,
   BiEye,
+  MdAlternateemailSharp,
 )
 
 const app = createApp(App)

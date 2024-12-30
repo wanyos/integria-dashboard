@@ -9,11 +9,12 @@ class LoginApi extends ApiBase {
     return response
   }
 
-  async postRegister(username, password) {
+  async postRegister(username, password, email) {
     const needToken = false
-    const data = { username, password }
+    const data = { username, password, email }
     const endpoint = '/api/register'
-    return await this.post(endpoint, needToken, data)
+    const response = await this.post(endpoint, needToken, data)
+    return response
   }
 }
 

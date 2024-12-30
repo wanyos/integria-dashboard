@@ -8,12 +8,16 @@
 <script setup>
 import IncidentsApi from '@/api/incidents_api'
 import { onMounted, ref } from 'vue'
+import { useAuthenticationStore } from '@/stores/authentication'
 
 const incidents = ref([])
+const authStore = useAuthenticationStore()
 
 onMounted(async () => {
   try {
-    incidents.value = await IncidentsApi.getIncidents()
+    const token = authStore.getValidToken
+    console.log('token incidents', token)
+    incidents.value = await IncidentsApi.getIncidents(token)
   } catch (error) {
     console.error('Error fetching incidents:', error)
   }

@@ -1,8 +1,9 @@
 import ApiBase from './apiBase'
 
 class UsersApi extends ApiBase {
-  async getUsers() {
+  async getUsers(token) {
     const needToken = true
+    ApiBase._setToken(token)
     return await this.get('/api/users', needToken)
   }
 

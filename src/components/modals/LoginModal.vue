@@ -22,6 +22,18 @@
                 required
               />
             </div>
+
+            <div v-if="typeRegister" class="item">
+              <label for=""> <v-icon name="md-alternateemail-sharp" class="icon-form" /> </label>
+              <input
+                v-model="authStore.credentials.email"
+                type="email"
+                placeholder="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+
             <div class="item">
               <label for=""> <v-icon name="ri-lock-password-line" class="icon-form" /> </label>
               <input
@@ -43,7 +55,7 @@
         </div>
 
         <div class="div__buttons">
-          <button v-if="typeLogin" @click="handleRegister">Register</button>
+          <button v-if="typeRegister" @click="handleRegister">Register</button>
           <button v-else @click="handleLogin">Login</button>
           <button @click="closeModal">Close</button>
         </div>
@@ -79,7 +91,7 @@ watch(
   },
 )
 
-const typeLogin = computed(() => props.title === 'Sing Up')
+const typeRegister = computed(() => props.title === 'Sing Up')
 
 const closeModal = () => {
   showModal.value = !showModal.value
@@ -101,7 +113,7 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
   try {
-    // register store
+    await authStore.register()
     closeModal()
   } catch (error) {
     console.log('Register failed: ', error)
@@ -127,7 +139,7 @@ const handleRegister = async () => {
 
 .div__login {
   width: 400px;
-  height: 300px;
+  height: 370px;
   border: 1px solid black;
   border-radius: 10px;
   background-color: #fff;

@@ -1,12 +1,13 @@
-import LoginService from '../services/loginService.js'
+import LoginService from '../services/login/loginService.js'
 import jwt from 'jsonwebtoken'
 
 export default class LoginController {
   static async postLogin(req, res) {
     const { username, password } = req.body
     try {
-      const { status, user } = await LoginService.postLogin(username, password)
-      // timestamp expire
+      const { status, message, user } = await LoginService.postLogin(username, password)
+      if (!user) return res.status(status).json({ status, message })
+
       const expiresIn = '1h'
       const token = jwt.sign(
         { username: user.username, email: user.email },
@@ -21,17 +22,31 @@ export default class LoginController {
         expirationTime: expiresIn,
       })
     } catch (error) {
-      return res.status(401).json({ message: 'error login...' })
+      return res.status(500).json({ message: 'Internal server error login...' })
     }
   }
 
   static async postRegister(req, res) {
-    const { username, password } = req.body
+    const { username, password, email } = req.body
     try {
-      const { status, message } = await LoginService.postRegister(username, password)
-      return res.status(status).json(message)
+      const { status, message, user } = await LoginService.postRegister(username, password, email)
+      if (!user) return res.status(status).json({ status, message })
+
+      const expiresIn = '1h'
+      const token = jwt.sign(
+        { username: user.username, email: user.email },
+        process.env.SECRET_JWT_KEY,
+        { expiresIn },
+      )
+      return res.status(status).json({
+        status,
+        token,
+        username: user.username,
+        email: user.email,
+        expirationTime: expiresIn,
+      })
     } catch (error) {
-      return res.status(401).json({ message: 'error register...' })
+      return res.status(500).json({ message: 'Internal server error register...' })
     }
   }
 
@@ -44,11 +59,11 @@ export default class LoginController {
     }
   }
 
-  static async getProtected(req, res) {
-    try {
-      return res.status(200).json({})
-    } catch (error) {
-      return res.status(403).json({ message: 'error protected...' })
-    }
-  }
+  // static async getProtected(req, res) {
+  //   try {
+  //     return res.status(200).json({})
+  //   } catch (error) {
+  //     return res.status(403).json({ message: 'error protected...' })
+  //   }
+  // }
 }

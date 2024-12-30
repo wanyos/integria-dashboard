@@ -1,0 +1,12 @@
+[
+  {
+    "id": "d6a26771-dc5f-45b0-bf2f-571844a2540c",
+    "username": "wanyos99",
+    "email": "juanjor99@gmail.com",
+    "hashPassword": "$2b$10$kHsPOXctZTsaN/PsENXw9.w0C96KR1r3uXwkUIoFZQsLgvb1FOny.",
+    "createAt": "2024-12-29T16:33:47.574Z",
+    "roles": [
+      "user"
+    ]
+  }
+]

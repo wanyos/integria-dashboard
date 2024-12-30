@@ -1,10 +1,8 @@
-/* eslint-disable no-undef */
 import ApiBase from './apiBase'
 
 class InventoryApi extends ApiBase {
-  async getInventory() {
+  async getInventory(token) {
     const needToken = true
-    const token = $cookies.get('token')
     ApiBase._setToken(token)
     return await this.get('/api/inventory', needToken)
   }

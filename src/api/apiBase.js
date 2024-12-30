@@ -1,4 +1,3 @@
-// const URL_BASE = 'http://localhost:8022'
 const API_BASE_URL = import.meta.env.VITE_ENDPOINT_BACKEND
 
 export default class ApiBase {
@@ -19,36 +18,27 @@ export default class ApiBase {
   }
 
   async get(endpoint, includeToken) {
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: ApiBase._getHeaders(includeToken),
-      })
-      if (!response.ok) {
-        throw new Error(`Failed to fetch from ${endpoint}`)
-      }
-      return await response.json()
-    } catch (error) {
-      console.error(error)
-      throw error
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: ApiBase._getHeaders(includeToken),
+    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || `Failed to get from ${endpoint}`)
     }
+    return await response.json()
   }
 
   async post(endpoint, includeToken, data) {
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: ApiBase._getHeaders(includeToken),
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to post to ${endpoint}`)
-      }
-      return await response.json()
-    } catch (error) {
-      console.error(error)
-      throw error
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: ApiBase._getHeaders(includeToken),
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || `Failed to ppost to ${endpoint}`)
     }
+    return await response.json()
   }
 
   // all data update
