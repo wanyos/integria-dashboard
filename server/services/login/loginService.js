@@ -4,9 +4,14 @@ import { validateRegister, validateLogin } from '../../util/validates.js'
 import fs from 'node:fs/promises'
 import crypto from 'node:crypto'
 import path from 'path'
+import { fileURLToPath } from 'url';
+
+// Convierte la URL en una ruta de archivo válida
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ruta absoluta al archivo users.json
-const usersFilePath = path.resolve(new URL('./users.json', import.meta.url).pathname)
+const usersFilePath = path.join(__dirname, 'users.json');
 
 const readUsersFile = async () => {
   try {

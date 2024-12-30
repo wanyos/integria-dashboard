@@ -16,7 +16,9 @@ const authStore = useAuthenticationStore()
 onMounted(async () => {
   try {
     const token = authStore.getValidToken
-    users.value = await UsersApi.getUsers(token)
+    if(token) {
+      users.value = await UsersApi.getUsers(token)
+    }
   } catch (error) {
     console.error('Error fetching users:', error)
   }

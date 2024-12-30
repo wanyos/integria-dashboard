@@ -23,13 +23,15 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   const isAuthenticated = computed(() => !!token.value)
 
   const getValidToken = computed(() => {
+    console.log('token: ', token.value)
     console.log('expiration token: ', tokenExpiration.value)
     const expiration = dayjs().isAfter(dayjs(tokenExpiration.value))
+     console.log('expiration: ', expiration)
     if (expiration || tokenExpiration.value === null) {
       logout()
       return null
     }
-    console.log('expiration: ', expiration)
+
     return token.value
   })
 

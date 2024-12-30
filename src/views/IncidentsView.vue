@@ -16,7 +16,6 @@ const authStore = useAuthenticationStore()
 onMounted(async () => {
   try {
     const token = authStore.getValidToken
-    console.log('token incidents', token)
     if (token) {
       incidents.value = await IncidentsApi.getIncidents(token)
     }

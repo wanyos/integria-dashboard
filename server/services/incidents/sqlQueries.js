@@ -35,7 +35,9 @@ const QUERIES = {
 
   // Incidencias abiertas por id_grupo 2=operadores, 7=tecnicos, 8=administradores, 148=ciberseguridad
   // openIncidentsGroup: `SELECT * FROM tincidencia WHERE cierre < "0001-01-01" AND id_grupo IN (2, 7, 8, 148);`,
-  openIncidentsGr: `SELECT id_incidencia, inicio, id_grupo FROM tincidencia WHERE cierre < "0001-01-01" AND id_grupo IN (2, 7, 8, 148);`,
+
+  // openIncidentsGr: `SELECT id_incidencia, inicio, id_grupo FROM tincidencia WHERE cierre < "0001-01-01" AND id_grupo IN (2, 7, 8, 148);`,
+  openIncidentsGr: `SELECT id_incidencia, inicio, id_grupo FROM tincidencia WHERE (cierre IS NULL OR cierre < '0001-01-01 00:00:00') AND id_grupo IN (2, 7, 8, 148);`,
 
   // Todas incidencias por rango de fechas y grupos, abiertas
   allIncOpenOperadores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 2;`,
