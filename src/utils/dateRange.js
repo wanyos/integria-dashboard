@@ -66,10 +66,10 @@ export default class DateRangeCalculator {
         endDate = currentDate.endOf('day')
     }
 
-    if (startDate && endDate) {
-      startDate = startDate.year(currentYear)
-      endDate = endDate.year(currentYear)
-    }
+    // if (startDate && endDate) {
+    //   startDate = startDate.year(currentYear)
+    //   endDate = endDate.year(currentYear)
+    // }
 
     return { startDate, endDate }
   }

@@ -66,6 +66,7 @@ const openModal = (title) => {
 <style scoped lang="css">
 .container {
   height: 100vh;
+  width: 100%;
   display: grid;
   grid-template-columns: 10rem 1fr;
   grid-template-rows: 50px 1fr 50px;

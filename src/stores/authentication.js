@@ -17,21 +17,23 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   })
 
   const errorMsg = reactive([])
-  const tokenExpiration = ref($cookies.get('tokenExpiration') || null)
+  // const tokenExpiration = ref($cookies.get('tokenExpiration') || null)
   const token = ref($cookies.get('token') || null)
 
   const isAuthenticated = computed(() => !!token.value)
 
   const getValidToken = computed(() => {
-    console.log('token: ', token.value)
-    console.log('expiration token: ', tokenExpiration.value)
-    const expiration = dayjs().isAfter(dayjs(tokenExpiration.value))
-     console.log('expiration: ', expiration)
-    if (expiration || tokenExpiration.value === null) {
+    const time = $cookies.get('token').expire
+    const name = $cookies.get('token').name
+    const token = $cookies.get('token').token
+    console.log('token is valid', time)
+    console.log('name', name)
+    console.log('token', token)
+    if (!token.value) {
       logout()
       return null
     }
-
+    // console.log('token is valid', token.value)
     return token.value
   })
 
@@ -39,10 +41,19 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     token.value = res.token
     userLogin.username = res.username
     userLogin.email = res.email
-    // Crear una fecha de expiración en formato Date
-    const expirationDate = dayjs().add(res.expirationTime, 'second').toDate()
-    $cookies.set('tokenExpiration', expirationDate)
-    $cookies.set('token', token.value)
+    // Convertimos los segundos de expiración en horas
+    // const expirationInHours = res.expirationTime / 3600
+    const tokenExpiration = dayjs().add(res.expirationTime, 'second').toDate()
+
+    // $cookies.set('tokenExpiration', tokenExpiration.value)
+    const userCookie = {
+      name: res.username,
+      email: res.email,
+      token: res.token,
+      expire: tokenExpiration,
+    }
+    // $cookies.set('token', token.value, tokenExpiration)
+    $cookies.set('token', userCookie)
   }
 
   const login = async () => {
@@ -77,7 +88,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     token.value = null
     userLogin.username = null
     userLogin.email = null
-    $cookies.remove('tokenExpiration')
+    // $cookies.remove('tokenExpiration')
     $cookies.remove('token')
   }
 

@@ -163,7 +163,12 @@ let startDateAvg = null
 let endDateAvg = null
 
 const rangeYears = computed(() => {
-  let years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+  let years = []
+  let startYear = 2015
+  const currentYear = dayjs().year()
+  while (startYear < currentYear) {
+    years.push(startYear++)
+  }
   years.push(dayjs().year())
   return years
 })
