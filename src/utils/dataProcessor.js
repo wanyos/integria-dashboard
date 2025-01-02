@@ -192,10 +192,10 @@ export const generateDataDonnut = (incidents) => {
   const values = []
   Object.entries(incidents).forEach(([key, value]) => {
     labels.push(key)
-    values.push(value)
+    values.push(parseInt(value, 10))
   })
   return {
-    labels,
-    values,
+    labels: Array.from(labels),
+    values: Array.from(values),
   }
 }

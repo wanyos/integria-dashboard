@@ -17,7 +17,7 @@ import { generateDataDonnut } from '../utils/dataProcessor'
 const props = defineProps({
   id: {
     type: String,
-    default: 'areachart',
+    default: 'donut',
   },
   incidents: {
     type: Object,
@@ -122,7 +122,9 @@ watch(
         text: `Date filter: ${String(props.subtitle)}`,
       },
     }
-    series.value = values.length ? values : defaulValues
+
+    series.value = values.length ? [...values] : defaulValues
+
   },
   { immediate: true },
 )

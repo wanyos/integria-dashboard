@@ -189,45 +189,56 @@ export default class IncidentsService {
       sanchinarro: 'SANCHINARRO',
     }
 
-    const selectedGroup = locations.pacifico
-    const placeholders = selectedGroup.map(() => '?').join(', ')
-    const query = QUERIES.allIncLocationRange.replace('%IN_PLACEHOLDER%', placeholders)
+    // const selectedGroup = locations.pacifico
+    // const placeholders = selectedGroup.map(() => '?').join(', ')
+    // const query = QUERIES.allIncLocationRange.replace('%IN_PLACEHOLDER%', placeholders)
 
     try {
-      const [incPacifico] = await pool.query(query, [startDate, endDate, ...selectedGroup])
-      const [incFuencarral] = await pool.query(QUERIES.allIncLocationRange, [
-        startDate,
-        endDate,
-        locations.fuencarral,
-      ])
-      const [incLaElipa] = await pool.query(QUERIES.allIncLocationRange, [
-        startDate,
-        endDate,
-        locations.la_elipa,
-      ])
-      const [incCarabanchel] = await pool.query(QUERIES.allIncLocationRange, [
-        startDate,
-        endDate,
-        locations.carabanchel,
-      ])
-      const [incEntrevias] = await pool.query(QUERIES.allIncLocationRange, [
-        startDate,
-        endDate,
-        locations.entrevias,
-      ])
-      const [incSanchinarro] = await pool.query(QUERIES.allIncLocationRange, [
-        startDate,
-        endDate,
-        locations.sanchinarro,
-      ])
+      // const [incPacifico] = await pool.query(query, [startDate, endDate, ...selectedGroup])
+      // const [incFuencarral] = await pool.query(QUERIES.allIncLocationRange, [
+      //   startDate,
+      //   endDate,
+      //   locations.fuencarral,
+      // ])
+      // const [incLaElipa] = await pool.query(QUERIES.allIncLocationRange, [
+      //   startDate,
+      //   endDate,
+      //   locations.la_elipa,
+      // ])
+      // const [incCarabanchel] = await pool.query(QUERIES.allIncLocationRange, [
+      //   startDate,
+      //   endDate,
+      //   locations.carabanchel,
+      // ])
+      // const [incEntrevias] = await pool.query(QUERIES.allIncLocationRange, [
+      //   startDate,
+      //   endDate,
+      //   locations.entrevias,
+      // ])
+      // const [incSanchinarro] = await pool.query(QUERIES.allIncLocationRange, [
+      //   startDate,
+      //   endDate,
+      //   locations.sanchinarro,
+      // ])
+      // const incidentsSummary = {
+      //   pacifico: incPacifico[0]?.total || 0,
+      //   fuencarral: incFuencarral[0]?.total || 0,
+      //   la_elipa: incLaElipa[0]?.total || 0,
+      //   carabanchel: incCarabanchel[0]?.total || 0,
+      //   entrevias: incEntrevias[0]?.total || 0,
+      //   sanchinarro: incSanchinarro[0]?.total || 0,
+      // }
+
+      const [results] = await pool.query(QUERIES.allIncLocationRange, [startDate, endDate]);
       const incidentsSummary = {
-        pacifico: incPacifico[0]?.total || 0,
-        fuencarral: incFuencarral[0]?.total || 0,
-        la_elipa: incLaElipa[0]?.total || 0,
-        carabanchel: incCarabanchel[0]?.total || 0,
-        entrevias: incEntrevias[0]?.total || 0,
-        sanchinarro: incSanchinarro[0]?.total || 0,
-      }
+        pacifico: results[0]?.pacifico || 0,
+        fuencarral: results[0]?.fuencarral || 0,
+        la_elipa: results[0]?.la_elipa || 0,
+        carabanchel: results[0]?.carabanchel || 0,
+        entrevias: results[0]?.entrevias || 0,
+        sanchinarro: results[0]?.sanchinarro || 0,
+      };
+
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncLocationRange:', error)
@@ -237,69 +248,84 @@ export default class IncidentsService {
 
   // incidencias abiertas en rango de fechas por bases, cantidad de cada base
   static async getAllIncBasesRange(startDate, endDate) {
-    const bases = {
-      Colon: ['%Colon%', '%%'],
-      Escuadron: ['%Escuadron%', '%%'],
-      Mediodia2: ['%Mediodia%', '%2%'],
-      Mediodia3: ['%Mediodia%', '%3%'],
-      Recuerdo: ['%Ntra%', '%Recuerdo%'],
-      Imperial: ['%Imperial%', '%%'],
-      Vicalvaro: ['%Vicalvaro%', '%%'],
-    }
+    // const bases = {
+    //   Colon: ['%Colon%', '%%'],
+    //   Escuadron: ['%Escuadron%', '%%'],
+    //   Mediodia2: ['%Mediodia%', '%2%'],
+    //   Mediodia3: ['%Mediodia%', '%3%'],
+    //   Recuerdo: ['%Ntra%', '%Recuerdo%'],
+    //   Imperial: ['%Imperial%', '%%'],
+    //   Vicalvaro: ['%Vicalvaro%', '%%'],
+    // }
 
     try {
-      const [incColon] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Colon[0],
-        bases.Colon[1],
-      ])
-      const [incEscuadron] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Escuadron[0],
-        bases.Escuadron[1],
-      ])
-      const [incMediodia2] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Mediodia2[0],
-        bases.Mediodia2[1],
-      ])
-      const [incMediodia3] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Mediodia3[0],
-        bases.Mediodia3[1],
-      ])
-      const [incRecuerdo] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Recuerdo[0],
-        bases.Recuerdo[1],
-      ])
-      const [incImperial] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Imperial[0],
-        bases.Imperial[1],
-      ])
-      const [incVicalvaro] = await pool.query(QUERIES.allIncBasesRange, [
-        startDate,
-        endDate,
-        bases.Vicalvaro[0],
-        bases.Vicalvaro[1],
-      ])
 
-      const incidentsSummary = {
-        colon: incColon[0]?.total || 0,
-        escuadron: incEscuadron[0]?.total || 0,
-        mediodia2: incMediodia2[0]?.total || 0,
-        mediodia3: incMediodia3[0]?.total || 0,
-        recuerdo: incRecuerdo[0]?.total || 0,
-        imperial: incImperial[0]?.total || 0,
-        vicalvaro: incVicalvaro[0]?.total || 0,
-      }
+      const [results] = await pool.query(QUERIES.allIncBasesRange, [startDate, endDate]);
+
+    const incidentsSummary = {
+      colon: results[0]?.Colon || 0,
+      escuadron: results[0]?.Escuadron || 0,
+      mediodia2: results[0]?.Mediodia2 || 0,
+      mediodia3: results[0]?.Mediodia3 || 0,
+      recuerdo: results[0]?.Recuerdo || 0,
+      imperial: results[0]?.Imperial || 0,
+      vicalvaro: results[0]?.Vicalvaro || 0,
+    };
+
+      // const valuesColon = [ bases.Colon[0], bases.Colon[1], startDate, endDate,]
+      // const [incColon] = await pool.query(QUERIES.allIncBasesRange, valuesColon)
+
+      // const [incEscuadron] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Escuadron[0],
+      //   bases.Escuadron[1],
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [incMediodia2] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Mediodia2[0],
+      //   bases.Mediodia2[1],
+      //   startDate,
+      //   endDate,
+
+      // ])
+      // const [incMediodia3] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Mediodia3[0],
+      //   bases.Mediodia3[1],
+      //   startDate,
+      //   endDate,
+
+      // ])
+      // const [incRecuerdo] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Recuerdo[0],
+      //   bases.Recuerdo[1],
+      //   startDate,
+      //   endDate,
+
+      // ])
+      // const [incImperial] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Imperial[0],
+      //   bases.Imperial[1],
+      //   startDate,
+      //   endDate,
+
+      // ])
+      // const [incVicalvaro] = await pool.query(QUERIES.allIncBasesRange, [
+      //   bases.Vicalvaro[0],
+      //   bases.Vicalvaro[1],
+      //   startDate,
+      //   endDate,
+
+      // ])
+
+      // const incidentsSummary = {
+      //   colon: incColon[0]?.total || 0,
+      //   escuadron: incEscuadron[0]?.total || 0,
+      //   // mediodia2: incMediodia2[0]?.total || 0,
+      //   // mediodia3: incMediodia3[0]?.total || 0,
+      //   // recuerdo: incRecuerdo[0]?.total || 0,
+      //   // imperial: incImperial[0]?.total || 0,
+      //   // vicalvaro: incVicalvaro[0]?.total || 0,
+      // }
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncBasesRange:', error)
