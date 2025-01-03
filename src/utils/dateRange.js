@@ -59,6 +59,7 @@ export default class DateRangeCalculator {
         break
       case 'thisYear':
         startDate = currentDate.startOf('year')
+        // startDate = currentDate.subtract(1, 'year').startOf('year')
         endDate = currentDate.endOf('year')
         break
       default:

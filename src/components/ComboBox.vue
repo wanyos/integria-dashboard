@@ -1,12 +1,13 @@
 <template>
   <ComboboxRoot v-model="selectedValue" class="ComboboxRoot">
     <ComboboxAnchor class="ComboboxAnchor">
-      <v-icon name="bi-calendar2-check" class="icon-calendar" />
+      <v-icon :name="props.iconName" class="icon-calendar" />
       <ComboboxInput
         class="ComboboxInput"
         placeholder="Select..."
         :style="{ width: props.customWidth }"
         name="combobox-input"
+        readonly
       />
       <ComboboxTrigger class="ComboboxIcon">
         <v-icon name="bi-chevron-down" />
@@ -57,6 +58,10 @@ const props = defineProps({
     type: String,
     default: '100px',
   },
+  iconName: {
+    type: String,
+    default: ''
+  }
 })
 
 const selectedValue = ref('')
@@ -128,6 +133,8 @@ const selectedValue = ref('')
   height: 25px;
   padding: 0 35px 0 25px;
   position: relative;
+  margin: 0 5px;
+
 }
 .ComboboxItem[data-disabled] {
   color: #4ea6e1;

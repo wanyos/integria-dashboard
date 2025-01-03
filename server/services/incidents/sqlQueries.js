@@ -68,7 +68,6 @@ INNER JOIN tincidencia I
     AND R.id_incident_field IN (98, 103, 109, 114)
 WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
 
-
 //   allIncLocationRange: `SELECT count(*) as total FROM tincident_field_data R
 // INNER JOIN
 //     tincidencia I
@@ -76,7 +75,6 @@ WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
 //     AND R.id_incident_field IN (98, 103, 109, 114)
 // WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
 //         AND R.data IN(?);`,
-
 
 //   allIncLocationRange: `SELECT count(*) as total FROM tincident_field_data R
 // LEFT JOIN
@@ -156,8 +154,6 @@ FROM tincident_field_data R
 INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
 WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);
 `,
-
-
 
 }
 

@@ -13,6 +13,7 @@ import {
   BiEyeSlash,
   BiEye,
   MdAlternateemailSharp,
+  IoOptionsSharp
 } from 'oh-vue-icons/icons'
 import VueCookies from 'vue-cookies'
 import App from './App.vue'
@@ -31,6 +32,7 @@ addIcons(
   BiEyeSlash,
   BiEye,
   MdAlternateemailSharp,
+  IoOptionsSharp
 )
 
 const app = createApp(App)
