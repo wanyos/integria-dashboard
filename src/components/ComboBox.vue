@@ -12,26 +12,27 @@
       <ComboboxTrigger class="ComboboxIcon">
         <v-icon name="bi-chevron-down" />
       </ComboboxTrigger>
+
+      <ComboboxContent data-align="center" class="ComboboxContent">
+        <ComboboxViewport class="ComboboxViewport">
+          <ComboboxGroup>
+            <ComboboxItem
+              v-for="(option, index) in props.options"
+              :key="index"
+              class="ComboboxItem"
+              :value="option"
+            >
+              <ComboboxItemIndicator class="ComboboxItemIndicator">
+                <v-icon name="bi-check" />
+              </ComboboxItemIndicator>
+              <span>
+                {{ option }}
+              </span>
+            </ComboboxItem>
+          </ComboboxGroup>
+        </ComboboxViewport>
+      </ComboboxContent>
     </ComboboxAnchor>
-    <ComboboxContent data-align="center" class="ComboboxContent">
-      <ComboboxViewport class="ComboboxViewport">
-        <ComboboxGroup>
-          <ComboboxItem
-            v-for="(option, index) in props.options"
-            :key="index"
-            class="ComboboxItem"
-            :value="option"
-          >
-            <ComboboxItemIndicator class="ComboboxItemIndicator">
-              <v-icon name="bi-check" />
-            </ComboboxItemIndicator>
-            <span>
-              {{ option }}
-            </span>
-          </ComboboxItem>
-        </ComboboxGroup>
-      </ComboboxViewport>
-    </ComboboxContent>
   </ComboboxRoot>
 </template>
 
@@ -60,8 +61,8 @@ const props = defineProps({
   },
   iconName: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const selectedValue = ref('')
@@ -73,6 +74,7 @@ const selectedValue = ref('')
 }
 
 .ComboboxAnchor {
+  position: relative;
   display: flex;
   align-items: center;
   font-size: 12px;
@@ -100,11 +102,13 @@ const selectedValue = ref('')
 
 .ComboboxContent {
   z-index: 10;
+  width: 100%;
   position: absolute;
+  top: 35px;
+  left: 0;
   overflow: hidden;
   background-color: white;
   border-radius: 6px;
-  margin-top: 8px;
   box-shadow:
     0px 10px 38px -10px rgba(22, 23, 24, 0.35),
     0px 10px 20px -15px rgba(22, 23, 24, 0.2);
@@ -127,14 +131,11 @@ const selectedValue = ref('')
   font-size: 14px;
   line-height: 1;
   border-radius: 5px;
-  width: 70%;
+  width: 100%;
   display: flex;
+  justify-content: center;
   align-items: center;
   height: 25px;
-  padding: 0 35px 0 25px;
-  position: relative;
-  margin: 0 5px;
-
 }
 .ComboboxItem[data-disabled] {
   color: #4ea6e1;

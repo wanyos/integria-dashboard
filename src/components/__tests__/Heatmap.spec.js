@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import HeatMap from '../HeatMap.vue'
 
-// Mockear el componente VueApexCharts
 vi.mock('vue3-apexcharts', () => ({
   default: {
     props: ['options', 'series'],

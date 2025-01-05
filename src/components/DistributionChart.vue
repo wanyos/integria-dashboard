@@ -154,7 +154,7 @@ const option = ref({
 })
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .div__chart {
   padding: 10px;
 }

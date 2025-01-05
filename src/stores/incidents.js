@@ -14,6 +14,10 @@ export const useIncidentsStore = defineStore('incidents', () => {
   const allIncLocationRange = ref([])
   const allIncBasesRange = ref([])
 
+  const fetchIncidentsByYear = async (yearValue) => {
+    allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
+   }
+
   const fetchData = async (startDate, endDate, yearValue) => {
     // console.log('year value store', yearValue)
     // incidentsRange.value = await IncidentsApi.getIncidentsRange(startDate, endDate)
@@ -23,7 +27,7 @@ export const useIncidentsStore = defineStore('incidents', () => {
     // allIncLocationRange.value = await IncidentsApi.getIncLocationRange(startDate, endDate)
 
     incidentsRange.value = await ReportApi.getIncidentsRange(startDate, endDate)
-    allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
+    // allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
     openIncidentsGroup.value = await ReportApi.getOpenIncidentsGroup()
     allIncidentsGroup.value = await ReportApi.getAllIncidentsGroup(startDate, endDate)
     allIncLocationRange.value = await ReportApi.getIncLocationRange(startDate, endDate)
@@ -47,6 +51,7 @@ export const useIncidentsStore = defineStore('incidents', () => {
 
   return {
     fetchData,
+    fetchIncidentsByYear,
     openIncidentsYear,
     closedIncidentsYear,
     currentIncidentsRange,
@@ -55,5 +60,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allIncidentsGroupData,
     allIncLocationRangeData,
     allIncBasesRange,
+
   }
 })
