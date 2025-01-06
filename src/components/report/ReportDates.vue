@@ -81,6 +81,14 @@
         :labels="BASES"
       />
     </div>
+
+    <div class="chart-base line-inc-hours">
+      <GradientLine />
+    </div>
+
+    <div class="chart-base bar-inc-days">
+      <BarChart />
+    </div>
   </section>
 </template>
 
@@ -94,6 +102,8 @@ import BaseBadge from '@/components/BaseBadge.vue'
 import StakedBar from '@/components/StakedBar.vue'
 import ScatterGroup from '@/components/ScatterGroup.vue'
 import DonnutChart from '@/components/DonnutChart.vue'
+import GradientLine from '@/components/GradientLine.vue'
+import BarChart from '@/components/BarChart.vue'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { useIncidentsStore } from '@/stores/incidents.js'
@@ -265,7 +275,7 @@ function convertirMinutos(minutosDecimal) {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 100px 300px 300px;
+  grid-template-rows: 100px 300px 300px 350px;
   gap: 10px;
 }
 
@@ -287,5 +297,15 @@ function convertirMinutos(minutosDecimal) {
 .donnut-bases {
   grid-column: 5 / 7;
   grid-row: 3 / 4;
+}
+
+.line-inc-hours {
+  grid-column: 1 / 5;
+  grid-row: 4 / 5;
+}
+
+.bar-inc-days {
+  grid-column: 5 / 7;
+  grid-row: 4 / 5;
 }
 </style>

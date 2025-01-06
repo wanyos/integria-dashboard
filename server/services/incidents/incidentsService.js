@@ -104,7 +104,6 @@ export default class IncidentsService {
   // incidencias abiertas por cada grupo de cualquier fecha
   static async getOpenIncidentsGroup() {
     try {
-      // const [rows] = await pool.query(QUERIES.openIncidentsGroup)
       const [rows] = await pool.query(QUERIES.openIncidentsGr)
       return { status: 200, incidents: rows }
     } catch (error) {
@@ -116,61 +115,110 @@ export default class IncidentsService {
   // incidencias abiertas / cerradas por rango de fechas y grupo, solo cantidades
   static async getAllIncidentsGroup(startDate, endDate) {
     try {
-      const [openOperadores] = await pool.query(QUERIES.allIncOpenOperadores, [startDate, endDate])
-      const [openTecnicos] = await pool.query(QUERIES.allIncOpenTecnicos, [startDate, endDate])
-      const [openAdministradores] = await pool.query(QUERIES.allIncOpenAdministradores, [
-        startDate,
-        endDate,
-      ])
-      const [openCiberseguridad] = await pool.query(QUERIES.allIncOpenCiberseguridad, [
-        startDate,
-        endDate,
-      ])
-      const [openHorizontales] = await pool.query(QUERIES.allIncOpenHorizontales, [
-        startDate,
-        endDate,
-      ])
-      const [openNegocio] = await pool.query(QUERIES.allIncOpenNegocio, [startDate, endDate])
-      const [openExterno] = await pool.query(QUERIES.allIncOpenExterno, [startDate, endDate])
-      const [closeOperadores] = await pool.query(QUERIES.allIncCloseOperadores, [
-        startDate,
-        endDate,
-      ])
-      const [closeTecnicos] = await pool.query(QUERIES.allIncCloseTecnicos, [startDate, endDate])
-      const [closeAdministradores] = await pool.query(QUERIES.allIncCloseAdministradores, [
-        startDate,
-        endDate,
-      ])
-      const [closeCiberseguridad] = await pool.query(QUERIES.allIncCloseCiberseguridad, [
-        startDate,
-        endDate,
-      ])
-      const [closeHorizontales] = await pool.query(QUERIES.allIncCloseHorizontales, [
-        startDate,
-        endDate,
-      ])
-      const [closeNegocio] = await pool.query(QUERIES.allIncCloseNegocio, [startDate, endDate])
-      const [closeExterno] = await pool.query(QUERIES.allIncCloseExterno, [startDate, endDate])
+      // const [openOperadores] = await pool.query(QUERIES.allIncOpenOperadores, [startDate, endDate])
+      // const [openTecnicos] = await pool.query(QUERIES.allIncOpenTecnicos, [startDate, endDate])
+      // const [openAdministradores] = await pool.query(QUERIES.allIncOpenAdministradores, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [openCiberseguridad] = await pool.query(QUERIES.allIncOpenCiberseguridad, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [openHorizontales] = await pool.query(QUERIES.allIncOpenHorizontales, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [openNegocio] = await pool.query(QUERIES.allIncOpenNegocio, [startDate, endDate])
+      // const [openExterno] = await pool.query(QUERIES.allIncOpenExterno, [startDate, endDate])
+
+      // const [closeOperadores] = await pool.query(QUERIES.allIncCloseOperadores, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [closeTecnicos] = await pool.query(QUERIES.allIncCloseTecnicos, [startDate, endDate])
+      // const [closeAdministradores] = await pool.query(QUERIES.allIncCloseAdministradores, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [closeCiberseguridad] = await pool.query(QUERIES.allIncCloseCiberseguridad, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [closeHorizontales] = await pool.query(QUERIES.allIncCloseHorizontales, [
+      //   startDate,
+      //   endDate,
+      // ])
+      // const [closeNegocio] = await pool.query(QUERIES.allIncCloseNegocio, [startDate, endDate])
+      // const [closeExterno] = await pool.query(QUERIES.allIncCloseExterno, [startDate, endDate])
+      // const incidentsSummary = {
+      //   open: {
+      //     operadores: openOperadores[0]?.count || 0,
+      //     tecnicos: openTecnicos[0].count || 0,
+      //     administradores: openAdministradores[0]?.count || 0,
+      //     ciberseguridad: openCiberseguridad[0]?.count || 0,
+      //     horizontales: openHorizontales[0]?.count || 0,
+      //     negocio: openNegocio[0]?.count || 0,
+      //     externo: openExterno[0]?.count || 0,
+      //   },
+      //   close: {
+      //     operadores: closeOperadores[0]?.count || 0,
+      //     tecnicos: closeTecnicos[0]?.count || 0,
+      //     administradores: closeAdministradores[0]?.count || 0,
+      //     ciberseguridad: closeCiberseguridad[0]?.count || 0,
+      //     horizontales: closeHorizontales[0]?.count || 0,
+      //     negocio: closeNegocio[0]?.count || 0,
+      //     externo: closeExterno[0]?.count || 0,
+      //   },
+      // }
+
+      const [openByGroup] = await pool.query(QUERIES.allIncOpenByGroup, [startDate, endDate]);
+      const [closeByGroup] = await pool.query(QUERIES.allIncCloseByGroup, [startDate, endDate]);
       const incidentsSummary = {
         open: {
-          operadores: openOperadores[0]?.count || 0,
-          tecnicos: openTecnicos[0].count || 0,
-          administradores: openAdministradores[0]?.count || 0,
-          ciberseguridad: openCiberseguridad[0]?.count || 0,
-          horizontales: openHorizontales[0]?.count || 0,
-          negocio: openNegocio[0]?.count || 0,
-          externo: openExterno[0]?.count || 0,
+          operadores: 0,
+          tecnicos: 0,
+          administradores: 0,
+          ciberseguridad: 0,
+          horizontales: 0,
+          negocio: 0,
+          externo: 0,
         },
         close: {
-          operadores: closeOperadores[0]?.count || 0,
-          tecnicos: closeTecnicos[0]?.count || 0,
-          administradores: closeAdministradores[0]?.count || 0,
-          ciberseguridad: closeCiberseguridad[0]?.count || 0,
-          horizontales: closeHorizontales[0]?.count || 0,
-          negocio: closeNegocio[0]?.count || 0,
-          externo: closeExterno[0]?.count || 0,
+          operadores: 0,
+          tecnicos: 0,
+          administradores: 0,
+          ciberseguridad: 0,
+          horizontales: 0,
+          negocio: 0,
+          externo: 0,
         },
       }
+
+      const groupMapping = {
+        'Operadores': 'operadores',
+        'Tecnicos': 'tecnicos',
+        'Administradores': 'administradores',
+        'Ciberseguridad': 'ciberseguridad',
+        'Apl.Horizontales': 'horizontales',
+        'Apl.Negocio': 'negocio',
+        'Tec.Externo': 'externo',
+      };
+
+      openByGroup.forEach(row => {
+        const groupKey = groupMapping[row.grupo];
+        if (groupKey) {
+          incidentsSummary.open[groupKey] = row.count;
+        }
+      });
+
+      closeByGroup.forEach(row => {
+        const groupKey = groupMapping[row.grupo];
+        if (groupKey) {
+          incidentsSummary.close[groupKey] = row.count;
+        }
+      });
+
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncidentsGroup:', error)

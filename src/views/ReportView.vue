@@ -161,7 +161,7 @@ const selectOptionMenu = (option) => {
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px;
+  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px 300px;
   gap: 10px;
 }
 

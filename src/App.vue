@@ -8,6 +8,7 @@
       </div>
       <article>
         <h4>Integria Dashboard</h4>
+        <p>auth: {{ authStore.isAuthenticated }}</p>
 
         <div v-if="!authStore.isAuthenticated" class="header__login-div">
           <button @click="openModal('Sing Up')">Sing up</button>
