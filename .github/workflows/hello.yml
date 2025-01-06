@@ -7,10 +7,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v2
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: 'Display messages'
         run: echo "Hello, world!"
+      - name: 'Check Node.js version'
+        run: node -v
       - name: 'Finish job'
         run: echo "Job finished successfully"
