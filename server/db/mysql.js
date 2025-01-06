@@ -1,14 +1,11 @@
 import dotenv from 'dotenv'
 import mysql from 'mysql2/promise'
 import { fileURLToPath } from 'url'
-// import { dirname, path } from 'path'
 import path from 'path'
 
 // Obtener la ruta del directorio actual usando `import.meta.url`
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-// dotenv.config({ path: resolve(__dirname, '../.env.development') })
 
 // Dynamically build the path to the .env.development file
 const envFile = `../.env.${process.env.NODE_ENV || 'development'}`
