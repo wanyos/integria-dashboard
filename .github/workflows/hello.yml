@@ -12,3 +12,5 @@ jobs:
     steps:
       - name: 'Display messages'
         run: echo "Hello, world!"
+      - name: 'Finish job'
+        run: echo "Job finished successfully"
