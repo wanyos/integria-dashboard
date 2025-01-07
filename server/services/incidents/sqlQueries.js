@@ -132,6 +132,30 @@ const QUERIES = {
 
 export default QUERIES
 
+// tiempo medio de resolucion y total de incidencias gestionadas
+// SELECT
+//     CASE
+//         WHEN id_grupo IN (2) THEN 'Operadores'
+//         WHEN id_grupo IN (7) THEN 'Tecnicos'
+//         WHEN id_grupo IN (8) THEN 'Administradores'
+//         WHEN id_grupo IN (148) THEN 'Ciberseguridad'
+//         WHEN id_grupo IN (19, 84, 86, 87, 122, 126, 149, 141, 21) THEN 'Apl.Horizontales'
+//         WHEN id_grupo IN (85, 20, 23, 40, 90, 91, 101, 43, 147) THEN 'Apl.Negocio'
+//         WHEN id_grupo IN (22, 24, 28, 31, 56, 154, 50, 52, 59, 32) THEN 'Tec.Externo'
+//         ELSE 'Otros'
+//     END AS grupo,
+//     COUNT(*) AS total_incidencias,
+//     AVG(TIMESTAMPDIFF(MINUTE, inicio, cierre)) AS minutos
+// FROM
+//     tincidencia
+// WHERE
+//     cierre IS NOT NULL
+//     AND cierre > '0001-01-01'
+//     AND inicio >= ?
+//     AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+//     AND id_grupo IN (2, 7, 8, 148, 19, 84, 86, 87, 122, 126, 149, 141, 21, 85, 20, 23, 40, 90, 91, 101, 43, 147, 22, 24, 28, 31, 56, 154, 50, 52, 59, 32)
+// GROUP BY grupo;
+
 // totalIncidents: `SELECT * FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
 
    //   avgIncidents: `
