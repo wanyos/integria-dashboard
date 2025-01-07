@@ -1,23 +1,54 @@
 <template>
-  <VueApexCharts type="line" width="100%" height="100%" :options="chartOptions" :series="series" />
+  <VueApexCharts ref="chartRef" type="line" width="100%" height="100%" :options="chartOptions" :series="series" />
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
+import { useChartUtils } from '@/composables/useChartUtils'
+import { generateDataGradient } from '../utils/dataProcessor'
+
+const props = defineProps({
+  id: {
+    type: String,
+    default: 'donut',
+  },
+  title: {
+    type: String,
+    default: ''
+  },
+  subtitle: {
+     type: String,
+    default: ''
+  },
+  incidents: {
+    type: Array,
+    default: () => []
+  }
+})
+
+const { chartRef } = useChartUtils()
+
+// const series = ref([
+//   {
+//     name: 'Total Inc',
+//     data: [
+//       0, 75, 20, 40, 12, 129, 106, 95, 8, 12, 33, 45, 0, 75, 20, 40, 12, 129, 106, 95, 8, 12, 33,
+//       45,
+//     ],
+//   },
+// ])
 
 const series = ref([
   {
     name: 'Total Inc',
-    data: [
-      0, 75, 20, 40, 12, 129, 106, 95, 8, 12, 33, 45, 0, 75, 20, 40, 12, 129, 106, 95, 8, 12, 33,
-      45,
-    ],
-  },
+    data: []
+  }
 ])
 
-const chartOptions = reactive({
+const chartOptions = ref({
   chart: {
+    id: `${props.id}`,
     type: 'line',
     zoom: {
       enabled: false,
@@ -27,7 +58,7 @@ const chartOptions = reactive({
     },
   },
   title: {
-    text: `Incidencts by hour`,
+    text: `${props.title}`,
     align: 'left',
     style: {
       fontSize: '16px',
@@ -77,7 +108,7 @@ const chartOptions = reactive({
   },
   yaxis: {
     min: 0,
-    max: 200,
+    max: 100,
     tickAmount: 5,
     labels: {
       formatter: function (value) {
@@ -118,6 +149,29 @@ const chartOptions = reactive({
     },
   },
 })
+
+const defaulValues = [0,0,0,0,0,0,0,0,0]
+
+watch(
+  () => props.incidents,
+  async (newIncidents) => {
+    const { values } = generateDataGradient(newIncidents)
+    await nextTick()
+
+    chartOptions.value = {
+      ...chartOptions.value,
+      subtitle: {
+        text: `${String(props.subtitle)}`,
+      },
+      yaxis: {
+        max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100
+      }
+    }
+    series.value[0].data = values.length ? [...values] : defaulValues
+  },
+  { immediate: true },
+)
+
 </script>
 
 <style lang="css" scoped></style>

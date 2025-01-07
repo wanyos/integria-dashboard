@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { generateDataScatterGroup } from '../utils/dataProcessor'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
@@ -46,7 +46,7 @@ const props = defineProps({
 const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesData = ref([])
 
-const chartOptions = reactive({
+const chartOptions = ref({
   chart: {
     type: 'scatter',
     zoom: {

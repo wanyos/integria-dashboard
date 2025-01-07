@@ -83,7 +83,7 @@
     </div>
 
     <div class="chart-base line-inc-hours">
-      <GradientLine />
+      <GradientLine title="Incidents by hours" :subtitle="getCurrentDate" :incidents="allIncByHours"  />
     </div>
 
     <div class="chart-base bar-inc-days">
@@ -136,7 +136,7 @@ const getDataStore = async (selectedRange, initYear) => {
   const endDate = dayjs(dateRange.value.endDate).format('YYYY-MM-DD')
   startDateAvg = startDate
   endDateAvg = endDate
-  await storeIncidents.fetchData(startDate, endDate, initYear)
+  await storeIncidents.fetchData(startDate, endDate)
   await nextTick()
   isLoading.value = false
 }
@@ -147,6 +147,7 @@ const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
 const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
 const allIncLocationRange = computed(() => storeIncidents.allIncLocationRangeData)
 const allIncBasesRange = computed(() => storeIncidents.allIncBasesRange)
+const allIncByHours = computed(() => storeIncidents.allIncByHours)
 
 const getPercentOpen = computed(() => {
   return calculatePercentage(

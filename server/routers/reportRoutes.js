@@ -10,5 +10,6 @@ reportRouter.get('/location/:startDate/:endDate', ReportController.getAllIncLoca
 reportRouter.get('/bases/:startDate/:endDate', ReportController.getAllIncBasesRange)
 reportRouter.get('/year/:currentYear', ReportController.getAllIncidentsYear)
 reportRouter.get('/open', ReportController.getOpenIncidentsGroup)
+reportRouter.get('/byhours/:startDate/:endDate', ReportController.getAllIncByHours)
 
 export default reportRouter

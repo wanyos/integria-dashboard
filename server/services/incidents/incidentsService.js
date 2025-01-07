@@ -115,63 +115,6 @@ export default class IncidentsService {
   // incidencias abiertas / cerradas por rango de fechas y grupo, solo cantidades
   static async getAllIncidentsGroup(startDate, endDate) {
     try {
-      // const [openOperadores] = await pool.query(QUERIES.allIncOpenOperadores, [startDate, endDate])
-      // const [openTecnicos] = await pool.query(QUERIES.allIncOpenTecnicos, [startDate, endDate])
-      // const [openAdministradores] = await pool.query(QUERIES.allIncOpenAdministradores, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [openCiberseguridad] = await pool.query(QUERIES.allIncOpenCiberseguridad, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [openHorizontales] = await pool.query(QUERIES.allIncOpenHorizontales, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [openNegocio] = await pool.query(QUERIES.allIncOpenNegocio, [startDate, endDate])
-      // const [openExterno] = await pool.query(QUERIES.allIncOpenExterno, [startDate, endDate])
-
-      // const [closeOperadores] = await pool.query(QUERIES.allIncCloseOperadores, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [closeTecnicos] = await pool.query(QUERIES.allIncCloseTecnicos, [startDate, endDate])
-      // const [closeAdministradores] = await pool.query(QUERIES.allIncCloseAdministradores, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [closeCiberseguridad] = await pool.query(QUERIES.allIncCloseCiberseguridad, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [closeHorizontales] = await pool.query(QUERIES.allIncCloseHorizontales, [
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [closeNegocio] = await pool.query(QUERIES.allIncCloseNegocio, [startDate, endDate])
-      // const [closeExterno] = await pool.query(QUERIES.allIncCloseExterno, [startDate, endDate])
-      // const incidentsSummary = {
-      //   open: {
-      //     operadores: openOperadores[0]?.count || 0,
-      //     tecnicos: openTecnicos[0].count || 0,
-      //     administradores: openAdministradores[0]?.count || 0,
-      //     ciberseguridad: openCiberseguridad[0]?.count || 0,
-      //     horizontales: openHorizontales[0]?.count || 0,
-      //     negocio: openNegocio[0]?.count || 0,
-      //     externo: openExterno[0]?.count || 0,
-      //   },
-      //   close: {
-      //     operadores: closeOperadores[0]?.count || 0,
-      //     tecnicos: closeTecnicos[0]?.count || 0,
-      //     administradores: closeAdministradores[0]?.count || 0,
-      //     ciberseguridad: closeCiberseguridad[0]?.count || 0,
-      //     horizontales: closeHorizontales[0]?.count || 0,
-      //     negocio: closeNegocio[0]?.count || 0,
-      //     externo: closeExterno[0]?.count || 0,
-      //   },
-      // }
-
       const [openByGroup] = await pool.query(QUERIES.allIncOpenByGroup, [startDate, endDate]);
       const [closeByGroup] = await pool.query(QUERIES.allIncCloseByGroup, [startDate, endDate]);
       const incidentsSummary = {
@@ -228,56 +171,9 @@ export default class IncidentsService {
 
   // incidencias abiertas en rango de fechas por localizacion, cantidad de cada localización
   static async getAllIncLocationRange(startDate, endDate) {
-    const locations = {
-      pacifico: ['PACIFICO', 'CERRO PLATA'],
-      fuencarral: 'FUENCARRAL',
-      la_elipa: 'LA ELIPA',
-      carabanchel: 'CARABANCHEL',
-      entrevias: 'ENTREVIAS',
-      sanchinarro: 'SANCHINARRO',
-    }
-
-    // const selectedGroup = locations.pacifico
-    // const placeholders = selectedGroup.map(() => '?').join(', ')
-    // const query = QUERIES.allIncLocationRange.replace('%IN_PLACEHOLDER%', placeholders)
-
     try {
-      // const [incPacifico] = await pool.query(query, [startDate, endDate, ...selectedGroup])
-      // const [incFuencarral] = await pool.query(QUERIES.allIncLocationRange, [
-      //   startDate,
-      //   endDate,
-      //   locations.fuencarral,
-      // ])
-      // const [incLaElipa] = await pool.query(QUERIES.allIncLocationRange, [
-      //   startDate,
-      //   endDate,
-      //   locations.la_elipa,
-      // ])
-      // const [incCarabanchel] = await pool.query(QUERIES.allIncLocationRange, [
-      //   startDate,
-      //   endDate,
-      //   locations.carabanchel,
-      // ])
-      // const [incEntrevias] = await pool.query(QUERIES.allIncLocationRange, [
-      //   startDate,
-      //   endDate,
-      //   locations.entrevias,
-      // ])
-      // const [incSanchinarro] = await pool.query(QUERIES.allIncLocationRange, [
-      //   startDate,
-      //   endDate,
-      //   locations.sanchinarro,
-      // ])
-      // const incidentsSummary = {
-      //   pacifico: incPacifico[0]?.total || 0,
-      //   fuencarral: incFuencarral[0]?.total || 0,
-      //   la_elipa: incLaElipa[0]?.total || 0,
-      //   carabanchel: incCarabanchel[0]?.total || 0,
-      //   entrevias: incEntrevias[0]?.total || 0,
-      //   sanchinarro: incSanchinarro[0]?.total || 0,
-      // }
-
       const [results] = await pool.query(QUERIES.allIncLocationRange, [startDate, endDate]);
+
       const incidentsSummary = {
         pacifico: results[0]?.pacifico || 0,
         fuencarral: results[0]?.fuencarral || 0,
@@ -296,18 +192,7 @@ export default class IncidentsService {
 
   // incidencias abiertas en rango de fechas por bases, cantidad de cada base
   static async getAllIncBasesRange(startDate, endDate) {
-    // const bases = {
-    //   Colon: ['%Colon%', '%%'],
-    //   Escuadron: ['%Escuadron%', '%%'],
-    //   Mediodia2: ['%Mediodia%', '%2%'],
-    //   Mediodia3: ['%Mediodia%', '%3%'],
-    //   Recuerdo: ['%Ntra%', '%Recuerdo%'],
-    //   Imperial: ['%Imperial%', '%%'],
-    //   Vicalvaro: ['%Vicalvaro%', '%%'],
-    // }
-
     try {
-
       const [results] = await pool.query(QUERIES.allIncBasesRange, [startDate, endDate]);
 
     const incidentsSummary = {
@@ -320,64 +205,22 @@ export default class IncidentsService {
       vicalvaro: results[0]?.Vicalvaro || 0,
     };
 
-      // const valuesColon = [ bases.Colon[0], bases.Colon[1], startDate, endDate,]
-      // const [incColon] = await pool.query(QUERIES.allIncBasesRange, valuesColon)
-
-      // const [incEscuadron] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Escuadron[0],
-      //   bases.Escuadron[1],
-      //   startDate,
-      //   endDate,
-      // ])
-      // const [incMediodia2] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Mediodia2[0],
-      //   bases.Mediodia2[1],
-      //   startDate,
-      //   endDate,
-
-      // ])
-      // const [incMediodia3] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Mediodia3[0],
-      //   bases.Mediodia3[1],
-      //   startDate,
-      //   endDate,
-
-      // ])
-      // const [incRecuerdo] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Recuerdo[0],
-      //   bases.Recuerdo[1],
-      //   startDate,
-      //   endDate,
-
-      // ])
-      // const [incImperial] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Imperial[0],
-      //   bases.Imperial[1],
-      //   startDate,
-      //   endDate,
-
-      // ])
-      // const [incVicalvaro] = await pool.query(QUERIES.allIncBasesRange, [
-      //   bases.Vicalvaro[0],
-      //   bases.Vicalvaro[1],
-      //   startDate,
-      //   endDate,
-
-      // ])
-
-      // const incidentsSummary = {
-      //   colon: incColon[0]?.total || 0,
-      //   escuadron: incEscuadron[0]?.total || 0,
-      //   // mediodia2: incMediodia2[0]?.total || 0,
-      //   // mediodia3: incMediodia3[0]?.total || 0,
-      //   // recuerdo: incRecuerdo[0]?.total || 0,
-      //   // imperial: incImperial[0]?.total || 0,
-      //   // vicalvaro: incVicalvaro[0]?.total || 0,
-      // }
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncBasesRange:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
+
+  static async getAllIncByHours(startDate, endDate) {
+    try {
+      const [results] = await pool.query(QUERIES.allIncHours, [startDate, endDate]);
+      return { status: 200, incidents: results }
+    } catch (error) {
+      console.error('Database error getAllIncByHours:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+
 }

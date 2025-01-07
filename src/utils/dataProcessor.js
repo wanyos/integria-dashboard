@@ -199,3 +199,11 @@ export const generateDataDonnut = (incidents) => {
     values: Array.from(values),
   }
 }
+
+export const generateDataGradient = (incidents) => {
+  const values = []
+  incidents.forEach((inc) => {
+    values.push(inc.count)
+  })
+  return { values }
+}

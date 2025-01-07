@@ -119,12 +119,10 @@ watch(
     chartOptions.value = {
       ...chartOptions.value,
       subtitle: {
-        text: `Date filter: ${String(props.subtitle)}`,
+        text: `${String(props.subtitle)}`,
       },
     }
-
     series.value = values.length ? [...values] : defaulValues
-
   },
   { immediate: true },
 )

@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 const props = defineProps({
@@ -21,7 +21,7 @@ const series = ref([
   },
 ])
 
-const chartOptions = reactive({
+const chartOptions = ref({
   chart: {
     type: 'bar',
   },

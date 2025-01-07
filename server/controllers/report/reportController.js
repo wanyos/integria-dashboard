@@ -93,4 +93,21 @@ export default class ReportController {
       next(error)
     }
   }
+
+  static async getAllIncByHours(req, res, next) {
+    const { startDate, endDate } = req.params
+    if (!startDate || !endDate || isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+      const error = new Error('startDate and endDate must be valid date values')
+      error.status = 400
+      return next(error)
+    }
+    try {
+      const { status, incidents } = await IncidentsService.getAllIncByHours(startDate, endDate)
+      return res.status(status).json(incidents)
+    } catch (error) {
+      console.error(error)
+      next(error)
+    }
+  }
+
 }
