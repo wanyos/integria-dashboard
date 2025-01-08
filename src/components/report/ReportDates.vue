@@ -66,9 +66,8 @@
       <DonnutChart
         id="location"
         :incidents="allIncLocationRange"
-        title="Incident by place"
+        title="Incidents by location "
         :subtitle="getCurrentDate"
-        :labels="LOCATION"
       />
     </div>
 
@@ -76,9 +75,17 @@
       <DonnutChart
         id="bases"
         :incidents="allIncBasesRange"
-        title="Incident bases"
+        title="Incidents by bases"
         :subtitle="getCurrentDate"
-        :labels="BASES"
+      />
+    </div>
+
+    <div class="chart-base donnut-parking">
+      <DonnutChart
+        id="parking"
+        :incidents="allIncParkingRange"
+        title="Parking incidents"
+        :subtitle="getCurrentDate"
       />
     </div>
 
@@ -87,8 +94,9 @@
     </div>
 
     <div class="chart-base bar-inc-days">
-      <BarChart />
+      <BarChart title="Incidents by Weekdays" :subtitle="getCurrentDate" :incidents="allIncByWekdays" />
     </div>
+
   </section>
 </template>
 
@@ -96,7 +104,6 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import dayjs from 'dayjs'
 import DateRange from '@/utils/dateRange.js'
-import { LOCATION, BASES } from '@/constants/constants'
 import InfoItem from '@/components/InfoItem.vue'
 import BaseBadge from '@/components/BaseBadge.vue'
 import StakedBar from '@/components/StakedBar.vue'
@@ -147,7 +154,9 @@ const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
 const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
 const allIncLocationRange = computed(() => storeIncidents.allIncLocationRangeData)
 const allIncBasesRange = computed(() => storeIncidents.allIncBasesRange)
-const allIncByHours = computed(() => storeIncidents.allIncByHours)
+const allIncParkingRange = computed(() => storeIncidents.allIncParkingRangeData)
+const allIncByHours = computed(() => storeIncidents.allIncByHoursRangeData)
+const allIncByWekdays = computed(() => storeIncidents.allIncByWeekdaysRangeData)
 
 const getPercentOpen = computed(() => {
   return calculatePercentage(
@@ -276,7 +285,7 @@ function convertirMinutos(minutosDecimal) {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 100px 300px 300px 350px;
+  grid-template-rows: 100px 300px 300px 350px 350px;
   gap: 10px;
 }
 
@@ -290,23 +299,30 @@ function convertirMinutos(minutosDecimal) {
   grid-row: 2 / 3;
 }
 
-.donnut-places {
-  grid-column: 3 / 5;
+.line-inc-hours {
+  grid-column: 3 / 7;
   grid-row: 3 / 4;
+}
+
+
+.donnut-places {
+  grid-column: 1 / 3;
+  grid-row: 4 / 5;
 }
 
 .donnut-bases {
-  grid-column: 5 / 7;
-  grid-row: 3 / 4;
-}
-
-.line-inc-hours {
-  grid-column: 1 / 5;
+  grid-column: 3 / 5;
   grid-row: 4 / 5;
 }
+
+.donnut-parking {
+  grid-column: 5 / 7;
+  grid-row: 4 / 5;
+}
+
 
 .bar-inc-days {
-  grid-column: 5 / 7;
-  grid-row: 4 / 5;
+  grid-column: 1 / 3;
+  grid-row: 5 / 6;
 }
 </style>

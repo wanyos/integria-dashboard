@@ -109,7 +109,7 @@ const chartOptions = ref({
   yaxis: {
     min: 0,
     max: 100,
-    tickAmount: 5,
+    tickAmount: 10,
     labels: {
       formatter: function (value) {
         return value.toFixed(0) // Mostrar valores enteros
@@ -128,14 +128,6 @@ const chartOptions = ref({
       right: 50,
     },
   },
-  //   title: {
-  //     text: 'Forecast',
-  //     align: 'left',
-  //     style: {
-  //       fontSize: '16px',
-  //       color: '#666'
-  //     }
-  //   },
   fill: {
     type: 'gradient',
     gradient: {

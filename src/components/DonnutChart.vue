@@ -61,7 +61,32 @@ const chartOptions = ref({
       expandOnClick: false,
       donut: {
         size: '50%',
-      },
+        labels: {
+          show: true,
+          total: {
+            show: true,
+            label: 'Total',
+            formatter: function (w) {
+              const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+              return `${total} Inc`
+            }
+          }
+        }
+      }
+    },
+  },
+  dataLabels: {
+    enabled: true,
+    formatter: function (val) {
+      return `${val.toFixed(1)}%`
+    },
+    style: {
+      fontSize: '12px',
+      fontWeight: 'normal',
+      colors: ['#1a1a1a']
+    },
+    dropShadow: {
+      enabled: false,
     },
   },
   title: {
@@ -121,6 +146,7 @@ watch(
       subtitle: {
         text: `${String(props.subtitle)}`,
       },
+      labels: [...labels]
     }
     series.value = values.length ? [...values] : defaulValues
   },

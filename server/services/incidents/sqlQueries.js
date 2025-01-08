@@ -85,6 +85,29 @@ const QUERIES = {
     INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
     WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
 
+    allIncParkingRange: ` SELECT
+    SUM(CASE WHEN R.data LIKE '%ALMAGRO%' THEN 1 ELSE 0 END) AS Almagro,
+    SUM(CASE WHEN R.data LIKE '%AVD PORTUGAL%' THEN 1 ELSE 0 END) AS AvdPortugal,
+    SUM(CASE WHEN R.data LIKE '%CANALEJAS%' THEN 1 ELSE 0 END) AS Canalejas,
+    SUM(CASE WHEN R.data LIKE '%FUENCARRAL123%' THEN 1 ELSE 0 END) AS Fuencarral123,
+    SUM(CASE WHEN R.data LIKE '%JACINTO BENAVENTE%' THEN 1 ELSE 0 END) AS Benavente,
+    SUM(CASE WHEN R.data LIKE '%MARQUES DE SALAMANCA%' THEN 1 ELSE 0 END) AS MqSalamanca,
+    SUM(CASE WHEN R.data LIKE '%MONTALBAN%' THEN 1 ELSE 0 END) AS Montalban,
+    SUM(CASE WHEN R.data LIKE '%NTRA SRA DEL RECUERDO%' THEN 1 ELSE 0 END) AS NtrRecuerdo,
+    SUM(CASE WHEN R.data LIKE '%ORENSE%' THEN 1 ELSE 0 END) AS Orense,
+    SUM(CASE WHEN R.data LIKE '%PLAZA ESPAÑA%' THEN 1 ELSE 0 END) AS PlzEspaña,
+    SUM(CASE WHEN R.data LIKE '%PLAZA MAYOR%' THEN 1 ELSE 0 END) AS PlzMayor,
+    SUM(CASE WHEN R.data LIKE '%RECOLETOS%' THEN 1 ELSE 0 END) AS Recoletos,
+    SUM(CASE WHEN R.data LIKE '%SAN EPIFANIO%' THEN 1 ELSE 0 END) AS SanEpifanio,
+    SUM(CASE WHEN R.data LIKE '%PEDRO ZEROLO%' THEN 1 ELSE 0 END) AS PedroZerolo,
+    SUM(CASE WHEN R.data LIKE '%VILLA DE PARIS%' THEN 1 ELSE 0 END) AS VillaParis,
+    SUM(CASE WHEN R.data LIKE '%OLAVIDE%' THEN 1 ELSE 0 END) AS Olavide,
+    SUM(CASE WHEN R.data LIKE '%WANDA METROPOLITANO%' THEN 1 ELSE 0 END) AS Metropolitano,
+    SUM(CASE WHEN R.data LIKE '%FUENTE DE LA MORA%' THEN 1 ELSE 0 END) AS FuenteMora
+FROM tincident_field_data R
+INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
+WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+
   // total incidencias por horas en rango de fechas (line-chart)
   allIncHours: `SELECT HOUR(inicio) AS hour, COUNT(*) AS count
                 FROM tincidencia  WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)  GROUP BY hour  ORDER BY hour;`,

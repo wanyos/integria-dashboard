@@ -191,8 +191,11 @@ export const generateDataDonnut = (incidents) => {
   const labels = []
   const values = []
   Object.entries(incidents).forEach(([key, value]) => {
-    labels.push(key)
-    values.push(parseInt(value, 10))
+    const t = parseInt(value, 10)
+    if(t > 0) {
+      labels.push(key)
+      values.push(parseInt(value, 10))
+    }
   })
   return {
     labels: Array.from(labels),
@@ -205,5 +208,13 @@ export const generateDataGradient = (incidents) => {
   incidents.forEach((inc) => {
     values.push(inc.count)
   })
+  return { values }
+}
+
+export const generateDataBarchart = (incidents) => {
+  const values = []
+ incidents.forEach((inc) => {
+  values.push(inc.count)
+ })
   return { values }
 }

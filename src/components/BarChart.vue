@@ -1,23 +1,33 @@
 <template>
-  <VueApexCharts type="bar" width="100%" height="100%" :options="chartOptions" :series="series" />
+  <VueApexCharts ref="chartRef" type="bar" width="100%" height="100%" :options="chartOptions" :series="series" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
+import { useChartUtils } from '@/composables/useChartUtils'
+import { generateDataBarchart } from '../utils/dataProcessor'
 
 const props = defineProps({
-  seriesColor: {
+  title: {
     type: String,
-    default: '#08B545',
+    default: ''
   },
+  subtitle: {
+    type: String,
+    default: '',
+  },
+  incidents: {
+    type: Array,
+    default: () => []
+  }
 })
 
+const { chartRef } = useChartUtils()
 const series = ref([
   {
     name: 'Total Inc',
     data: [0, 75, 20, 40, 12, 129, 106],
-    color: props.seriesColor,
   },
 ])
 
@@ -26,7 +36,7 @@ const chartOptions = ref({
     type: 'bar',
   },
   title: {
-    text: `Incidents by day`,
+    text: `${props.title}`,
     align: 'left',
     style: {
       fontSize: '16px',
@@ -58,8 +68,8 @@ const chartOptions = ref({
   grid: {
     padding: {
       top: 10,
-      left: 20,
-      right: 20,
+      left: 30,
+      right: 30,
     },
     // row: {
     //   colors: ['#fff', '#f2f2f2']
@@ -106,6 +116,30 @@ const chartOptions = ref({
     },
   },
 })
+
+const defaulValues = [0,0,0,0,0,0,0,0,0]
+
+watch(
+  () => props.incidents,
+  async (newIncidents) => {
+    const { values } = generateDataBarchart(newIncidents)
+    await nextTick()
+
+    chartOptions.value = {
+      ...chartOptions.value,
+      subtitle: {
+        text: `${String(props.subtitle)}`,
+      },
+      yaxis: {
+        max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100
+      }
+    }
+    series.value[0].data = values.length ? [...values] : defaulValues
+  },
+  { immediate: true },
+)
+
+
 </script>
 
 <style lang="css" scoped></style>

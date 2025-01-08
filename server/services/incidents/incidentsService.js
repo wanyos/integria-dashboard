@@ -212,12 +212,57 @@ export default class IncidentsService {
     }
   }
 
+  // incidencias abiertas en rango de fechas por aparcamientos, cantidad de ellas
+  static async getAllIncParkingRange(startDate, endDate) {
+    try {
+      const [results] = await pool.query(QUERIES.allIncParkingRange, [startDate, endDate]);
+
+      const incidentsSummary = {
+        almagro: results[0]?.Almagro || 0,
+        avdPortugal: results[0]?.AvdPortugal || 0,
+        canalejas: results[0]?.Canalejas || 0,
+        fuencarral123: results[0]?.Fuencarral123 || 0,
+        benavente: results[0]?.Benavente || 0,
+        mqSalamanca: results[0]?.MqSalamanca || 0,
+        montalban: results[0]?.Montalban || 0,
+        recuerdo: results[0]?.NtrRecuerdo || 0,
+        orense: results[0]?.Orense || 0,
+        plzEspaña: results[0]?.PlzEspaña || 0,
+        plzMayor: results[0]?.PlzMayor || 0,
+        recoletos: results[0]?.Recoletos || 0,
+        sanEpifanio: results[0]?.SanEpifanio || 0,
+        pedroZerolo: results[0]?.PedroZerolo || 0,
+        villaParis: results[0]?.VillaParis || 0,
+        olavide: results[0]?.Olavide || 0,
+        metropolitano: results[0]?.Metropolitano || 0,
+        fuenteMora: results[0]?.FuenteMora || 0,
+      };
+
+      return { status: 200, incidents: incidentsSummary }
+    }catch (error) {
+      console.error('Database error getAllIncParkingRange:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // incidencias totales por horas del dia, rango de fechas
   static async getAllIncByHours(startDate, endDate) {
     try {
       const [results] = await pool.query(QUERIES.allIncHours, [startDate, endDate]);
       return { status: 200, incidents: results }
     } catch (error) {
       console.error('Database error getAllIncByHours:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // incidencias totales por dias, rango de fechas
+  static async getAllIncByWeekdays(startDate, endDate) {
+    try {
+      const [results] = await pool.query(QUERIES.allIncWeekDay, [startDate, endDate]);
+      return { status: 200, incidents: results }
+    } catch(error) {
+      console.error('Database error getAllIncByWeekdays:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
