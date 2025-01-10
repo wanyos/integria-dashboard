@@ -191,11 +191,9 @@ const getPercentPending = computed(() => {
 
 const getPercentAvg = computed(() => {
   const currentAvgDecimal =
-    storeIncidents.currentIncidentsRange.avg.hour +
-    storeIncidents.currentIncidentsRange.avg.minute / 60
+    storeIncidents.currentIncidentsRange.avg.minute
   const lastYearAvgDecimal =
-    storeIncidents.lastYearIncidentsRange.avg.hour +
-    storeIncidents.lastYearIncidentsRange.avg.minute / 60
+    storeIncidents.lastYearIncidentsRange.avg.minute
   return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal)
 })
 
