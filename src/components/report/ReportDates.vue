@@ -304,7 +304,6 @@ function convertirMinutos(minutosDecimal) {
   grid-row: 3 / 4;
 }
 
-
 .donnut-places {
   grid-column: 1 / 3;
   grid-row: 4 / 5;
@@ -319,7 +318,6 @@ function convertirMinutos(minutosDecimal) {
   grid-column: 5 / 7;
   grid-row: 4 / 5;
 }
-
 
 .bar-inc-days {
   grid-column: 1 / 3;
