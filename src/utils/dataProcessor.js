@@ -16,15 +16,16 @@ export function buildChartData(incidents) {
       groupedData[group].push([incident.id_incidencia, daysOpen])
     }
   })
-  // console.log('groupedData', groupedData)
   return groupedData
 }
+
 function calculateDaysOpen(startDate) {
   const start = dayjs(startDate)
   const now = dayjs()
   const diffDays = now.diff(start, 'day')
   return diffDays
 }
+
 function getGroupName(groupId) {
   switch (groupId) {
     case 2:
@@ -82,6 +83,7 @@ const GRUPOS = {
   Administradores: 8,
   Ciberseguridad: 148,
 }
+
 export const generateDataScatterGroup = (incidencias) => {
   // Inicializamos las series con los nombres de los grupos
   const series = Object.keys(GRUPOS).map((grupo, index) => ({

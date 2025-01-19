@@ -20,6 +20,14 @@ const props = defineProps({
   incidents: {
     type: Array,
     default: () => []
+  },
+  categories: {
+    type: Array,
+    default: () => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  },
+  options: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -27,9 +35,10 @@ const { chartRef } = useChartUtils()
 const series = ref([
   {
     name: 'Total Inc',
-    data: [0, 75, 20, 40, 12, 129, 106],
+    data: [20, 75, 20, 40, 12, 129, 106],
   },
 ])
+
 
 const chartOptions = ref({
   chart: {
@@ -77,10 +86,10 @@ const chartOptions = ref({
   },
   xaxis: {
     type: 'category',
-    categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    categories: props.categories,
     labels: {
-      rotate: -45,
-      rotateAlways: true,
+      rotate: props.options.rotate ?? 0,
+      rotateAlways: props.options.rotateAlways ?? false,
       style: {
         fontSize: '12px',
         colors: ['#1a1a1a'],
@@ -89,11 +98,11 @@ const chartOptions = ref({
   },
   yaxis: {
     min: 0,
-    max: 200,
+    max: 100,
     tickAmount: 5,
     labels: {
       formatter: function (value) {
-        return value.toFixed(0) // Mostrar valores enteros
+        return value.toFixed(0)
       },
       style: {
         fontSize: '12px',
@@ -131,7 +140,8 @@ watch(
         text: `${String(props.subtitle)}`,
       },
       yaxis: {
-        max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100
+        //max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100
+        max: values.length ? Math.ceil(Math.max(...values)) * 1.1 : 100 // Ajustar el valor máximo dinámicamente
       }
     }
     series.value[0].data = values.length ? [...values] : defaulValues

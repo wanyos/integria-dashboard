@@ -94,7 +94,7 @@
     </div>
 
     <div class="chart-base bar-inc-days">
-      <BarChart title="Incidents by Weekdays" :subtitle="getCurrentDate" :incidents="allIncByWekdays" />
+      <BarChart title="Incidents by Weekdays" :subtitle="getCurrentDate" :incidents="allIncByWekdays" :options="{rotate: -45, rotateAlways: true}" />
     </div>
 
   </section>

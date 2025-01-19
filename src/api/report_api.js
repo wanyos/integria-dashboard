@@ -19,6 +19,12 @@ class ReportApi extends ApiBase {
     return await this.get(endpoint, needToken)
   }
 
+  async getTotalIncYears(currentYear) {
+    const endpoint = `/api/report/years/${currentYear}`
+    const needToken = false
+    return await this.get(endpoint, needToken)
+  }
+
   async getOpenIncidentsGroup() {
     const endpoint = '/api/report/open'
     const needToken = false

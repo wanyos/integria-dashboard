@@ -8,5 +8,15 @@
     "roles": [
       "user"
     ]
+  },
+  {
+    "id": "799cd96c-de5a-436f-bebd-ac2886c167d0",
+    "username": "juanjo",
+    "email": "juanjoromero9@gmail.com",
+    "hashPassword": "$2b$10$ZzqKw8Dgfm4dERZOhAOLKeHG9ZiQFVA8lz1V93EpO.kBaKFAY4X86",
+    "createAt": "2025-01-14T20:33:21.027Z",
+    "roles": [
+      "user"
+    ]
   }
 ]

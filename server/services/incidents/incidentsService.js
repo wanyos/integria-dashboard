@@ -7,8 +7,26 @@ export default class IncidentsService {
       const [rows] = await pool.query(QUERIES.allIncidents)
       return { status: 200, incidents: rows }
     } catch (error) {
-      console.error(error)
       console.error('Database error:', error.message)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  // total incidencias de cada año gestionadas hasta el 2015, comienza en el ultimo año
+  static async getTotalIncYears(lastYear) {
+    try {
+      let summary = []
+      let initYear = 2015
+      while(initYear <= lastYear) {
+        const startDate = `${initYear-1}-12-31`
+        const endDate = `${initYear+1}-01-01`
+        const [result] = await pool.query(QUERIES.openIncidents, [startDate, endDate])
+        summary.push({[initYear]: result[0]?.count || 0})
+        initYear++
+      }
+      return { status: 200, incidents: summary}
+    } catch (error) {
+      console.error('Database error getTotalIncYears:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
@@ -72,7 +90,7 @@ export default class IncidentsService {
     }
   }
 
-  // todas las incidencias de un año, abiertas y cerradas. Cantidad de ellas
+  // todas las incidencias de un año, abiertas y cerradas. Cantidad de ellas por cada dia del año
   static async getIncidentsYear(currentYear) {
     try {
       const [openInc] = await pool.query(QUERIES.allIncidentsYearOpen, [currentYear])

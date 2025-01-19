@@ -2,6 +2,9 @@
 const QUERIES = {
   // Consultas para obtener incidentes por rango de fechas
   allIncidents: 'SELECT * FROM tincidencia LIMIT 100',
+
+  totalIncidents: `select count(*) as count from tincidencia WHERE inicio > ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+
   openIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
   closeIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'`,
   pendingIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre < '0001-01-01'`,

@@ -10,6 +10,7 @@ reportRouter.get('/location/:startDate/:endDate', ReportController.getAllIncLoca
 reportRouter.get('/bases/:startDate/:endDate', ReportController.getAllIncBasesRange)
 reportRouter.get('/parking/:startDate/:endDate', ReportController.getAllIncParkingRange)
 reportRouter.get('/year/:currentYear', ReportController.getAllIncidentsYear)
+reportRouter.get('/years/:lastYear', ReportController.getTotalIncYears)
 reportRouter.get('/open', ReportController.getOpenIncidentsGroup)
 reportRouter.get('/byhours/:startDate/:endDate', ReportController.getAllIncByHours)
 reportRouter.get('/byweekdays/:startDate/:endDate', ReportController.getAllIncByWeekdays)

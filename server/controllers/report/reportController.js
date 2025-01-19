@@ -33,6 +33,22 @@ export default class ReportController {
     }
   }
 
+  static async getTotalIncYears(req, res, next) {
+    const { lastYear } = req.params
+    if (!lastYear || isNaN(lastYear) || lastYear.length !== 4) {
+      const error = new Error('currentYear must be valid date values')
+      error.status = 400
+      return next(error)
+    }
+    try {
+      const { status, incidents } = await IncidentsService.getTotalIncYears(lastYear)
+      return res.status(status).json(incidents)
+    } catch (error) {
+      console.error(error)
+      next(error)
+    }
+  }
+
   static async getOpenIncidentsGroup(req, res, next) {
     try {
       const { status, incidents } = await IncidentsService.getOpenIncidentsGroup()
@@ -141,5 +157,7 @@ export default class ReportController {
       next(error)
     }
   }
+
+
 
 }

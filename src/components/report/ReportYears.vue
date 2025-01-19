@@ -6,6 +6,15 @@
       :is-full-page="false"
       :color="'#1565C0'"
     />
+
+    <div class="chart-base table-total-years">
+      <TableChart title="Sumary of incidents by year" :data-column="columns" :data-row="rows" />
+    </div>
+
+    <div class="chart-base barchart-total-years">
+      <BarChart title="Total incidents Years" :categories="yearsArray" :options="{rotate: 0}" />
+    </div>
+
     <div class="chart-base heatmap-open-init">
       <HeatMap
         id="heatmap-open"
@@ -91,10 +100,40 @@
 <script setup>
 import HeatMap from '@/components/HeatMap.vue'
 import AreaChart from '@/components/AreaChart.vue'
+import TableChart from '@/components/TableChart.vue'
+import BarChart from '@/components/BarChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import { watch, ref, nextTick, onMounted } from 'vue'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
+
+const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
+const rows = [
+  {
+    year: 2021,
+    inc: 14566,
+    tase: `+${125}`,
+    per: `+${12}%`
+  },
+  {
+    year: 2022,
+    inc: 12566,
+    tase: `+${125}`,
+    per: `+${12}%`
+  },
+  {
+    year: 2023,
+    inc: 11566,
+    tase: `+${125}`,
+    per: `+${12}%`
+  },
+  {
+    year: 2024,
+    inc: 10566,
+    tase: `+${125}`,
+    per: `+${12}%`
+  },
+]
 
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
@@ -103,6 +142,8 @@ const openInitYear = ref([])
 const closeInitYear = ref([])
 const openEndYear = ref([])
 const closeEndYear = ref([])
+const totalIncYears = ref([])
+const yearsArray = ref([])
 
 const props = defineProps({
   initYear: {
@@ -113,6 +154,17 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+})
+
+const getYearsArray = () => {
+  const currentYear = new Date().getFullYear()
+  for (let year = 2015; year < currentYear; year++) {
+    yearsArray.value.push(year)
+  }
+}
+
+onMounted(() => {
+  getYearsArray()
 })
 
 const setDataForYear = async (year, target) => {
@@ -127,6 +179,7 @@ const setDataForYear = async (year, target) => {
     closeEndYear.value = [...storeIncidents.closedIncidentsYear]
   }
 
+  totalIncYears.value = storeIncidents.totalIncidentsYears
   await nextTick()
   isLoading.value = false
 }
@@ -163,47 +216,57 @@ onMounted(() => {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 400px 400px 300px 300px;
+  grid-template-rows: 350px 400px 400px 300px 300px;
   gap: 10px;
+}
+
+.table-total-years {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+
+.barchart-total-years {
+  grid-column: 3 / 7;
+  grid-row: 1 / 2;
 }
 
 .heatmap-open-init {
   grid-column: 1 / 4;
-  grid-row: 1 / 2;
+  grid-row: 2 / 3;
 }
 
 .heatmap-open-end {
   grid-column: 4 / 7;
-  grid-row: 1 / 2;
+  grid-row: 2 / 3;
 }
 
 .heatmap-close-init {
   grid-column: 1 / 4;
-  grid-row: 2 / 3;
+  grid-row: 3 / 4;
 }
 
 .heatmap-close-end {
   grid-column: 4 / 7;
-  grid-row: 2 / 3;
+  grid-row: 3 / 4;
 }
 
 .histogram-open-init {
   grid-column: 1 / 4;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
 }
 
 .histogram-open-end {
   grid-column: 4 / 7;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
 }
 
 .histogram-close-init {
   grid-column: 1 / 4;
-  grid-row: 4 / 5;
+  grid-row: 5 / 6;
 }
 
 .histogram-close-end {
   grid-column: 4 / 7;
-  grid-row: 4 / 5;
+  grid-row: 5 / 6;
 }
 </style>
