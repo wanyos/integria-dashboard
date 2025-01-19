@@ -40,7 +40,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allIncByHours.value = await ReportApi.getIncByHours(startDate, endDate)
     allIncByWeekdays.value = await ReportApi.getIncByWeekdays(startDate, endDate)
 
-
     // console.log('store range', incidentsRange.value)
     // console.log('store year', allIncidentsYear.value)
     // console.log('store open', openIncidentsGroup.value)
