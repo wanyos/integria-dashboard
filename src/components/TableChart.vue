@@ -1,84 +1,110 @@
 <template>
-   <section class="container">
-<table>
-    <caption>{{ props.title }}</caption>
+  <section class="container">
+    <table>
+      <caption>
+        {{
+          props.title
+        }}
+      </caption>
 
-    <thead>
+      <thead>
         <tr>
           <th v-for="(item, index) in props.dataColumn" :key="index">{{ item }}</th>
         </tr>
-    </thead>
+      </thead>
 
-    <tbody>
-      <tr v-for="(row, rowIndex) in props.dataRow" :key="rowIndex">
-        <td v-for="(value, key, colIndex) in row" :key="colIndex">{{ value }}</td>
-      </tr>
-    </tbody>
-</table>
-
-</section>
+      <tbody>
+        <tr v-for="(row, rowIndex) in props.dataRow" :key="rowIndex">
+          <td
+            v-for="(value, key, colIndex) in row"
+            :key="colIndex"
+            :class="getColorClass(key, value)"
+          >
+            {{ value }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </template>
 
 <script setup>
-
 const props = defineProps({
   title: {
     type: String,
-    default: ''
+    default: '',
   },
   dataColumn: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   dataRow: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
+const getColorClass = (key, value) => {
+  // Convertir el valor a número si es una cadena con el símbolo '%'
+  const numericValue = typeof value === 'string' && value.includes('%') ? parseFloat(value) : value
+  if ((key === 'tase' || key === 'percent') && numericValue > 0) {
+    return 'text-green-500'
+  } else if ((key === 'tase' || key === 'percent') && numericValue < 0) {
+    return 'text-red-500'
+  }
+  return ''
+}
 </script>
 
 <style lang="css" scoped>
 .container {
-    /* padding: 25px; */
+  /* padding: 25px; */
 }
 
 caption {
-    margin-bottom: 5px;
-    font-size: 16px;
-    font-weight: normal;
-    color:  #1a1a1a;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #1a1a1a;
 }
 
 table {
-    border: 1px solid lightslategray;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid lightslategray;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 th {
-    position: relative;
-    width: 40px;
-    padding: 10px 25px;
-    font-size: 14px;
-    font-weight: normal;
-    color:  #1a1a1a;
+  position: relative;
+  width: 30px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: normal;
+  color: #1a1a1a;
 }
 
 th::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 10%;
-    width: 80%;
-    border-bottom: 2px solid black;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  border-bottom: 2px solid black;
 }
 
 td {
-    padding: 5px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: normal;
-    color:  #1a1a1a;
+  padding: 5px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+  color: #1a1a1a;
+}
+
+.text-green-500 {
+  color: #3aa43a;
+}
+
+.text-red-500 {
+  color: #d82d2d;
 }
 </style>

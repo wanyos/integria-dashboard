@@ -128,7 +128,7 @@ WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
     END AS day_of_week,
     COUNT(*) AS count
     FROM  tincidencia WHERE  inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
-      GROUP BY  day_of_week ORDER BY
+      GROUP BY day_of_week ORDER BY
     FIELD(day_of_week, 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun');`,
 
   // tiempo medio de respuesta por grupo en el rango de fechas (table)

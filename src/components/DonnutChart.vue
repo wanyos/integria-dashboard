@@ -13,6 +13,7 @@ import { nextTick, ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
 import { generateDataDonnut } from '../utils/dataProcessor'
+import { COLORS } from '@/constants/constants.js'
 
 const props = defineProps({
   id: {
@@ -35,6 +36,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  options: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 // const series = ref([14, 32, 12, 9, 5, 23])
@@ -47,7 +52,7 @@ const chartOptions = ref({
     type: 'donut',
   },
   labels: props.labels,
-  colors: ['#0096FB', '#8DBCFD', '#CCEAFE', '#A3E4D7', '#F9E79F', '#F5CBA7', '#D7BDE2', '#AED6F1'],
+  colors: props.options.colors || COLORS,
   grid: {
     padding: {
       top: 5,
@@ -63,27 +68,34 @@ const chartOptions = ref({
         size: '50%',
         labels: {
           show: true,
+
           total: {
             show: true,
             label: 'Total',
             formatter: function (w) {
               const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0)
               return `${total} Inc`
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
   },
+  // dataLabels: {
+  //   enabled: true,
+  //   formatter: function (val) {
+  //     return `${val.toFixed(1)}%`
+  //   },
   dataLabels: {
     enabled: true,
-    formatter: function (val) {
-      return `${val.toFixed(1)}%`
+    formatter: function (val, opts) {
+      const total = opts.w.globals.series[opts.seriesIndex]
+      return `${total} Inc`
     },
     style: {
       fontSize: '12px',
       fontWeight: 'normal',
-      colors: ['#1a1a1a']
+      colors: ['#1a1a1a'],
     },
     dropShadow: {
       enabled: false,
@@ -121,6 +133,7 @@ const chartOptions = ref({
     },
   },
   tooltip: {
+    enabled: false,
     style: {
       fontSize: '12px',
       fontFamily: 'Arial, sans-serif',
@@ -146,7 +159,7 @@ watch(
       subtitle: {
         text: `${String(props.subtitle)}`,
       },
-      labels: [...labels]
+      labels: [...labels],
     }
     series.value = values.length ? [...values] : defaulValues
   },

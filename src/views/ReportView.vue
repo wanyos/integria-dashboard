@@ -7,9 +7,13 @@
       :color="'#1565C0'"
     />
     <div class="div-menu">
-      <button @click="selectOptionMenu('Dates')" :class="{ selected: selectedOptions === 'Dates' }">
-        Dates
+      <button
+        @click="selectOptionMenu('Dashboard')"
+        :class="{ selected: selectedOptions === 'Dashboard' }"
+      >
+        Dashboard
       </button>
+      <button @click="selectOptionMenu('Dates')">Dates</button>
       <button @click="selectOptionMenu('Years')">Years</button>
     </div>
 
@@ -33,7 +37,7 @@
         </div>
       </div>
 
-      <div v-else class="item div__select">
+      <div v-if="selectedOptions === 'Dates'" class="item div__select">
         <ComboBox :options="SELECT_PERIOD" icon-name="bi-calendar2-check" v-model="selectedRange" />
       </div>
     </section>
@@ -41,13 +45,15 @@
     <div v-if="selectedOptions === 'Dates'" class="item item-label-date">{{ currentDate }}</div>
     <div class="item item__title"><p>Incidents</p></div>
 
+    <ReportDashboard v-if="selectedOptions === 'Dashboard'" />
+
     <ReportDates
       v-if="selectedOptions === 'Dates'"
       :selected-range="selectedRange"
       :init-year="initYear"
       @update:currentDate="updateCurrentDate"
     />
-    <ReportYears v-else :init-year="initYear" :end-year="endYear" />
+    <ReportYears v-if="selectedOptions === 'Years'" :init-year="initYear" :end-year="endYear" />
   </section>
 </template>
 
@@ -60,15 +66,16 @@ import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import ReportYears from '@/components/report/ReportYears.vue'
 import ReportDates from '@/components/report/ReportDates.vue'
+import ReportDashboard from '@/components/report/ReportDashboard.vue'
 
-const MENU_OPTIONS = ['Dates', 'Years']
+// const MENU_OPTIONS = ['Dashboard', 'Dates', 'Years']
 
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
 const initYear = ref(dayjs().subtract(1, 'year').year())
 const endYear = ref(dayjs().subtract(2, 'year').year())
 
 const isLoading = ref(false)
-const selectedOptions = ref('Dates')
+const selectedOptions = ref('Dashboard')
 const currentDate = ref(dayjs().format('DD MMM YYYY'))
 
 const initYearValues = computed(() => {
@@ -158,33 +165,34 @@ const selectOptionMenu = (option) => {
 
 /**************************                 container report          ***************************/
 .container-report {
+  margin-top: 15px;
+  border-radius: 15px;
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px 300px 300px;
+  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px 300px;
   gap: 10px;
 }
 
 .div-menu {
+  padding: 10px;
   border-bottom: 2px solid var(--color-text);
   width: 90%;
   grid-column: 1 / 3;
   grid-row: 1 / 2;
-  display: flex;
-  align-items: center;
-  padding: 0px 50px;
-  margin-bottom: 35px;
+  margin-bottom: 10px;
 }
 
-.div__select-menu {
+/* .div__select-menu {
   grid-column: 1 / 2;
   grid-row: 2 / 3;
-}
+} */
 
-.div__select {
+/* .div__select {
   grid-column: 3 / 4;
   grid-row: 2 / 3;
-}
+  background-color: antiquewhite;
+} */
 
 .section-years {
   grid-column: 2 / 4;

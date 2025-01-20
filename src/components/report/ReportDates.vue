@@ -90,13 +90,21 @@
     </div>
 
     <div class="chart-base line-inc-hours">
-      <GradientLine title="Incidents by hours" :subtitle="getCurrentDate" :incidents="allIncByHours"  />
+      <GradientLine
+        title="Incidents by hours"
+        :subtitle="getCurrentDate"
+        :incidents="allIncByHours"
+      />
     </div>
 
     <div class="chart-base bar-inc-days">
-      <BarChart title="Incidents by Weekdays" :subtitle="getCurrentDate" :incidents="allIncByWekdays" :options="{rotate: -45, rotateAlways: true}" />
+      <BarChart
+        title="Incidents by Weekdays"
+        :subtitle="getCurrentDate"
+        :incidents="allIncByWekdays"
+        :options="{ rotate: -45, rotateAlways: true }"
+      />
     </div>
-
   </section>
 </template>
 
@@ -190,10 +198,8 @@ const getPercentPending = computed(() => {
 })
 
 const getPercentAvg = computed(() => {
-  const currentAvgDecimal =
-    storeIncidents.currentIncidentsRange.avg.minute
-  const lastYearAvgDecimal =
-    storeIncidents.lastYearIncidentsRange.avg.minute
+  const currentAvgDecimal = storeIncidents.currentIncidentsRange.avg.minute
+  const lastYearAvgDecimal = storeIncidents.lastYearIncidentsRange.avg.minute
   return calculatePercentage(currentAvgDecimal, lastYearAvgDecimal)
 })
 

@@ -189,16 +189,46 @@ export const generateAreapData = (incidents) => {
 }
 
 /****************        generate objects serie for chart donnut places incidents      ******************/
+// export const generateDataDonnut = (incidents) => {
+//   const labels = []
+//   const values = []
+//   Object.entries(incidents).forEach(([key, value]) => {
+//     const t = parseInt(value, 10)
+//     if(t > 0) {
+//       labels.push(key)
+//       values.push(parseInt(value, 10))
+//     }
+//   })
+//   return {
+//     labels: Array.from(labels),
+//     values: Array.from(values),
+//   }
+// }
+
 export const generateDataDonnut = (incidents) => {
   const labels = []
   const values = []
-  Object.entries(incidents).forEach(([key, value]) => {
-    const t = parseInt(value, 10)
-    if(t > 0) {
-      labels.push(key)
-      values.push(parseInt(value, 10))
-    }
-  })
+
+  if (Array.isArray(incidents)) {
+    incidents.forEach((item) => {
+      if (item && typeof item === 'object') {
+        const keys = Object.keys(item)
+        if (keys.length >= 2) {
+          labels.push(item[keys[0]])
+          values.push(parseInt(item[keys[1]], 10))
+        }
+      }
+    })
+  } else if (typeof incidents === 'object' && incidents !== null) {
+    Object.entries(incidents).forEach(([key, value]) => {
+      const t = parseInt(value, 10)
+      if (t > 0) {
+        labels.push(key)
+        values.push(t)
+      }
+    })
+  }
+
   return {
     labels: Array.from(labels),
     values: Array.from(values),
@@ -219,4 +249,27 @@ export const generateDataBarchart = (incidents) => {
   values.push(inc.count)
  })
   return { values }
+}
+
+export const getRowsTableYears = (incidents) => {
+  const rows = []
+  for (let a = 0; a < incidents.length; a++) {
+    let diff = 0
+    let per = '0%'
+
+    if (a > 0) {
+      const incLast = parseInt(incidents[a - 1].count)
+      diff = parseInt(incidents[a].count) - incLast
+      per = ((diff / incLast) * 100).toFixed(2) + '%'
+    }
+
+    const row = {
+      year: incidents[a].year,
+      inc: incidents[a].count,
+      tase: diff,
+      percent: per
+    }
+    rows.push(row)
+  }
+  return rows
 }

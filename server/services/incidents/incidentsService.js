@@ -21,7 +21,7 @@ export default class IncidentsService {
         const startDate = `${initYear-1}-12-31`
         const endDate = `${initYear+1}-01-01`
         const [result] = await pool.query(QUERIES.openIncidents, [startDate, endDate])
-        summary.push({[initYear]: result[0]?.count || 0})
+        summary.push({ 'year': initYear, 'count': result[0]?.count || 0})
         initYear++
       }
       return { status: 200, incidents: summary}

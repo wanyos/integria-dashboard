@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted, onUpdated, computed, reactive } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { generateHeatmapData } from '@/utils/dataProcessor'
 import { useChartUtils } from '@/composables/useChartUtils'

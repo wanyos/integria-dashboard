@@ -30,10 +30,9 @@ export const useAuthenticationStore = defineStore('authentication', () => {
 
   const isAuthenticated = computed(() => {
     const isValid = dayjs().isBefore(dayjs(tokenExpiration.value));
-    console.log('tokenExpire', tokenExpiration.value);
-    console.log('is valid token: ', isValid);
-    console.log('token', token.value);
-
+    // console.log('tokenExpire', tokenExpiration.value);
+    // console.log('is valid token: ', isValid);
+    // console.log('token', token.value);
     // Retorna null si el token no es válido, de lo contrario retorna el token
     return isValid ? token.value : null;
   });
@@ -41,7 +40,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   // Observar cambios en isAuthenticated
   watch(isAuthenticated, (newValue) => {
     if (newValue === null) {
-      logout(); // Llama a logout cuando el token deja de ser válido
+      logout();
     }
   });
 
