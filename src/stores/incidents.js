@@ -17,10 +17,12 @@ export const useIncidentsStore = defineStore('incidents', () => {
   const allIncByHours = ref([])
   const allIncByWeekdays = ref([])
   const totalIncidentsYears = ref([])
+  const allIncByMonths = ref([])
 
   const fetchIncidentsByYear = async (yearValue) => {
     allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
     totalIncidentsYears.value = await ReportApi.getTotalIncYears(yearValue)
+    allIncByMonths.value = await ReportApi.getIncBymonths()
    }
 
   const fetchData = async (startDate, endDate) => {
@@ -73,6 +75,7 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allIncParkingRangeData,
     allIncByHoursRangeData,
     allIncByWeekdaysRangeData,
-    totalIncidentsYears
+    totalIncidentsYears,
+    allIncByMonths
   }
 })

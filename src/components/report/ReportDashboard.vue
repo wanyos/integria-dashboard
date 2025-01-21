@@ -34,7 +34,7 @@
     </div>
 
     <div class="chart-base table-years-months">
-      <TableChart title="Summary total months in years" :data-column="yearsArray" />
+      <TableChart title="Summary total months in years" :first-column="monthNames" :data-column="yearsArray" :data-row="totalBymonths" />
     </div>
   </section>
 </template>
@@ -48,8 +48,14 @@ import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { ref, nextTick, onMounted } from 'vue'
 import { COLORS1, COLORS2 } from '@/constants/constants.js'
-import { getRowsTableYears } from '@/utils/dataProcessor'
+import { getRowsTableYears, getRowsTableByMonths } from '@/utils/dataProcessor'
 import dayjs from 'dayjs'
+
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
 
 const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
 const storeIncidents = useIncidentsStore()
@@ -57,6 +63,9 @@ const isLoading = ref(false)
 const rowsTableYears = ref([])
 const yearsArray = ref([])
 const totalIncYears = ref([])
+
+const tableHeaders = ref([])
+const totalBymonths = ref([])
 
 const getYearsArray = () => {
   const currentYear = new Date().getFullYear()
@@ -70,6 +79,7 @@ const setDataForYear = async (year) => {
   await storeIncidents.fetchIncidentsByYear(year)
   totalIncYears.value = storeIncidents.totalIncidentsYears
   rowsTableYears.value = getRowsTableYears(storeIncidents.totalIncidentsYears)
+  totalBymonths.value = getRowsTableByMonths(storeIncidents.allIncByMonths)
 
   await nextTick()
   isLoading.value = false
@@ -94,7 +104,7 @@ onMounted(() => {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 400px 400px 400px 300px 300px;
+  grid-template-rows: 400px 450px 400px 400px 400px;
   gap: 10px;
 }
 

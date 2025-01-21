@@ -60,6 +60,12 @@ class ReportApi extends ApiBase {
     const needToken = false
     return await this.get(endpoint, needToken)
   }
+
+  async getIncBymonths() {
+    const endpoint = `/api/report/bymonths`
+    const needToken = false
+    return await this.get(endpoint, needToken)
+  }
 }
 
 export default new ReportApi()

@@ -285,4 +285,15 @@ export default class IncidentsService {
     }
   }
 
+  // cantidad por meses desde el 2015
+  static async getAllIncByMonths() {
+    try {
+      const [results] = await pool.query(QUERIES.allIncByMonths);
+      return { status: 200, incidents: results }
+    } catch(error) {
+      console.error('Database error getAllIncByMonths:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
 }

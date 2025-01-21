@@ -1,10 +1,8 @@
 
 const QUERIES = {
-  // Consultas para obtener incidentes por rango de fechas
   allIncidents: 'SELECT * FROM tincidencia LIMIT 100',
 
   totalIncidents: `select count(*) as count from tincidencia WHERE inicio > ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
-
   openIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
   closeIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'`,
   pendingIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre < '0001-01-01'`,
@@ -153,6 +151,24 @@ WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
     AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
     AND id_grupo IN (2, 7, 8, 148, 19, 84, 86, 87, 122, 126, 149, 141, 21, 85, 20, 23, 40, 90, 91, 101, 43, 147, 22, 24, 28, 31, 56, 154, 50, 52, 59, 32)
       GROUP BY grupo;`,
+
+      // incidencias desde el 2015 hasta año anterior, cantidad por meses
+  allIncByMonths: `SELECT
+    YEAR(cierre) AS year,
+    MONTH(cierre) AS month,
+    COUNT(*) AS count
+FROM
+    tincidencia
+WHERE
+    cierre >= '2015-01-01'
+    AND cierre < DATE_FORMAT(CURDATE(), '%Y-01-01')
+    AND cierre > '0001-01-01'
+GROUP BY
+    YEAR(cierre),
+    MONTH(cierre)
+ORDER BY
+    YEAR(cierre),
+    MONTH(cierre);`
 
 }
 

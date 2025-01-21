@@ -158,6 +158,14 @@ export default class ReportController {
     }
   }
 
-
+  static async getAllIncByMonths(req, res, next) {
+    try {
+      const { status, incidents } = await IncidentsService.getAllIncByMonths()
+      return res.status(status).json(incidents)
+    } catch (error) {
+      console.error(error)
+      next(error)
+    }
+  }
 
 }

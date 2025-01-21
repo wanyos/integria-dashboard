@@ -9,12 +9,15 @@
 
       <thead>
         <tr>
+          <th v-if="props.firstColumn.length > 0">Months</th>
           <th v-for="(item, index) in props.dataColumn" :key="index">{{ item }}</th>
         </tr>
       </thead>
 
       <tbody>
+
         <tr v-for="(row, rowIndex) in props.dataRow" :key="rowIndex">
+          <td v-if="props.firstColumn.length > 0">{{ props.firstColumn[rowIndex] }}</td>
           <td
             v-for="(value, key, colIndex) in row"
             :key="colIndex"
@@ -23,6 +26,7 @@
             {{ value }}
           </td>
         </tr>
+
       </tbody>
     </table>
   </section>
@@ -33,6 +37,10 @@ const props = defineProps({
   title: {
     type: String,
     default: '',
+  },
+  firstColumn: {
+    type: Array,
+    default: () => []
   },
   dataColumn: {
     type: Array,

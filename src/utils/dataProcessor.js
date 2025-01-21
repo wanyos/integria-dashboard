@@ -188,6 +188,87 @@ export const generateAreapData = (incidents) => {
   ]
 }
 
+/****************        generate rows for months table      ******************/
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const createMonthsArray = () => {
+  return monthNames.map((month) => ({
+    counts: {}
+  }))
+}
+
+export const getRowsTableByMonths = (incidents) => {
+  const monthsArray = createMonthsArray()
+  const years = new Set(incidents.map(incident => incident.year))
+
+  // Inicializar todos los meses con 0 para cada año
+  monthsArray.forEach(monthObj => {
+    years.forEach(year => {
+      monthObj.counts[year] = 0
+    })
+  })
+
+  // Llenar los conteos en el arreglo de meses
+  incidents.forEach(({ year, month, count }) => {
+    const monthIndex = month - 1 // Convertir mes a índice (0-11)
+    if (monthsArray[monthIndex]) {
+      monthsArray[monthIndex].counts[year] = count
+    }
+  })
+
+  // Crear las filas asegurando el orden de las claves
+  return monthsArray.map(({ counts }) => {
+    const row = {}
+    Object.keys(counts)
+      .sort() // Asegurarse de que los años estén en orden ascendente
+      .forEach((year) => {
+        row[year] = counts[year] || 0
+      })
+    return row
+  })
+}
+
+
+// const monthNames = [
+//   'January', 'February', 'March', 'April', 'May', 'June',
+//   'July', 'August', 'September', 'October', 'November', 'December'
+// ]
+
+// const createMonthsArray = () => {
+//   return monthNames.map((month) => ({
+//     month,
+//     counts: {}
+//   }))
+// }
+
+// export const getRowsTableByMonths = (incidents) => {
+//   const monthsArray = createMonthsArray()
+//   incidents.forEach((incident) => {
+//     const { year, month, count } = incident
+//     const monthIndex = month - 1 // Convertir el mes a índice (0-11)
+//     if (monthsArray[monthIndex]) {
+//       monthsArray[monthIndex].counts[year] = count
+//     }
+//   })
+
+//   const rows = monthsArray.map((monthObj) => {
+//     const row = { month: monthObj.month } // january, february, ....
+//     for (const year of Object.keys(monthObj.counts)) {
+//       if (year !== '2015') {
+//         row[year] = monthObj.counts[year]
+//       } else {
+//         row[year] = monthObj.month === 'December' ? monthObj.counts[year] : '' // Solo mostrar datos en diciembre de 2015
+//       }
+//     }
+//     return row
+//   })
+
+//   return rows
+// }
+
 /****************        generate objects serie for chart donnut places incidents      ******************/
 // export const generateDataDonnut = (incidents) => {
 //   const labels = []
