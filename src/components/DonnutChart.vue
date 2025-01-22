@@ -36,6 +36,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  data: {
+    type: Array,
+    default: () => []
+  },
   options: {
     type: Object,
     default: () => ({}),
@@ -44,7 +48,7 @@ const props = defineProps({
 
 // const series = ref([14, 32, 12, 9, 5, 23])
 const { chartRef } = useChartUtils()
-const series = ref([])
+const series = ref(props.data)
 
 const chartOptions = ref({
   chart: {

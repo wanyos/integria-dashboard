@@ -36,6 +36,11 @@
     <div class="chart-base table-years-months">
       <TableChart title="Summary total months in years" :first-column="monthNames" :data-column="yearsArray" :data-row="totalBymonths" />
     </div>
+
+    <div class="chart-base donut-avg-months">
+      <DonnutChart id="AvgByMonths" title="Average incidents by months" :labels=nameMonths :data=dataValues />
+    </div>
+
   </section>
 </template>
 
@@ -48,7 +53,7 @@ import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { ref, nextTick, onMounted } from 'vue'
 import { COLORS1, COLORS2 } from '@/constants/constants.js'
-import { getRowsTableYears, getRowsTableByMonths } from '@/utils/dataProcessor'
+import { getRowsTableYears, getRowsTableByMonths, getAvgByMonths } from '@/utils/dataProcessor'
 import dayjs from 'dayjs'
 
 const monthNames = [
@@ -64,8 +69,12 @@ const rowsTableYears = ref([])
 const yearsArray = ref([])
 const totalIncYears = ref([])
 
-const tableHeaders = ref([])
+const avgByMonths = ref(['Enero', 'Febrero', 'Marzo'])
+const dataValues = ref([85,84,93])
+
+// const tableHeaders = ref([])
 const totalBymonths = ref([])
+const nameMonths = ref([])
 
 const getYearsArray = () => {
   const currentYear = new Date().getFullYear()
@@ -80,6 +89,11 @@ const setDataForYear = async (year) => {
   totalIncYears.value = storeIncidents.totalIncidentsYears
   rowsTableYears.value = getRowsTableYears(storeIncidents.totalIncidentsYears)
   totalBymonths.value = getRowsTableByMonths(storeIncidents.allIncByMonths)
+  const { labels, values } = getAvgByMonths(storeIncidents.allIncByMonths)
+  nameMonths.value = [...labels]
+  console.log('labels data', labels)
+  console.log('values data', values)
+
 
   await nextTick()
   isLoading.value = false
@@ -131,5 +145,10 @@ onMounted(() => {
   grid-row: 2 / 3;
   display: flex;
   justify-content: center;
+}
+
+.donut-avg-months {
+  grid-column: 5 / 7;
+  grid-row: 2 / 3;
 }
 </style>

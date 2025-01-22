@@ -188,11 +188,52 @@ export const generateAreapData = (incidents) => {
   ]
 }
 
-/****************        generate rows for months table      ******************/
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+/****************        generate donut avg incidents by months all years      ******************/
+export const getAvgByMonths = (incidents) => {
+  const totalMonths = {
+    1: { total: 0, count: 0 },
+    2: { total: 0, count: 0 },
+    3: { total: 0, count: 0 },
+    4: { total: 0, count: 0 },
+    5: { total: 0, count: 0 },
+    6: { total: 0, count: 0 },
+    7: { total: 0, count: 0 },
+    8: { total: 0, count: 0 },
+    9: { total: 0, count: 0 },
+    10: { total: 0, count: 0 },
+    11: { total: 0, count: 0 },
+    12: { total: 0, count: 0 },
+  };
+
+  // Sumar los valores de count y contar las ocurrencias para cada mes
+  incidents.forEach(({ year, month, count }) => {
+    if (totalMonths[month]) {
+      totalMonths[month].total += count;
+      totalMonths[month].count += 1;
+    }
+  });
+
+  // Calcular el promedio para cada mes
+  const values = Object.keys(totalMonths).map((month) => {
+    const { total, count } = totalMonths[month];
+    return count > 0 ? Math.round(total / count) : 0;
+  });
+
+  //console.log('values procesor', values);
+  //console.log('labels procesor', monthNames)
+  return {
+    labels: Array.from(monthNames),
+    values: Array.from(values),
+  }
+}
+
+/****************        generate rows for months table      ******************/
+
 
 const createMonthsArray = () => {
   return monthNames.map((month) => ({
@@ -309,7 +350,8 @@ export const generateDataDonnut = (incidents) => {
       }
     })
   }
-
+// console.log('labels', labels)
+// console.log('values', values)
   return {
     labels: Array.from(labels),
     values: Array.from(values),

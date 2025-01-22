@@ -6,6 +6,7 @@ export const SELECT_PERIOD = [
   'Last 4 Months',
   'Last 7 Months',
   'This Year',
+  'Last Year'
 ]
 
 export const LOCATION = [
