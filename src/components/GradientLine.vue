@@ -6,7 +6,6 @@
 import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
-import { generateDataGradient } from '../utils/dataProcessor'
 
 const props = defineProps({
   id: {
@@ -22,8 +21,8 @@ const props = defineProps({
     default: ''
   },
   incidents: {
-    type: Array,
-    default: () => []
+    type: Object,
+    default: () => {}
   }
 })
 
@@ -147,7 +146,7 @@ const defaulValues = [0,0,0,0,0,0,0,0,0]
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    const { values } = generateDataGradient(newIncidents)
+    const { values } = newIncidents
     await nextTick()
 
     chartOptions.value = {

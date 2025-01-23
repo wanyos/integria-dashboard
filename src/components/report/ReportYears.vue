@@ -7,32 +7,6 @@
       :color="'#1565C0'"
     />
 
-    <!-- <div class="chart-base table-total-years">
-      <TableChart
-        title="Sumary of incidents by year"
-        :data-column="columns"
-        :data-row="rowsTableYears"
-      />
-    </div>
-
-    <div class="chart-base donnut-total-years">
-      <DonnutChart
-        id="totalYears"
-        :incidents="totalIncYears"
-        title="Total incidents by years"
-        :options="{ colors: COLORS1 }"
-      />
-    </div>
-
-    <div class="chart-base barchart-total-years">
-      <BarChart
-        title="Total incidents Years"
-        :categories="yearsArray"
-        :incidents="totalIncYears"
-        :options="{ rotate: -45, rotateAlways: true }"
-      />
-    </div> -->
-
     <div class="chart-base heatmap-open-init">
       <HeatMap
         id="heatmap-open"
@@ -118,16 +92,11 @@
 <script setup>
 import HeatMap from '@/components/HeatMap.vue'
 import AreaChart from '@/components/AreaChart.vue'
-// import TableChart from '@/components/TableChart.vue'
-// import BarChart from '@/components/BarChart.vue'
-// import DonnutChart from '@/components/DonnutChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import { watch, ref, nextTick, onMounted } from 'vue'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
-// import { getRowsTableYears } from '@/utils/dataProcessor'
-// import { COLORS1, COLORS2 } from '@/constants/constants.js'
-// const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
+import { generateHeatmapData, generateAreapData } from '@/utils/dataProcessor'
 
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
@@ -137,8 +106,11 @@ const closeInitYear = ref([])
 const openEndYear = ref([])
 const closeEndYear = ref([])
 const yearsArray = ref([])
-// const rowsTableYears = ref([])
-// const totalIncYears = ref([])
+
+// const openInitYear = computed(() => )
+// const closeInitYear = computed(() => )
+// const openEndYear = computed(() => )
+// const closeEndYear = computed(() => )
 
 const props = defineProps({
   initYear: {
@@ -169,8 +141,7 @@ const setDataForYear = async (year, target) => {
     openEndYear.value = [...storeIncidents.openIncidentsYear]
     closeEndYear.value = [...storeIncidents.closedIncidentsYear]
   }
-  // totalIncYears.value = storeIncidents.totalIncidentsYears
-  // rowsTableYears.value = getRowsTableYears(storeIncidents.totalIncidentsYears)
+
   await nextTick()
   isLoading.value = false
 }
@@ -211,24 +182,6 @@ onMounted(async () => {
   grid-template-rows: 400px 400px 300px 300px 300px;
   gap: 10px;
 }
-
-/* .table-total-years {
-  grid-column: 1 / 3;
-  grid-row: 1 / 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.barchart-total-years {
-  grid-column: 3 / 5;
-  grid-row: 1 / 2;
-}
-
-.donnut-total-years {
-  grid-column: 5 / 7;
-  grid-row: 1 / 2;
-} */
 
 .heatmap-open-init {
   grid-column: 1 / 4;

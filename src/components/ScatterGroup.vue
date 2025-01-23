@@ -11,7 +11,6 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { generateDataScatterGroup } from '../utils/dataProcessor'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
 
@@ -172,8 +171,8 @@ const chartOptions = ref({
 
 watch(
   () => props.allIncidents,
-  (newIncidents) => {
-    seriesData.value = generateDataScatterGroup(newIncidents)
+   (newIncidents) => {
+    seriesData.value = newIncidents
   },
   { immediate: true },
 )

@@ -18,7 +18,7 @@
     <div class="chart-base donnut-total-years">
       <DonnutChart
         id="totalYears"
-        :incidents="totalIncYears"
+        :incidents="totalIncYearsDonut"
         title="Total incidents by years"
         :options="{ colors: COLORS1 }"
       />
@@ -28,7 +28,7 @@
       <BarChart
         title="Total incidents Years"
         :categories="yearsArray"
-        :incidents="totalIncYears"
+        :incidents="totalIncYearBarchart"
         :options="{ rotate: -45, rotateAlways: true }"
       />
     </div>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="chart-base donut-avg-months">
-      <DonnutChart id="AvgByMonths" title="Average incidents by months" :labels=nameMonths :data=dataValues />
+      <DonnutChart id="AvgByMonths" title="Average incidents by months" :incidents="avgByMonths" :options="{ colors: COLORS1 }" />
     </div>
 
   </section>
@@ -51,30 +51,19 @@ import DonnutChart from '@/components/DonnutChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted,computed } from 'vue'
 import { COLORS1, COLORS2 } from '@/constants/constants.js'
-import { getRowsTableYears, getRowsTableByMonths, getAvgByMonths } from '@/utils/dataProcessor'
+import { getRowsTableYears, getRowsTableByMonths, getAvgByMonths, generateDataDonnut, generateDataBarchart } from '@/utils/dataProcessor'
 import dayjs from 'dayjs'
 
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
-
-
 const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
-const rowsTableYears = ref([])
 const yearsArray = ref([])
-const totalIncYears = ref([])
-
-const avgByMonths = ref(['Enero', 'Febrero', 'Marzo'])
-const dataValues = ref([85,84,93])
-
-// const tableHeaders = ref([])
-const totalBymonths = ref([])
-const nameMonths = ref([])
 
 const getYearsArray = () => {
   const currentYear = new Date().getFullYear()
@@ -83,18 +72,15 @@ const getYearsArray = () => {
   }
 }
 
+  const totalIncYearsDonut = computed(() =>generateDataDonnut(storeIncidents.totalIncidentsYears))
+  const totalIncYearBarchart = computed(() =>generateDataBarchart(storeIncidents.totalIncidentsYears))
+  const rowsTableYears = computed(() => getRowsTableYears(storeIncidents.totalIncidentsYears))
+  const totalBymonths = computed(() => getRowsTableByMonths(storeIncidents.allIncByMonths))
+  const avgByMonths = computed(() => getAvgByMonths(storeIncidents.allIncByMonths))
+
 const setDataForYear = async (year) => {
   isLoading.value = true
   await storeIncidents.fetchIncidentsByYear(year)
-  totalIncYears.value = storeIncidents.totalIncidentsYears
-  rowsTableYears.value = getRowsTableYears(storeIncidents.totalIncidentsYears)
-  totalBymonths.value = getRowsTableByMonths(storeIncidents.allIncByMonths)
-  const { labels, values } = getAvgByMonths(storeIncidents.allIncByMonths)
-  nameMonths.value = [...labels]
-  console.log('labels data', labels)
-  console.log('values data', values)
-
-
   await nextTick()
   isLoading.value = false
 }

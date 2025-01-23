@@ -272,61 +272,6 @@ export const getRowsTableByMonths = (incidents) => {
   })
 }
 
-
-// const monthNames = [
-//   'January', 'February', 'March', 'April', 'May', 'June',
-//   'July', 'August', 'September', 'October', 'November', 'December'
-// ]
-
-// const createMonthsArray = () => {
-//   return monthNames.map((month) => ({
-//     month,
-//     counts: {}
-//   }))
-// }
-
-// export const getRowsTableByMonths = (incidents) => {
-//   const monthsArray = createMonthsArray()
-//   incidents.forEach((incident) => {
-//     const { year, month, count } = incident
-//     const monthIndex = month - 1 // Convertir el mes a índice (0-11)
-//     if (monthsArray[monthIndex]) {
-//       monthsArray[monthIndex].counts[year] = count
-//     }
-//   })
-
-//   const rows = monthsArray.map((monthObj) => {
-//     const row = { month: monthObj.month } // january, february, ....
-//     for (const year of Object.keys(monthObj.counts)) {
-//       if (year !== '2015') {
-//         row[year] = monthObj.counts[year]
-//       } else {
-//         row[year] = monthObj.month === 'December' ? monthObj.counts[year] : '' // Solo mostrar datos en diciembre de 2015
-//       }
-//     }
-//     return row
-//   })
-
-//   return rows
-// }
-
-/****************        generate objects serie for chart donnut places incidents      ******************/
-// export const generateDataDonnut = (incidents) => {
-//   const labels = []
-//   const values = []
-//   Object.entries(incidents).forEach(([key, value]) => {
-//     const t = parseInt(value, 10)
-//     if(t > 0) {
-//       labels.push(key)
-//       values.push(parseInt(value, 10))
-//     }
-//   })
-//   return {
-//     labels: Array.from(labels),
-//     values: Array.from(values),
-//   }
-// }
-
 export const generateDataDonnut = (incidents) => {
   const labels = []
   const values = []

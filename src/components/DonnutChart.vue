@@ -12,7 +12,6 @@
 import { nextTick, ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
-import { generateDataDonnut } from '../utils/dataProcessor'
 import { COLORS } from '@/constants/constants.js'
 
 const props = defineProps({
@@ -155,9 +154,8 @@ const defaulValues = [0, 0, 0, 0, 0, 0]
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    const { labels, values } = generateDataDonnut(newIncidents)
+    const { labels, values } = newIncidents
     await nextTick()
-
     chartOptions.value = {
       ...chartOptions.value,
       subtitle: {

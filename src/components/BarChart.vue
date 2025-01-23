@@ -13,7 +13,6 @@
 import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useChartUtils } from '@/composables/useChartUtils'
-import { generateDataBarchart } from '../utils/dataProcessor'
 
 const props = defineProps({
   title: {
@@ -25,8 +24,8 @@ const props = defineProps({
     default: '',
   },
   incidents: {
-    type: Array,
-    default: () => [],
+    type: Object,
+    default: () => {},
   },
   categories: {
     type: Array,
@@ -151,7 +150,7 @@ const defaulValues = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    const { values } = generateDataBarchart(newIncidents)
+    const { values } = newIncidents
     await nextTick()
 
     chartOptions.value = {

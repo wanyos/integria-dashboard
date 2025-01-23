@@ -122,6 +122,7 @@ import BarChart from '@/components/BarChart.vue'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { useIncidentsStore } from '@/stores/incidents.js'
+import {generateDataScatterGroup, generateDataStakedBar, generateDataDonnut, generateDataGradient, generateDataBarchart } from '@/utils/dataProcessor.js'
 
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
@@ -158,13 +159,13 @@ const getDataStore = async (selectedRange, initYear) => {
 
 const getAvgDayClose = computed(() => calculateAvgDay(storeIncidents.currentIncidentsRange.close))
 const getAvgDayOpen = computed(() => calculateAvgDay(storeIncidents.currentIncidentsRange.open))
-const distributionData = computed(() => storeIncidents.allOpenIncidentsGroup)
-const allIncidentsGroup = computed(() => storeIncidents.allIncidentsGroupData)
-const allIncLocationRange = computed(() => storeIncidents.allIncLocationRangeData)
-const allIncBasesRange = computed(() => storeIncidents.allIncBasesRange)
-const allIncParkingRange = computed(() => storeIncidents.allIncParkingRangeData)
-const allIncByHours = computed(() => storeIncidents.allIncByHoursRangeData)
-const allIncByWekdays = computed(() => storeIncidents.allIncByWeekdaysRangeData)
+const distributionData = computed(() => generateDataScatterGroup(storeIncidents.allOpenIncidentsGroup))
+const allIncidentsGroup = computed(() => generateDataStakedBar(storeIncidents.allIncidentsGroupData))
+const allIncLocationRange = computed(() => generateDataDonnut(storeIncidents.allIncLocationRangeData))
+const allIncBasesRange = computed(() => generateDataDonnut(storeIncidents.allIncBasesRange))
+const allIncParkingRange = computed(() => generateDataDonnut(storeIncidents.allIncParkingRangeData))
+const allIncByHours = computed(() => generateDataGradient(storeIncidents.allIncByHoursRangeData))
+const allIncByWekdays = computed(() => generateDataBarchart(storeIncidents.allIncByWeekdaysRangeData))
 
 const getPercentOpen = computed(() => {
   return calculatePercentage(

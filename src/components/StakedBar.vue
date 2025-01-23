@@ -12,14 +12,12 @@
 <script setup>
 import { ref, watch, nextTick } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
-import { generateDataStakedBar } from '../utils/dataProcessor'
-
 import { useChartUtils } from '@/composables/useChartUtils'
 
 const props = defineProps({
   allIncidentsGroup: {
     type: Object,
-    default: () => ({}),
+    default: () => {},
   },
   subtitle: {
     type: String,
@@ -162,8 +160,7 @@ const chartOptions = ref({
 watch(
   () => props.allIncidentsGroup,
   async (newIncidents) => {
-    const groupsData = generateDataStakedBar(newIncidents)
-    seriesData.value = groupsData.incidents
+    seriesData.value = newIncidents.incidents
     await nextTick()
 
     chartOptions.value = {
