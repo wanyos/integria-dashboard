@@ -93,7 +93,7 @@
 import HeatMap from '@/components/HeatMap.vue'
 import AreaChart from '@/components/AreaChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
-import { watch, ref, nextTick, onMounted } from 'vue'
+import { watch, ref, nextTick, onMounted, computed } from 'vue'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { generateHeatmapData, generateAreapData } from '@/utils/dataProcessor'
@@ -101,14 +101,14 @@ import { generateHeatmapData, generateAreapData } from '@/utils/dataProcessor'
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
 
-const openInitYear = ref([])
-const closeInitYear = ref([])
+//const openInitYear = ref([])
+//const closeInitYear = ref([])
 const openEndYear = ref([])
 const closeEndYear = ref([])
 const yearsArray = ref([])
 
-// const openInitYear = computed(() => )
-// const closeInitYear = computed(() => )
+const openInitYear = computed(() => generateHeatmapData(storeIncidents.openIncidentsYear))
+const closeInitYear = computed(() =>  generateHeatmapData(storeIncidents.closedIncidentsYear))
 // const openEndYear = computed(() => )
 // const closeEndYear = computed(() => )
 
@@ -130,16 +130,26 @@ const getYearsArray = () => {
   }
 }
 
+const setDataForYearInit = async (year) => {
+  isLoading.value = true
+  await storeIncidents.fetchIncidentsByYear(year)
+
+  await nextTick()
+  isLoading.value = false
+}
+
 const setDataForYear = async (year, target) => {
   isLoading.value = true
   await storeIncidents.fetchIncidentsByYear(year)
 
   if (target === 'init') {
-    openInitYear.value = [...storeIncidents.openIncidentsYear]
-    closeInitYear.value = [...storeIncidents.closedIncidentsYear]
+    // openInitYear.value = storeIncidents.openIncidentsYear
+    // closeInitYear.value = storeIncidents.closedIncidentsYear
+    // openInitYear.value = generateHeatmapData(storeIncidents.openIncidentsYear)
+    // closeInitYear.value = generateHeatmapData(storeIncidents.closedIncidentsYear)
   } else if (target === 'end') {
-    openEndYear.value = [...storeIncidents.openIncidentsYear]
-    closeEndYear.value = [...storeIncidents.closedIncidentsYear]
+    openEndYear.value = storeIncidents.openIncidentsYear
+    closeEndYear.value = storeIncidents.closedIncidentsYear
   }
 
   await nextTick()
@@ -150,6 +160,7 @@ watch(
   () => props.initYear,
   (newValue) => {
     setDataForYear(newValue, 'init')
+    setDataForYearInit(newValue)
   },
 )
 
@@ -162,6 +173,7 @@ watch(
 
 onMounted(async () => {
   getYearsArray()
+  await setDataForYearInit(props.initYear)
   await setDataForYear(props.initYear, 'init')
   await setDataForYear(props.endYear, 'end')
 })

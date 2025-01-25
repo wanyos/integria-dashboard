@@ -149,7 +149,9 @@ const chartOptionsHeat = ref({
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    seriesHeat.value = generateHeatmapData(newIncidents)
+    // seriesHeat.value = generateHeatmapData(newIncidents)
+    console.log('incidents', newIncidents)
+    seriesHeat.value = newIncidents
     await nextTick()
 
     chartOptionsHeat.value = {

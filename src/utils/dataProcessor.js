@@ -43,6 +43,7 @@ function getGroupName(groupId) {
 
 /****************        generate objects serie for chart heatmaps     ******************/
 export function generateHeatmapData(incidents) {
+  console.log('inciendts process', incidents)
   const months = [
     'Jan',
     'Feb',
