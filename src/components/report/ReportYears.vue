@@ -6,14 +6,13 @@
       :is-full-page="false"
       :color="'#1565C0'"
     />
-
     <div class="chart-base heatmap-open-init">
       <HeatMap
         id="heatmap-open"
         title="Open incidents by day"
         :subtitle="initYear"
         :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
-        :incidents="openInitYear"
+        :incidents="openInitYearHeat"
       />
     </div>
 
@@ -23,7 +22,7 @@
         title="Open incidents by day"
         :subtitle="endYear"
         :colors="['#c8eac8', '#98d498', '#6cbc6c', '#43a543', '#1f8c1f', '#166816']"
-        :incidents="openEndYear"
+        :incidents="openEndYearHeat"
       />
     </div>
 
@@ -33,7 +32,7 @@
         title="Closed incidents by day"
         :subtitle="initYear"
         :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
-        :incidents="closeInitYear"
+        :incidents="closeInitYearHeat"
       />
     </div>
 
@@ -43,7 +42,7 @@
         title="Closed incidents by day"
         :subtitle="endYear"
         :colors="['#f9cfcf', '#f4a8a8', '#ee7e7e', '#e65454', '#d82d2d', '#b71a1a']"
-        :incidents="closeEndYear"
+        :incidents="closeEndYearHeat"
       />
     </div>
 
@@ -53,7 +52,7 @@
         title="Open incidents by month"
         :subtitle="initYear"
         color="#98d498"
-        :incidents="openInitYear"
+        :incidents="openInitYearArea"
       />
     </div>
 
@@ -63,7 +62,7 @@
         title="Open incidents by month"
         :subtitle="endYear"
         color="#98d498"
-        :incidents="openEndYear"
+        :incidents="openEndYearArea"
       />
     </div>
 
@@ -73,7 +72,7 @@
         title="Close incidents by month"
         :subtitle="initYear"
         color="#f4a8a8"
-        :incidents="closeInitYear"
+        :incidents="closeInitYearArea"
       />
     </div>
 
@@ -83,7 +82,7 @@
         title="Close incidents by month"
         :subtitle="endYear"
         color="#f4a8a8"
-        :incidents="closeEndYear"
+        :incidents="closeEndYearArea"
       />
     </div>
   </section>
@@ -99,18 +98,32 @@ import 'vue-loading-overlay/dist/css/index.css'
 import { generateHeatmapData, generateAreapData } from '@/utils/dataProcessor'
 
 const storeIncidents = useIncidentsStore()
-const isLoading = ref(false)
+const isLoadingInit = ref(false)
+const isLoadingEnd = ref(false)
+const isLoading = computed(() => isLoadingInit.value || isLoadingEnd.value)
 
-//const openInitYear = ref([])
-//const closeInitYear = ref([])
-const openEndYear = ref([])
-const closeEndYear = ref([])
+const openInitYearHeat = ref([])
+const closeInitYearHeat = ref([])
+const openInitYearArea = ref([])
+const closeInitYearArea = ref([])
+
+const openEndYearHeat = ref([])
+const closeEndYearHeat = ref([])
+const openEndYearArea = ref([])
+const closeEndYearArea = ref([])
+
+// Computed properties para los datos transformados
+// const openInitYearHeatData = computed(() => generateHeatmapData(openInitYearHeat.value))
+// const closeInitYearHeatData = computed(() => generateHeatmapData(closeInitYearHeat.value))
+// const openInitYearAreaData = computed(() => generateAreapData(openInitYearArea.value))
+// const closeInitYearAreaData = computed(() => generateAreapData(closeInitYearArea.value))
+
+// const openEndYearHeatData = computed(() => generateHeatmapData(openEndYearHeat.value))
+// const closeEndYearHeatData = computed(() => generateHeatmapData(closeEndYearHeat.value))
+// const openEndYearAreaData = computed(() => generateAreapData(openEndYearArea.value))
+// const closeEndYearAreaData = computed(() => generateAreapData(closeEndYearArea.value))
+
 const yearsArray = ref([])
-
-const openInitYear = computed(() => generateHeatmapData(storeIncidents.openIncidentsYear))
-const closeInitYear = computed(() =>  generateHeatmapData(storeIncidents.closedIncidentsYear))
-// const openEndYear = computed(() => )
-// const closeEndYear = computed(() => )
 
 const props = defineProps({
   initYear: {
@@ -130,52 +143,180 @@ const getYearsArray = () => {
   }
 }
 
-const setDataForYearInit = async (year) => {
-  isLoading.value = true
-  await storeIncidents.fetchIncidentsByYear(year)
-
+const setDataInitYear = async (year) => {
+  isLoadingInit.value = true
+  await storeIncidents.fetchIncYear(year)
+  openInitYearHeat.value = generateHeatmapData(storeIncidents.openIncidentsYear)
+  closeInitYearHeat.value = generateHeatmapData(storeIncidents.closedIncidentsYear)
+  openInitYearArea.value = generateAreapData(storeIncidents.openIncidentsYear)
+  closeInitYearArea.value = generateAreapData(storeIncidents.closedIncidentsYear)
   await nextTick()
-  isLoading.value = false
+  isLoadingInit.value = false
 }
 
-const setDataForYear = async (year, target) => {
-  isLoading.value = true
-  await storeIncidents.fetchIncidentsByYear(year)
-
-  if (target === 'init') {
-    // openInitYear.value = storeIncidents.openIncidentsYear
-    // closeInitYear.value = storeIncidents.closedIncidentsYear
-    // openInitYear.value = generateHeatmapData(storeIncidents.openIncidentsYear)
-    // closeInitYear.value = generateHeatmapData(storeIncidents.closedIncidentsYear)
-  } else if (target === 'end') {
-    openEndYear.value = storeIncidents.openIncidentsYear
-    closeEndYear.value = storeIncidents.closedIncidentsYear
-  }
-
+const setDataEndYear = async (year) => {
+  isLoadingEnd.value = true
+  await storeIncidents.fetchIncYear(year)
+  openEndYearHeat.value = generateHeatmapData(storeIncidents.openIncidentsYear)
+  closeEndYearHeat.value = generateHeatmapData(storeIncidents.closedIncidentsYear)
+  openEndYearArea.value = generateAreapData(storeIncidents.openIncidentsYear)
+  closeEndYearArea.value = generateAreapData(storeIncidents.closedIncidentsYear)
   await nextTick()
-  isLoading.value = false
+  isLoadingEnd.value = false
 }
+
+// const setDataForYear = async (year, target) => {
+//   isLoadingEnd.value = true
+//   await storeIncidents.fetchIncYear(year)
+
+//   const mappings = {
+//     init: {
+//       openHeat: openInitYearHeat,
+//       closeHeat: closeInitYearHeat,
+//       openArea: openInitYearArea,
+//       closeArea: closeInitYearArea,
+//     },
+//     end: {
+//       openHeat: openEndYearHeat,
+//       closeHeat: closeEndYearHeat,
+//       openArea: openEndYearArea,
+//       closeArea: closeEndYearArea,
+//     },
+//   }
+
+//   const currentMapping = mappings[target]
+//   if (!currentMapping) {
+//     console.error(`Invalid target: ${target}`)
+//     isLoadingEnd.value = false
+//     return
+//   }
+
+//   currentMapping.openHeat.value = storeIncidents.openIncidentsYear
+//   currentMapping.closeHeat.value = storeIncidents.closedIncidentsYear
+//   currentMapping.openArea.value = storeIncidents.openIncidentsYear
+//   currentMapping.closeArea.value = storeIncidents.closedIncidentsYear
+
+//   isLoadingEnd.value = false
+// }
+
+// const setDataForYear = async (year, target) => {
+//   isLoading.value = true // Activar el spinner
+
+//   // 1. Cargar los datos de la store
+//   await storeIncidents.fetchIncYear(year)
+
+//   // 2. Mapear los gráficos a actualizar
+//   const mappings = {
+//     init: {
+//       openHeat: openInitYearHeat,
+//       closeHeat: closeInitYearHeat,
+//       openArea: openInitYearArea,
+//       closeArea: closeInitYearArea,
+//     },
+//     end: {
+//       openHeat: openEndYearHeat,
+//       closeHeat: closeEndYearHeat,
+//       openArea: openEndYearArea,
+//       closeArea: closeEndYearArea,
+//     },
+//   }
+
+//   const currentMapping = mappings[target]
+//   if (!currentMapping) {
+//     console.error(`Invalid target: ${target}`)
+//     isLoading.value = false
+//     return
+//   }
+
+//   // 3. Transformar y asignar los datos en pasos
+//   await Promise.all([
+//     transformAndAssignData(
+//       storeIncidents.openIncidentsYear,
+//       currentMapping.openHeat,
+//       generateHeatmapData,
+//     ),
+//     transformAndAssignData(
+//       storeIncidents.closedIncidentsYear,
+//       currentMapping.closeHeat,
+//       generateHeatmapData,
+//     ),
+//     transformAndAssignData(
+//       storeIncidents.openIncidentsYear,
+//       currentMapping.openArea,
+//       generateAreapData,
+//     ),
+//     transformAndAssignData(
+//       storeIncidents.closedIncidentsYear,
+//       currentMapping.closeArea,
+//       generateAreapData,
+//     ),
+//   ])
+
+//   isLoading.value = false // Desactivar el spinner
+// }
+
+// Función auxiliar para transformar y asignar datos
+// const transformAndAssignData = async (data, ref, transformFn) => {
+//   return new Promise((resolve) => {
+//     // Usar requestAnimationFrame para evitar bloquear la UI
+//     requestAnimationFrame(() => {
+//       ref.value = transformFn(data) // Transformar los datos y asignarlos
+//       resolve()
+//     })
+//   })
+// }
+
+// const setDataForYear = async (year, target) => {
+//   // isLoading.value = true
+//   await storeIncidents.fetchIncYear(year)
+//   const mappings = {
+//     init: {
+//       openHeat: openInitYearHeat,
+//       closeHeat: closeInitYearHeat,
+//       openArea: openInitYearArea,
+//       closeArea: closeInitYearArea,
+//     },
+//     end: {
+//       openHeat: openEndYearHeat,
+//       closeHeat: closeEndYearHeat,
+//       openArea: openEndYearArea,
+//       closeArea: closeEndYearArea,
+//     },
+//   }
+
+//   const currentMapping = mappings[target]
+//   if (!currentMapping) {
+//     console.error(`Invalid target: ${target}`)
+//     //isLoading.value = false
+//     return
+//   }
+
+//   currentMapping.openHeat.value = generateHeatmapData(storeIncidents.openIncidentsYear)
+//   currentMapping.closeHeat.value = generateHeatmapData(storeIncidents.closedIncidentsYear)
+//   currentMapping.openArea.value = generateAreapData(storeIncidents.openIncidentsYear)
+//   currentMapping.closeArea.value = generateAreapData(storeIncidents.closedIncidentsYear)
+
+//   await nextTick()
+//   isLoading.value = false
+// }
 
 watch(
   () => props.initYear,
   (newValue) => {
-    setDataForYear(newValue, 'init')
-    setDataForYearInit(newValue)
+    setDataInitYear(newValue)
   },
 )
 
 watch(
   () => props.endYear,
   (newValue) => {
-    setDataForYear(newValue, 'end')
+    setDataEndYear(newValue)
   },
 )
 
 onMounted(async () => {
   getYearsArray()
-  await setDataForYearInit(props.initYear)
-  await setDataForYear(props.initYear, 'init')
-  await setDataForYear(props.endYear, 'end')
+  await Promise.all([setDataInitYear(props.initYear), setDataEndYear(props.endYear)])
 })
 </script>
 
@@ -196,6 +337,7 @@ onMounted(async () => {
 }
 
 .heatmap-open-init {
+  position: relative;
   grid-column: 1 / 4;
   grid-row: 1 / 2;
 }
@@ -233,5 +375,16 @@ onMounted(async () => {
 .histogram-close-end {
   grid-column: 4 / 7;
   grid-row: 4 / 5;
+}
+
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

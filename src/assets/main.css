@@ -33,7 +33,7 @@ input {
 
 .main-container {
   max-width: 1400px;
-  height: 100%;
+  min-height: 100%;
   margin: 0 auto;
   border-radius: 5px;
   background-color: #edf0f6;

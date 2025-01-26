@@ -18,7 +18,7 @@
     </div>
 
     <section class="section-years">
-      <div v-if="selectedOptions === 'Years'" class="div-select-years">
+      <div v-if="selectedOptions === MENU_OPTIONS.Years" class="div-select-years">
         <div class="no__item">
           <ComboBox
             :options="initYearValues"
@@ -37,23 +37,29 @@
         </div>
       </div>
 
-      <div v-if="selectedOptions === 'Dates'" class="item div__select">
+      <div v-if="selectedOptions === MENU_OPTIONS.Dates" class="item div__select">
         <ComboBox :options="SELECT_PERIOD" icon-name="bi-calendar2-check" v-model="selectedRange" />
       </div>
     </section>
 
-    <div v-if="selectedOptions === 'Dates'" class="item item-label-date">{{ currentDate }}</div>
+    <div v-if="selectedOptions === MENU_OPTIONS.Dates" class="item item-label-date">
+      {{ currentDate }}
+    </div>
     <div class="item item__title"><p>Incidents</p></div>
 
-    <ReportDashboard v-if="selectedOptions === 'Dashboard'" />
+    <ReportDashboard v-if="selectedOptions === MENU_OPTIONS.Dashboard" />
 
     <ReportDates
-      v-if="selectedOptions === 'Dates'"
+      v-if="selectedOptions === MENU_OPTIONS.Dates"
       :selected-range="selectedRange"
       :init-year="initYear"
       @update:currentDate="updateCurrentDate"
     />
-    <ReportYears v-if="selectedOptions === 'Years'" :init-year="initYear" :end-year="endYear" />
+    <ReportYears
+      v-if="selectedOptions === MENU_OPTIONS.Years"
+      :init-year="initYear"
+      :end-year="endYear"
+    />
   </section>
 </template>
 
@@ -68,14 +74,18 @@ import ReportYears from '@/components/report/ReportYears.vue'
 import ReportDates from '@/components/report/ReportDates.vue'
 import ReportDashboard from '@/components/report/ReportDashboard.vue'
 
-// const MENU_OPTIONS = ['Dashboard', 'Dates', 'Years']
+const MENU_OPTIONS = {
+  Dashboard: 'Dashboard',
+  Dates: 'Dates',
+  Years: 'Years',
+}
 
 const selectedRange = ref(dayjs().format('DD MMM YYYY'))
 const initYear = ref(dayjs().subtract(1, 'year').year())
 const endYear = ref(dayjs().subtract(2, 'year').year())
 
 const isLoading = ref(false)
-const selectedOptions = ref('Dashboard')
+const selectedOptions = ref(MENU_OPTIONS.Dashboard)
 const currentDate = ref(dayjs().format('DD MMM YYYY'))
 
 const initYearValues = computed(() => {
@@ -170,7 +180,7 @@ const selectOptionMenu = (option) => {
   padding: 10px 15px;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px 300px;
+  grid-template-rows: 70px 30px 30px 100px 450px 300px 300px 300px;
   gap: 10px;
 }
 
@@ -182,17 +192,6 @@ const selectOptionMenu = (option) => {
   grid-row: 1 / 2;
   margin-bottom: 10px;
 }
-
-/* .div__select-menu {
-  grid-column: 1 / 2;
-  grid-row: 2 / 3;
-} */
-
-/* .div__select {
-  grid-column: 3 / 4;
-  grid-row: 2 / 3;
-  background-color: antiquewhite;
-} */
 
 .section-years {
   grid-column: 2 / 4;

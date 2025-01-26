@@ -42,38 +42,35 @@ function getGroupName(groupId) {
 }
 
 /****************        generate objects serie for chart heatmaps     ******************/
+
 export function generateHeatmapData(incidents) {
-  console.log('inciendts process', incidents)
   const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  // Agrupar datos por meses y días
-  const groupedData = {}
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  // Usar un Map para agrupar datos por meses
+  const groupedData = new Map();
+  months.forEach(month => {
+    groupedData.set(month, new Array(31).fill(null)); // Preasignar 31 días (máximo)
+  });
+
+  // Procesar los incidentes
   incidents.forEach(({ date, count }) => {
-    const incidentDate = new Date(date)
-    const month = months[incidentDate.getMonth()] // Nombre del mes
-    const day = incidentDate.getDate().toString() // Día del mes como string
-    if (!groupedData[month]) {
-      groupedData[month] = []
+    const incidentDate = new Date(date);
+    const month = months[incidentDate.getMonth()]; // Nombre del mes
+    const day = incidentDate.getDate() - 1; // Día del mes como índice (0-30)
+
+    if (groupedData.has(month)) {
+      groupedData.get(month)[day] = { x: (day + 1).toString(), y: count };
     }
-    groupedData[month].push({ x: day, y: count }) // Formato requerido por el heatmap
-  })
+  });
+
   // Transformar a un array de series para el heatmap
   return months.map((month) => ({
     name: month,
-    data: groupedData[month] || [],
-  }))
+    data: groupedData.get(month).filter(day => day !== null), // Filtrar días nulos
+  }));
 }
 
 /****************        generate objects serie for chart scatter distribution groups days open incidents      ******************/
@@ -140,59 +137,35 @@ export function generateDataStakedBar(allIncidentsGroup) {
 
 /****************        generate objects serie for chart areabar incidents by months      ******************/
 export const generateAreapData = (incidents) => {
-  // Convertir el objeto totalMonths a un array de objetos para el gráfico
   const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
 
-  const totalMonths = {
-    0: { count: 0 },
-    1: { count: 0 },
-    2: { count: 0 },
-    3: { count: 0 },
-    4: { count: 0 },
-    5: { count: 0 },
-    6: { count: 0 },
-    7: { count: 0 },
-    8: { count: 0 },
-    9: { count: 0 },
-    10: { count: 0 },
-    11: { count: 0 },
-  }
+  // Inicializar un array para almacenar el total de incidencias por mes
+  const totalMonths = new Array(12).fill(0);
 
-  for (const key in incidents) {
-    let month = dayjs(incidents[key].date).month()
-    totalMonths[month].count += Number(incidents[key].count)
-  }
+  // Calcular el total de incidencias por mes
+  incidents.forEach(({ date, count }) => {
+    const month = new Date(date).getMonth(); // Obtener el mes (0-11)
+    totalMonths[month] += Number(count); // Sumar el conteo al mes correspondiente
+  });
 
-  const seriesData = Object.keys(totalMonths).map((month) => ({
-    x: monthNames[month],
-    y: totalMonths[month].count,
-  }))
+  // Convertir los datos al formato requerido por el gráfico
+  const seriesData = totalMonths.map((count, month) => ({
+    x: monthNames[month], // Nombre del mes
+    y: count, // Total de incidencias
+  }));
 
   return [
     {
       name: 'Incidents',
       data: seriesData,
     },
-  ]
-}
+  ];
+};
 
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /****************        generate donut avg incidents by months all years      ******************/
 export const getAvgByMonths = (incidents) => {
@@ -234,7 +207,6 @@ export const getAvgByMonths = (incidents) => {
 }
 
 /****************        generate rows for months table      ******************/
-
 
 const createMonthsArray = () => {
   return monthNames.map((month) => ({

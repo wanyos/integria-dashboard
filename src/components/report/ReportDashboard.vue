@@ -34,13 +34,22 @@
     </div>
 
     <div class="chart-base table-years-months">
-      <TableChart title="Summary total months in years" :first-column="monthNames" :data-column="yearsArray" :data-row="totalBymonths" />
+      <TableChart
+        title="Summary total months in years"
+        :first-column="monthNames"
+        :data-column="yearsArray"
+        :data-row="totalBymonths"
+      />
     </div>
 
     <div class="chart-base donut-avg-months">
-      <DonnutChart id="AvgByMonths" title="Average incidents by months" :incidents="avgByMonths" :options="{ colors: COLORS1 }" />
+      <DonnutChart
+        id="AvgByMonths"
+        title="Average incidents by months"
+        :incidents="avgByMonths"
+        :options="{ colors: COLORS1 }"
+      />
     </div>
-
   </section>
 </template>
 
@@ -51,15 +60,31 @@ import DonnutChart from '@/components/DonnutChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
-import { ref, nextTick, onMounted,computed } from 'vue'
+import { ref, nextTick, onMounted, computed } from 'vue'
 import { COLORS1, COLORS2 } from '@/constants/constants.js'
-import { getRowsTableYears, getRowsTableByMonths, getAvgByMonths, generateDataDonnut, generateDataBarchart } from '@/utils/dataProcessor'
+import {
+  getRowsTableYears,
+  getRowsTableByMonths,
+  getAvgByMonths,
+  generateDataDonnut,
+  generateDataBarchart,
+} from '@/utils/dataProcessor'
 import dayjs from 'dayjs'
 
 const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
 const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
@@ -72,15 +97,17 @@ const getYearsArray = () => {
   }
 }
 
-  const totalIncYearsDonut = computed(() =>generateDataDonnut(storeIncidents.totalIncidentsYears))
-  const totalIncYearBarchart = computed(() =>generateDataBarchart(storeIncidents.totalIncidentsYears))
-  const rowsTableYears = computed(() => getRowsTableYears(storeIncidents.totalIncidentsYears))
-  const totalBymonths = computed(() => getRowsTableByMonths(storeIncidents.allIncByMonths))
-  const avgByMonths = computed(() => getAvgByMonths(storeIncidents.allIncByMonths))
+const totalIncYearsDonut = computed(() => generateDataDonnut(storeIncidents.totalIncidentsYears))
+const totalIncYearBarchart = computed(() =>
+  generateDataBarchart(storeIncidents.totalIncidentsYears),
+)
+const rowsTableYears = computed(() => getRowsTableYears(storeIncidents.totalIncidentsYears))
+const totalBymonths = computed(() => getRowsTableByMonths(storeIncidents.allIncByMonths))
+const avgByMonths = computed(() => getAvgByMonths(storeIncidents.allIncByMonths))
 
 const setDataForYear = async (year) => {
   isLoading.value = true
-  await storeIncidents.fetchIncidentsByYear(year)
+  await storeIncidents.fetchIncAnual(year)
   await nextTick()
   isLoading.value = false
 }
@@ -104,7 +131,7 @@ onMounted(() => {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(150px, 1fr));
-  grid-template-rows: 400px 450px 400px 400px 400px;
+  grid-template-rows: auto auto;
   gap: 10px;
 }
 

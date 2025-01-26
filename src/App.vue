@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <LoginModal :show="showModalLogin" @reset-modal="showModalLogin = false" :title="titleModal" />
-    <header>
+    <header :class="{ scrolled: isScrolling }" ref="header">
       <p>{{ routeName }}</p>
       <div class="header__userlogin-div">
         <p>{{ authStore.userLogin.email }}</p>
@@ -32,7 +32,7 @@
       </nav>
     </aside>
 
-    <main>
+    <main ref="main" @scroll="handleScroll">
       <RouterView />
     </main>
 
@@ -51,6 +51,9 @@ import { useAuthenticationStore } from '@/stores/authentication.js'
 const route = useRoute()
 const authStore = useAuthenticationStore()
 
+const isScrolling = ref(false)
+const header = ref(null) // Referencia al Header
+const main = ref(null) // Referencia al Main
 const showModalLogin = ref(false)
 const titleModal = ref('')
 const routeName = computed(() => route.name)
@@ -60,6 +63,10 @@ const openModal = (title) => {
   showModalLogin.value = true
   titleModal.value = title
 }
+
+const handleScroll = () => {
+  isScrolling.value = main.value.scrollTop > 10
+}
 </script>
 
 <style scoped lang="css">
@@ -67,9 +74,8 @@ const openModal = (title) => {
   height: 100vh;
   width: 100%;
   display: grid;
-  grid-template-columns: 10rem 1fr;
-  grid-template-rows: 50px 1fr 50px;
-  overflow-y: auto;
+  grid-template-columns: 10rem 1fr; /* menu lateral y main */
+  grid-template-rows: auto 1fr auto;
 }
 
 header {
@@ -117,6 +123,25 @@ header > article > h4 {
   background-color: var(--hover-button);
 }
 
+header::before {
+  content: ''; /* Necesario para el pseudo-elemento */
+  position: absolute; /* Posiciona el pseudo-elemento dentro del header */
+  top: 60px; /* Lo coloca justo debajo del header */
+  left: 10rem;
+  right: 0;
+  width: 90%;
+  height: 30px; /* Altura de la sombra */
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)); /* Degradado para la sombra */
+  pointer-events: none; /* Evita que interfiera con clics o eventos */
+  opacity: 0; /* Sombra invisible por defecto */
+  transition: opacity 0.3s ease; /* Transición suave */
+  border-radius: 15px;
+}
+
+header.scrolled::before {
+  opacity: 1; /* Muestra la sombra al hacer scroll */
+}
+
 aside {
   grid-column: 1 / 2;
   grid-row: 2 / 3;
@@ -162,6 +187,8 @@ aside > nav {
 main {
   grid-column: 2 / 3;
   grid-row: 2 / 3;
+  overflow-y: auto; /* Permite el scroll solo dentro de main */
+  height: 100%; /* Se ajusta al espacio disponible en la grid */
 }
 
 footer {

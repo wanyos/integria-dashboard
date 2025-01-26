@@ -1,19 +1,29 @@
 <template>
-  <VueApexCharts
-    ref="chartRef"
-    width="100%"
-    height="100%"
-    :options="chartOptionsHeat"
-    :series="seriesHeat"
-    @mouse-leave="handleMouseLeave"
-  />
+  <div class="div-container">
+    <!-- <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="'#1565C0'"
+      class="loading-container"
+    /> -->
+    <VueApexCharts
+      ref="chartRef"
+      width="100%"
+      height="100%"
+      :options="chartOptionsHeat"
+      :series="seriesHeat"
+      @mouse-leave="handleMouseLeave"
+    />
+  </div>
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
-import { generateHeatmapData } from '@/utils/dataProcessor'
 import { useChartUtils } from '@/composables/useChartUtils'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
 const props = defineProps({
   id: {
@@ -40,6 +50,11 @@ const props = defineProps({
 
 const { chartRef, handleMouseLeave } = useChartUtils()
 const seriesHeat = ref([])
+const isLoading = ref(false)
+
+onMounted(() => {
+  isLoading.value = true
+})
 
 const chartOptionsHeat = ref({
   chart: {
@@ -149,8 +164,7 @@ const chartOptionsHeat = ref({
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    // seriesHeat.value = generateHeatmapData(newIncidents)
-    console.log('incidents', newIncidents)
+    isLoading.value = true
     seriesHeat.value = newIncidents
     await nextTick()
 
@@ -160,8 +174,27 @@ watch(
         text: `Year: ${props.subtitle}`,
       },
     }
+    isLoading.value = false // Desactivar el spinner
   },
   { immediate: true },
 )
 </script>
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.div-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* .loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+} */
+</style>

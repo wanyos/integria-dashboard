@@ -14,7 +14,7 @@ import { nextTick, ref, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 import { useChartUtils } from '@/composables/useChartUtils'
-import { generateAreapData } from '../utils/dataProcessor'
+// import { generateAreapData } from '../utils/dataProcessor'
 
 const props = defineProps({
   id: {
@@ -153,8 +153,8 @@ const chartOptions = ref({
 watch(
   () => props.incidents,
   async (newIncidents) => {
-    seriesArea.value = generateAreapData(newIncidents)
-
+    // seriesArea.value = generateAreapData(newIncidents)
+    seriesArea.value = newIncidents
     await nextTick()
     chartOptions.value = {
       ...chartOptions.value,
