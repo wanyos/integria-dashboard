@@ -1,6 +1,6 @@
 <template>
   <div class="div-container">
-    <!-- <loading
+     <!-- <loading
       v-model:active="isLoading"
       :can-cancel="true"
       :is-full-page="false"
@@ -174,7 +174,7 @@ watch(
         text: `Year: ${props.subtitle}`,
       },
     }
-    isLoading.value = false // Desactivar el spinner
+    isLoading.value = false
   },
   { immediate: true },
 )
@@ -185,16 +185,4 @@ watch(
   width: 100%;
   height: 100%;
 }
-
-/* .loading-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-} */
 </style>

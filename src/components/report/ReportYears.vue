@@ -1,6 +1,6 @@
 <template>
   <section class="container-years-metricts">
-    <loading
+     <loading
       v-model:active="isLoading"
       :can-cancel="true"
       :is-full-page="false"
