@@ -10,6 +10,7 @@ import reportRouter from './routers/reportRoutes.js'
 import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
 import { sendEmail } from './emailconfig.js';
+import { sendEmail } from './emailconfig.js';
 
 const app = express()
 app.disable('x-powered-by')
