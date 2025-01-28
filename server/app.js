@@ -9,6 +9,7 @@ import inventoryRouter from './routers/inventoryRoutes.js'
 import reportRouter from './routers/reportRoutes.js'
 import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
+import { sendEmail } from './emailconfig.js';
 
 const app = express()
 app.disable('x-powered-by')
@@ -54,6 +55,34 @@ app.use('/api/report', reportRouter)
 app.use('/api/users', authMiddleware, usersRouter)
 app.use('/api/incidents', authMiddleware, incidentsRouter)
 app.use('/api/inventory', authMiddleware, inventoryRouter)
+
+
+app.post('/send-email', async (req, res) => {
+  const { to, subject, text, csvData } = req.body;
+
+  try {
+    // Llama a la función sendEmail de la configuración
+    const result = await sendEmail({
+      to,
+      subject,
+      text,
+      attachments: [
+        {
+          filename: 'reporte.csv',
+          content: csvData,
+          contentType: 'text/csv'
+        }
+      ]
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error en /send-email:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
 
 app.use(globalMiddleware)
 

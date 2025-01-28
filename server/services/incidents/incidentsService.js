@@ -4,7 +4,7 @@ import QUERIES from './sqlQueries.js'
 export default class IncidentsService {
   static async getIncidents() {
     try {
-      const [rows] = await pool.query(QUERIES.allIncidents)
+      const [rows] = await pool.query(QUERIES.getTenIncidents)
       return { status: 200, incidents: rows }
     } catch (error) {
       console.error('Database error:', error.message)

@@ -1,15 +1,16 @@
 
 const QUERIES = {
   allIncidents: 'SELECT * FROM tincidencia LIMIT 100',
+  getTenIncidents: `SELECT id_incidencia, inicio, id_creator FROM tincidencia ORDER BY id_incidencia DESC LIMIT 10;`,
 
-  totalIncidents: `select count(*) as count from tincidencia WHERE inicio > ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
-  openIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
-  closeIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'`,
-  pendingIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre < '0001-01-01'`,
+  totalIncidents: `select count(*) as count from tincidencia WHERE inicio > ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
+  openIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY)`,
+  closeIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'`,
+  pendingIncidents: `SELECT COUNT(*) AS count FROM tincidencia WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY) AND cierre < '0001-01-01'`,
 
   // media de incidencias gestionadas en un rango de fechas
   avgIncidents: `SELECT AVG(TIMESTAMPDIFF(MINUTE, inicio, cierre)) AS minutos
-                FROM tincidencia WHERE cierre IS NOT NULL AND cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+                FROM tincidencia WHERE cierre IS NOT NULL AND cierre > '0001-01-01' AND inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
 
   // Consultas para obtener incidentes por año
   allIncidentsYearOpen: `
@@ -41,7 +42,7 @@ const QUERIES = {
         ELSE 'Otros'
     END AS grupo,
     COUNT(*) AS count FROM tincidencia  WHERE
-    inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+    inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY)
 		GROUP BY grupo;`,
 
   // Todas incidencias cerradas en rango de fechas y por grupos (sustituir a todas las anteoriores)
@@ -57,7 +58,7 @@ const QUERIES = {
         ELSE 'Otros'
     END AS grupo,
     COUNT(*) AS count FROM tincidencia WHERE
-    inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'
+    inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01'
 		GROUP BY grupo;`,
 
   // Total de incidencias por rango de fechas y su localización
@@ -72,7 +73,7 @@ const QUERIES = {
     INNER JOIN tincidencia I
     ON R.id_incident = I.id_incidencia
     AND R.id_incident_field IN (98, 103, 109, 114)
-    WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+    WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
 
   allIncBasesRange: `SELECT
     SUM(CASE WHEN R.data LIKE '%Colon%' AND R.data LIKE '%%' THEN 1 ELSE 0 END) AS Colon,
@@ -84,7 +85,7 @@ const QUERIES = {
     SUM(CASE WHEN R.data LIKE '%Vicalvaro%' AND R.data LIKE '%%' THEN 1 ELSE 0 END) AS Vicalvaro
     FROM tincident_field_data R
     INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
-    WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+    WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
 
     allIncParkingRange: ` SELECT
     SUM(CASE WHEN R.data LIKE '%ALMAGRO%' THEN 1 ELSE 0 END) AS Almagro,
@@ -107,11 +108,11 @@ const QUERIES = {
     SUM(CASE WHEN R.data LIKE '%FUENTE DE LA MORA%' THEN 1 ELSE 0 END) AS FuenteMora
 FROM tincident_field_data R
 INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
-WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
+WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
 
   // total incidencias por horas en rango de fechas (line-chart)
   allIncHours: `SELECT HOUR(inicio) AS hour, COUNT(*) AS count
-                FROM tincidencia  WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)  GROUP BY hour  ORDER BY hour;`,
+                FROM tincidencia  WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY)  GROUP BY hour  ORDER BY hour;`,
 
   // total incidencias por cada dia de la semana en el rango de fechas (bar-chart)
   allIncWeekDay: `SELECT
@@ -125,7 +126,7 @@ WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
         WHEN 6 THEN 'Sun'
     END AS day_of_week,
     COUNT(*) AS count
-    FROM  tincidencia WHERE  inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+    FROM  tincidencia WHERE  inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY)
       GROUP BY day_of_week ORDER BY
     FIELD(day_of_week, 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun');`,
 
@@ -148,7 +149,7 @@ WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
     cierre IS NOT NULL
     AND cierre > '0001-01-01'
     AND inicio >= ?
-    AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+    AND inicio <= DATE_ADD(?, INTERVAL 1 DAY)
     AND id_grupo IN (2, 7, 8, 148, 19, 84, 86, 87, 122, 126, 149, 141, 21, 85, 20, 23, 40, 90, 91, 101, 43, 147, 22, 24, 28, 31, 56, 154, 50, 52, 59, 32)
       GROUP BY grupo;`,
 
