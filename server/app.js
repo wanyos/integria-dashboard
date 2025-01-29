@@ -30,6 +30,8 @@ const corsOption = {
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://10.10.14.37:5173',
+    'http://10.10.14.137:5173',
+    'http://10.10.14.137'
   ],
   method: ['GET'],
   credentials: true,
