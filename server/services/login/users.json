@@ -1,20 +1,10 @@
 [
   {
-    "id": "d6a26771-dc5f-45b0-bf2f-571844a2540c",
-    "username": "wanyos99",
+    "id": "4360ad34-2ce7-4ee5-b754-c21f38a07c7b",
+    "username": "wanyos",
     "email": "juanjor99@gmail.com",
-    "hashPassword": "$2b$10$kHsPOXctZTsaN/PsENXw9.w0C96KR1r3uXwkUIoFZQsLgvb1FOny.",
-    "createAt": "2024-12-29T16:33:47.574Z",
-    "roles": [
-      "user"
-    ]
-  },
-  {
-    "id": "799cd96c-de5a-436f-bebd-ac2886c167d0",
-    "username": "juanjo",
-    "email": "juanjoromero9@gmail.com",
-    "hashPassword": "$2b$10$ZzqKw8Dgfm4dERZOhAOLKeHG9ZiQFVA8lz1V93EpO.kBaKFAY4X86",
-    "createAt": "2025-01-14T20:33:21.027Z",
+    "hashPassword": "$2b$10$1Nlbde/PfE/JllWmP7oF.OvsC/kwG3EQqFGXJAU1hu8dbnJK7nNqi",
+    "createAt": "2025-01-28T19:56:54.640Z",
     "roles": [
       "user"
     ]

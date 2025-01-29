@@ -127,15 +127,14 @@ header::before {
   content: ''; /* Necesario para el pseudo-elemento */
   position: absolute; /* Posiciona el pseudo-elemento dentro del header */
   top: 60px; /* Lo coloca justo debajo del header */
-  left: 10rem;
+  left: 0;
   right: 0;
-  width: 90%;
+  width: 100%;
   height: 30px; /* Altura de la sombra */
   background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)); /* Degradado para la sombra */
   pointer-events: none; /* Evita que interfiera con clics o eventos */
   opacity: 0; /* Sombra invisible por defecto */
   transition: opacity 0.3s ease; /* Transición suave */
-  border-radius: 15px;
 }
 
 header.scrolled::before {
