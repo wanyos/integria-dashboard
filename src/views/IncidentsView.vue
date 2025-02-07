@@ -3,15 +3,14 @@
 
   <section class="section-search">
     <button @click="search">Search</button>
+    <!-- <datepicker ref="calendar" v-model="state" maximum-view="day" :use-utc="true" :full-month-name="true" :inline="true" :open-date="openDate" wrapper-class="calendarB" class="datepicker" name="uniquename"  ></datepicker> -->
+    <DateFilter />
    <div class="chart-base container-incidents">
         {{ incidents }}
    </div>
 
-   <button @click="transform">Transform</button>
-      <p> {{ conversion }} </p>
+      <button @click="sendGmail">Send gmail</button>
   </section>
-
-  <button @click="send">Send</button>
 
  </section>
 </template>
@@ -20,33 +19,13 @@
 import IncidentsApi from '@/api/incidents_api'
 import { onMounted, ref } from 'vue'
 import { useAuthenticationStore } from '@/stores/authentication'
-import { json2csv } from 'json-2-csv';
-
-import nodemailer from 'nodemailer';
-// import fs from 'fs/promises';
-
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com', // Cambia según tu proveedor de correo
-  port: 587,
-  secure: false, // STARTTLS
-  auth: {
-    user: 'JuanJose.Romero@emtmadrid.es', // Tu correo empresarial
-    pass: '8492@Dmr-Jr%69'          // Contraseña del correo (o token de aplicación)
-  }
-});
-try {
-  await transporter.verify();
-  console.log('Servidor SMTP conectado correctamente');
-} catch (error) {
-  console.error('Error al conectar con el servidor SMTP:', error);
-}
-
+// import Datepicker from 'vuejs3-datepicker';
+import DateFilter from '@/components/date_filter.vue'
 
 const incidents = ref([])
-const conversion = ref(false)
 const authStore = useAuthenticationStore()
 let token = null
+const state = ref([])
 
 onMounted(async () => {
   try {
@@ -63,45 +42,33 @@ const search = async () => {
   incidents.value = await IncidentsApi.getIncidents(token)
 }
 
-const transform = async () => {
-  const campos = ['id_incidencia', 'inicio', 'id_creador']; // Campos que quieres incluir en el CSV
-const opciones = { campos };
+const sendGmail = async () => {
+  const email = 'juanjor99@gmail.com';
+  const title = 'Subject of the email';
+  const comment = 'Total incidents';
 
-try {
-  const csv = await json2csv(incidents.value, opciones);
-  console.log(csv);
-} catch (err) {
-  console.error(err);
-}
-}
-
-const send = async () => {
   try {
-    // Lee el archivo CSV (asegúrate de que exista en la ruta indicada)
-    // const csvPath = './archivo.csv';
-    // const csvContent = await fs.readFile(csvPath);
+    const res = await fetch('http://localhost:8022/send-gmail', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token.value,
+    },
+    body: JSON.stringify({
+      email,
+      title,
+      comment,
+      incidents: incidents.value
+    })
+  })
 
-    // Configuración del correo
-    const mailOptions = {
-      from: '"Tu Empresa" JuanJose.Romero@emtmadrid.es',
-      to: 'juanjor99@gmail.com',
-      subject: 'Reporte CSV adjunto',
-      text: 'Por favor, encuentra el reporte adjunto en formato CSV.',
-      attachments: [
-        {
-          filename: 'reporte.csv',
-          // content: csvContent
-        }
-      ]
-    };
-
-    // Enviar el correo
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Correo enviado correctamente:', info.messageId);
+    const result = await res.text();
+    console.log(result);
   } catch (error) {
-    console.error('Error al enviar el correo:', error);
+    console.error('Error sending email:', error);
   }
 }
+
 </script>
 
 <style lang="css" scoped>
@@ -141,6 +108,10 @@ const send = async () => {
 
 .container-incidents {
   height: 100%;
+}
+
+.datepicker {
+  height: 50px;
 }
 
 
