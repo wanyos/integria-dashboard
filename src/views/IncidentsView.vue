@@ -2,9 +2,13 @@
  <section class="main-container container-report">
 
   <section class="section-search">
-    <button @click="search">Search</button>
-    <!-- <datepicker ref="calendar" v-model="state" maximum-view="day" :use-utc="true" :full-month-name="true" :inline="true" :open-date="openDate" wrapper-class="calendarB" class="datepicker" name="uniquename"  ></datepicker> -->
-    <DateFilter />
+    <div class="div-header">
+      <button @click="search">Search</button>
+
+      <DateFilter />
+
+    </div>
+
    <div class="chart-base container-incidents">
         {{ incidents }}
    </div>
@@ -19,13 +23,11 @@
 import IncidentsApi from '@/api/incidents_api'
 import { onMounted, ref } from 'vue'
 import { useAuthenticationStore } from '@/stores/authentication'
-// import Datepicker from 'vuejs3-datepicker';
-import DateFilter from '@/components/date_filter.vue'
+import DateFilter from '@/components/DateFilter.vue'
 
 const incidents = ref([])
 const authStore = useAuthenticationStore()
 let token = null
-const state = ref([])
 
 onMounted(async () => {
   try {
@@ -84,6 +86,7 @@ const sendGmail = async () => {
 
 .section-search {
   grid-column: 1 / -1;
+
 }
 
 .section-search > button {
@@ -110,8 +113,9 @@ const sendGmail = async () => {
   height: 100%;
 }
 
-.datepicker {
-  height: 50px;
+.div-header {
+  display: flex;
+
 }
 
 
