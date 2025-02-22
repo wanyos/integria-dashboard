@@ -51,25 +51,6 @@
       />
     </div>
 
-    <div class="chart-base div-datepicker">
-      <DateFilter />
-
-      <DatePicker
-      :use-utc="true"
-      :maximum-view="'day'"
-      placeholder="Select Day"
-      :minimum-view="'day'"
-      @input="selectDate"
-      :value="defaultValue"
-      :full-month-name="true"
-      :input-class="'customClass'"
-      @opened="datepickerAbierto"
-      @selected="fechaSeleccionada"
-      @closed="datepickerCerrado"
-    />
-
-      </div>
-
   </section>
 </template>
 
@@ -90,10 +71,6 @@ import {
   generateDataBarchart,
 } from '@/utils/dataProcessor'
 import dayjs from 'dayjs'
-import DateFilter from '@/components/DateFilter.vue'
-import DatePicker from 'vuejs3-datepicker';
-
-const defaultValue = ref(new Date())
 
 const monthNames = [
   'January',
@@ -113,19 +90,6 @@ const columns = ['Years', 'Incidents', 'Tase', 'Percentage']
 const storeIncidents = useIncidentsStore()
 const isLoading = ref(false)
 const yearsArray = ref([])
-
-const datepickerAbierto = () => {
-    console.log('El datepicker ha sido abierto');
-    }
-
-   const fechaSeleccionada = () => {
-        console.log('Una fecha ha sido seleccionada');
-    }
-
-   const datepickerCerrado = () => {
-        console.log('El datepicker ha sido cerrado');
-    }
-
 
 const getYearsArray = () => {
   const currentYear = new Date().getFullYear()
@@ -153,12 +117,7 @@ onMounted(() => {
   getYearsArray()
   const initYear = dayjs().subtract(1, 'year').year()
   setDataForYear(initYear, 'init')
-
 })
-
-const selectDate = (date) => {
-    console.log('date', date)
-}
 
 </script>
 
@@ -207,17 +166,5 @@ const selectDate = (date) => {
   grid-column: 5 / 7;
   grid-row: 2 / 3;
 }
-
-.div-datepicker {
-  grid-column: 1 / 3;
-  grid-row: 3 / 4;
- display: flex;
-justify-content: space-around;
-}
-
-.customClass {
-  background-color: aqua;
-}
-
 
 </style>

@@ -1,105 +1,90 @@
 <template>
-<section class="section-container">
-   <button @click="openPicker = !openPicker"> {{ btnDate }} </button>
-   <div  v-if="openPicker">
-    <DatePicker
-      :use-utc="true"
-      :maximum-view="'day'"
-      @input="handleChangedDay"
-      :enableMultipleDates="true"
-      :multiDatesLimit="5"
-      :open-date="dayjs().toDate()"
-      :inline="true"
-       :highlighted="currentSpanHighlight"
-    />
-   </div>
-
-</section>
+  <DatePicker
+    :use-utc="true"
+    :maximum-view="'day'"
+    placeholder="Select Day"
+    :minimum-view="'day'"
+    @input="selectDate"
+    :full-month-name="true"
+    :input-class="['customInputClass']"
+    :calendar-class="['customCalendarClass']"
+    :wrapper-class="['wrapperClass']"
+    :monday-first="true"
+  />
 </template>
 
 <script setup>
-import { ref, reactive, computed, onBeforeMount } from 'vue'
-import dayjs from 'dayjs'
-import DatePicker from 'vuejs3-datepicker';
+import DatePicker from 'vuejs3-datepicker'
 
-const openPicker = ref(false)
-const currentDate = reactive({
-  from: null,
-  to: null
-})
+const emit = defineEmits(['setDate'])
 
-// const openDate = computed(() => dayjs(currentDate.to).toDate() )
-const btnDate = computed(() =>  dayjs(currentDate.from).format('MMM DD, YYYY') )
-
-const currentSpanHighlight = computed(() => {
-            return {
-                from: dayjs(currentDate.from).toDate(),
-                to: dayjs(currentDate.to).toDate()
-            };
-        })
-
-const handleChangedDay = (date) => {
-  if (!date) return
-  try {
-    currentDate.from = date
-   // openPicker.value = false
-  } catch (error) {
-    console.error('Error al procesar la fecha:', error)
-  }
+const selectDate = (date) => {
+  emit('setDate', date)
 }
-
-const state = ref({
-  highlighted: {
-    to: new Date(2016, 0, 5), // Highlight all dates up to specific date
-    from: new Date(2016, 0, 26), // Highlight all dates after specific date
-    dates: [ // Highlight an array of dates
-      new Date(2016, 9, 16),
-      new Date(2016, 9, 17),
-      new Date(2016, 9, 18)
-    ]
-    },
-    includeDisabled: true // Highlight disabled dates
-  })
-
-
-// const currentHighlight = () => {
-//   return {
-//       from: dayjs(currentDate.from).toDate(),
-//       to: dayjs(currentDate.to).toDate()
-//     }
-// }
-
-// const customFormat = (date) => {
-//   if (!date) return ''
-//   const d = new Date(date)
-//   return d.toISOString().split('T')[0]
-// }
-
-// const setOpenDate = () => {
-//   currentDate.from = dayjs().format('MMM DD, YYYY')
-//   console.log('fecha', currentDate.from)
-//   console.log('Date', dayjs(currentDate.from, 'MMM DD, YYYY').toDate() )
-//  return currentDate.from
-// }
-
-onBeforeMount(() => {
-  currentDate.from = dayjs().toDate()
-  currentDate.to = dayjs().toDate()
-})
 
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 
-.calendar {
-  margin-top: 15px !important;
+:deep(.vuejs3-datepicker__calendar) {
+  touch-action: none;
 }
 
-.div-datepicker button {
-  border: 1px solid blue;
+:deep(.vuejs3-datepicker__calendar-topbar) {
+  display: none;
+}
+
+:deep(.customCalendarClass) {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+}
+
+:deep(.vuejs3-datepicker__calendar-actionarea .prev:not(.disabled):hover),
+:deep(.vuejs3-datepicker__calendar-actionarea .next:not(.disabled):hover) {
+  border-radius: 100%;
+  background-color: rgb(239, 246, 255);
+}
+
+:deep(.vuejs3-datepicker__calendar-actionarea .cell.day.disabled) {
+  color: #9ca3af;
+}
+
+:deep(.vuejs3-datepicker__calendar-actionarea .cell.day.selected),
+:deep(.vuejs3-datepicker__calendar-actionarea .cell.day.highlighted) {
+  background-color: rgb(239, 246, 255);
+  border-radius: 100%;
+}
+
+:deep(.vuejs3-datepicker__calendar-actionarea .cell.day) {
+  color: #1a1a1a;
+  border: none;
+  border-radius: 100%;
+}
+
+:deep(.vuejs3-datepicker__calendar-actionarea .cell.day:hover) {
+  border: none !important;
+  background-color: rgb(239, 246, 255);
+  border-radius: 100%;
+}
+
+:deep(#calendar-div) {
+  border: 1px solid var(--color-text);
   border-radius: 10px;
-  padding: 10px 18px;
-  cursor: pointer;
+  height: 35px;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+:deep(.vuejs3-datepicker__value) {
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+
+:deep(.vuejs3-datepicker__icon),
+:deep(.vuejs3-datepicker__content) {
+  color: var(--color-text);
+}
 </style>

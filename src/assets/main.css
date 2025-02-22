@@ -1,8 +1,8 @@
 /* @import './base.css'; */
-@import './datepicker.css'; 
 
 :root {
   --color-text: #0088cc;
+  --color-test-p: #1a1a1a;
   --hover-button: #c7d8fa;
   --close-button: #e05e5e;
   --close-button-hover: #ee8888;

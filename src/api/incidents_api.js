@@ -7,6 +7,12 @@ class IncidentsApi extends ApiBase {
     return await this.get('/api/incidents', needToken)
   }
 
+  async getIssIncidents(token) {
+    const needToken = true
+    ApiBase._setToken(token)
+    return await this.get('/api/incidents/iss', needToken)
+  }
+
   /**  */
 
   async createIncident(incidentData) {

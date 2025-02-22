@@ -2,18 +2,24 @@
  <section class="main-container container-report">
 
   <section class="section-search">
+
     <div class="div-header">
-      <button @click="search">Search</button>
 
-      <DateFilter />
+      <div class="div-datepicker">
+        <DateFilter @set-date="selectDate" />
+        <p> {{ datesSearch }} </p>
+      </div>
 
+
+      <button @click="search" :disabled="dates.initDate === null" class="btnSearch" :class="isDisabled" >Search</button>
     </div>
 
    <div class="chart-base container-incidents">
         {{ incidents }}
    </div>
 
-      <button @click="sendGmail">Send gmail</button>
+
+      <button @click="sendGmail">Send Reports</button>
   </section>
 
  </section>
@@ -21,13 +27,27 @@
 
 <script setup>
 import IncidentsApi from '@/api/incidents_api'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive, computed } from 'vue'
 import { useAuthenticationStore } from '@/stores/authentication'
 import DateFilter from '@/components/DateFilter.vue'
+import dayjs from 'dayjs'
 
 const incidents = ref([])
+const issIncidents = ref([])
 const authStore = useAuthenticationStore()
 let token = null
+const dates = reactive({
+  initDate: null,
+  endDate: null
+})
+
+const selectDate = (date) => {
+  dates.initDate = dayjs(date)
+  dates.endDate = dates.initDate.subtract(6, 'day')
+}
+
+const isDisabled = computed(() =>  dates.initDate === null ? 'btnDisabled' : 'btnEnabled' )
+const datesSearch = computed(() => dates.initDate !== null ? `Dates week: ${dates.initDate.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}` : '')
 
 onMounted(async () => {
   try {
@@ -41,7 +61,9 @@ onMounted(async () => {
 })
 
 const search = async () => {
+  issIncidents.value = await IncidentsApi.getIssIncidents(token)
   incidents.value = await IncidentsApi.getIncidents(token)
+
 }
 
 const sendGmail = async () => {
@@ -115,8 +137,38 @@ const sendGmail = async () => {
 
 .div-header {
   display: flex;
-
+  padding: 10px;
+  justify-content: space-between;
 }
 
+.div-datepicker {
+  display: flex;
+  align-items: center;
+}
+
+.div-datepicker p {
+  margin-left: 1rem;
+  color: var(--color-text-p);
+}
+
+.btnSearch {
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+  padding: 4px 15px;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.btnEnabled {
+  cursor: pointer;
+}
+
+.btnEnabled:hover {
+  background-color: var(--hover-button);
+}
+
+.btnDisabled {
+  cursor: not-allowed;
+}
 
 </style>
