@@ -2,51 +2,52 @@
  <section class="main-container container-report">
 
   <section class="section-search">
-    <button @click="search">Search</button>
+
+    <div class="div-header">
+
+      <div class="div-datepicker">
+        <DateFilter @set-date="selectDate" />
+        <p> {{ datesSearch }} </p>
+      </div>
+
+
+      <button @click="search" :disabled="dates.initDate === null" class="btnSearch" :class="isDisabled" >Search</button>
+    </div>
+
    <div class="chart-base container-incidents">
         {{ incidents }}
    </div>
 
-   <button @click="transform">Transform</button>
-      <p> {{ conversion }} </p>
-  </section>
 
-  <button @click="send">Send</button>
+      <button @click="sendGmail">Send Reports</button>
+  </section>
 
  </section>
 </template>
 
 <script setup>
 import IncidentsApi from '@/api/incidents_api'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive, computed } from 'vue'
 import { useAuthenticationStore } from '@/stores/authentication'
-import { json2csv } from 'json-2-csv';
-
-import nodemailer from 'nodemailer';
-// import fs from 'fs/promises';
-
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com', // Cambia según tu proveedor de correo
-  port: 587,
-  secure: false, // STARTTLS
-  auth: {
-    user: 'JuanJose.Romero@emtmadrid.es', // Tu correo empresarial
-    pass: '8492@Dmr-Jr%69'          // Contraseña del correo (o token de aplicación)
-  }
-});
-try {
-  await transporter.verify();
-  console.log('Servidor SMTP conectado correctamente');
-} catch (error) {
-  console.error('Error al conectar con el servidor SMTP:', error);
-}
-
+import DateFilter from '@/components/DateFilter.vue'
+import dayjs from 'dayjs'
 
 const incidents = ref([])
-const conversion = ref(false)
+const issIncidents = ref([])
 const authStore = useAuthenticationStore()
 let token = null
+const dates = reactive({
+  initDate: null,
+  endDate: null
+})
+
+const selectDate = (date) => {
+  dates.initDate = dayjs(date)
+  dates.endDate = dates.initDate.subtract(6, 'day')
+}
+
+const isDisabled = computed(() =>  dates.initDate === null ? 'btnDisabled' : 'btnEnabled' )
+const datesSearch = computed(() => dates.initDate !== null ? `Dates week: ${dates.initDate.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}` : '')
 
 onMounted(async () => {
   try {
@@ -60,48 +61,38 @@ onMounted(async () => {
 })
 
 const search = async () => {
+  issIncidents.value = await IncidentsApi.getIssIncidents(token)
   incidents.value = await IncidentsApi.getIncidents(token)
+
 }
 
-const transform = async () => {
-  const campos = ['id_incidencia', 'inicio', 'id_creador']; // Campos que quieres incluir en el CSV
-const opciones = { campos };
+const sendGmail = async () => {
+  const email = 'juanjor99@gmail.com';
+  const title = 'Subject of the email';
+  const comment = 'Total incidents';
 
-try {
-  const csv = await json2csv(incidents.value, opciones);
-  console.log(csv);
-} catch (err) {
-  console.error(err);
-}
-}
-
-const send = async () => {
   try {
-    // Lee el archivo CSV (asegúrate de que exista en la ruta indicada)
-    // const csvPath = './archivo.csv';
-    // const csvContent = await fs.readFile(csvPath);
+    const res = await fetch('http://localhost:8022/send-gmail', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token.value,
+    },
+    body: JSON.stringify({
+      email,
+      title,
+      comment,
+      incidents: incidents.value
+    })
+  })
 
-    // Configuración del correo
-    const mailOptions = {
-      from: '"Tu Empresa" JuanJose.Romero@emtmadrid.es',
-      to: 'juanjor99@gmail.com',
-      subject: 'Reporte CSV adjunto',
-      text: 'Por favor, encuentra el reporte adjunto en formato CSV.',
-      attachments: [
-        {
-          filename: 'reporte.csv',
-          // content: csvContent
-        }
-      ]
-    };
-
-    // Enviar el correo
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Correo enviado correctamente:', info.messageId);
+    const result = await res.text();
+    console.log(result);
   } catch (error) {
-    console.error('Error al enviar el correo:', error);
+    console.error('Error sending email:', error);
   }
 }
+
 </script>
 
 <style lang="css" scoped>
@@ -117,6 +108,7 @@ const send = async () => {
 
 .section-search {
   grid-column: 1 / -1;
+
 }
 
 .section-search > button {
@@ -143,5 +135,40 @@ const send = async () => {
   height: 100%;
 }
 
+.div-header {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+}
+
+.div-datepicker {
+  display: flex;
+  align-items: center;
+}
+
+.div-datepicker p {
+  margin-left: 1rem;
+  color: var(--color-text-p);
+}
+
+.btnSearch {
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+  padding: 4px 15px;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.btnEnabled {
+  cursor: pointer;
+}
+
+.btnEnabled:hover {
+  background-color: var(--hover-button);
+}
+
+.btnDisabled {
+  cursor: not-allowed;
+}
 
 </style>

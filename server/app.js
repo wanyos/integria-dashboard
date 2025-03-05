@@ -9,7 +9,9 @@ import inventoryRouter from './routers/inventoryRoutes.js'
 import reportRouter from './routers/reportRoutes.js'
 import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
-import { sendEmail } from './emailconfig.js';
+import { sendGmail } from './email-config/gmail-config.js';
+import { json2csv } from 'json-2-csv';
+import { convertJsonToExcel } from './email-config/conver_excel.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -56,29 +58,32 @@ app.use('/api/users', authMiddleware, usersRouter)
 app.use('/api/incidents', authMiddleware, incidentsRouter)
 app.use('/api/inventory', authMiddleware, inventoryRouter)
 
-app.post('/send-email', async (req, res) => {
-  const { to, subject, text, csvData } = req.body;
-  try {
-    // Llama a la función sendEmail de la configuración
-    const result = await sendEmail({
-      to,
-      subject,
-      text,
-      attachments: [
-        {
-          filename: 'reporte.csv',
-          content: csvData,
-          contentType: 'text/csv'
-        }
-      ]
-    });
+app.post('/send-gmail', async (req, res) => {
+  const { email, title, comment, incidents } = req.body;
+  if (!incidents) {
+    return res.status(400).send('No incidents data provided.');
+  }
 
+  // const csv = await json2csv(incidents);
+  const excel = await convertJsonToExcel(incidents)
+
+  const options = {
+    to: email,
+    subject: title,
+    text: comment,
+    fileName: 'export.xlsx',
+    fileData: excel
+  }
+
+  try {
+    const result = await sendGmail(options);
     res.status(200).json(result);
   } catch (error) {
     console.error('Error en /send-email:', error);
     res.status(500).json({ success: false, error: error.message });
   }
-});
+
+})
 
 app.use(globalMiddleware)
 

@@ -50,6 +50,7 @@
         :options="{ colors: COLORS1 }"
       />
     </div>
+
   </section>
 </template>
 
@@ -60,7 +61,7 @@ import DonnutChart from '@/components/DonnutChart.vue'
 import { useIncidentsStore } from '@/stores/incidents.js'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
-import { ref, nextTick, onMounted, computed } from 'vue'
+import { ref, reactive, nextTick, onMounted, computed } from 'vue'
 import { COLORS1, COLORS2 } from '@/constants/constants.js'
 import {
   getRowsTableYears,
@@ -117,6 +118,7 @@ onMounted(() => {
   const initYear = dayjs().subtract(1, 'year').year()
   setDataForYear(initYear, 'init')
 })
+
 </script>
 
 <style lang="css" scoped>
@@ -164,4 +166,5 @@ onMounted(() => {
   grid-column: 5 / 7;
   grid-row: 2 / 3;
 }
+
 </style>
