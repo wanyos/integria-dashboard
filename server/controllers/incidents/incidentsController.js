@@ -12,6 +12,17 @@ export default class IncidentsController {
     }
   }
 
+  static async getResolutorExternal(req, res, next) {
+    const { startDate, endDate } = req.params
+    try {
+      const { status, incidents } = await IncidentsService.getAllExternalResolutor(startDate, endDate)
+      return res.status(status).json(incidents)
+    } catch(error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
   static async getIssIncidents(req, res, next) {
     try {
       const { status, incidents } = await IssIncidentsService.getIssIncidents()

@@ -67,6 +67,7 @@ const getColorClass = (key, value) => {
 <style lang="css" scoped>
 .container {
   /* padding: 25px; */
+  width: 100%;
 }
 
 caption {
@@ -80,11 +81,12 @@ table {
   border: 1px solid lightslategray;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 100%;
 }
 
 th {
   position: relative;
-  width: 30px;
+
   padding: 10px 20px;
   font-size: 14px;
   font-weight: normal;

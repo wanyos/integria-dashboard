@@ -71,16 +71,14 @@ const handleScroll = () => {
 
 <style scoped lang="css">
 .container {
-  height: 100vh;
-  width: 100%;
+  min-height: 100vh;
   display: grid;
-  grid-template-columns: 10rem 1fr; /* menu lateral y main */
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr auto;
 }
 
 header {
   grid-column: 1 / -1;
-  grid-row: 1 / 2;
   background-color: #edf0f6;
   display: flex;
   align-items: center;
@@ -142,8 +140,8 @@ header.scrolled::before {
 }
 
 aside {
+  padding: 0 3rem;
   grid-column: 1 / 2;
-  grid-row: 2 / 3;
   background-color: #edf0f6;
   display: flex;
   flex-direction: column;
@@ -185,9 +183,7 @@ aside > nav {
 
 main {
   grid-column: 2 / 3;
-  grid-row: 2 / 3;
   overflow-y: auto; /* Permite el scroll solo dentro de main */
-  height: 100%; /* Se ajusta al espacio disponible en la grid */
 }
 
 footer {
