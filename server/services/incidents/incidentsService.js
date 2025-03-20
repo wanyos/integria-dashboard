@@ -1,5 +1,6 @@
 import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
+import { decodeHtmlEntities } from '../../util/formattingText.js'
 
 export default class IncidentsService {
   static async getIncidents() {
@@ -292,6 +293,35 @@ export default class IncidentsService {
       return { status: 200, incidents: results }
     } catch(error) {
       console.error('Database error getAllIncByMonths:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  static async getAllExternalResolutor(startDate, endDate) {
+    try {
+      const [results] = await pool.query(QUERIES.allExternalResolutor, [startDate, endDate]);
+      const formatIncidentData = (incident) => ({
+        ...incident,
+        titulo: decodeHtmlEntities(incident.titulo),
+        descripcion: decodeHtmlEntities(incident.descripcion),
+        resolutor: decodeHtmlEntities(incident.resolutor),
+        cierre: incident.cierre === '0000-00-00' ? null : incident.cierre
+      });
+
+       // Formatear y agrupar las incidencias por resolutor
+    const groupedIncidents = results.reduce((acc, incident) => {
+      const formattedIncident = formatIncidentData(incident);
+      const resolutor = formattedIncident.resolutor;
+      if (!acc[resolutor]) {
+        acc[resolutor] = [];
+      }
+      acc[resolutor].push(formattedIncident);
+      return acc;
+    }, {});
+
+      return { status: 200, incidents: groupedIncidents }
+    } catch(error) {
+      console.error('Database error getAllExternalResolutor:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
   }

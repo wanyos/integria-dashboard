@@ -169,7 +169,23 @@ GROUP BY
     MONTH(cierre)
 ORDER BY
     YEAR(cierre),
-    MONTH(cierre);`
+    MONTH(cierre);`,
+
+      // incidencias entre fechas resolutor externo, todos
+allExternalResolutor:
+`SELECT
+  I.id_incidencia,
+    DATE_FORMAT(inicio, '%Y-%m-%d') AS inicio,
+    DATE_FORMAT(cierre, '%Y-%m-%d') AS cierre,
+    I.titulo AS titulo,
+    I.descripcion AS descripcion,
+    I.id_creator,
+    g.id_grupo as id_resolutor,
+    G.nombre AS resolutor
+FROM tincidencia I
+LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
+WHERE I.id_incident_type = 7  AND I.inicio BETWEEN ? AND ? and I.cierre < '0001-01-01'
+ORDER BY G.id_grupo asc;`
 
 }
 
