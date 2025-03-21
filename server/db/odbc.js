@@ -1,4 +1,9 @@
-import odbc from 'odbc'
+import os from 'node:os'
+
+let odbc
+if (os.platform() === 'win32') {
+  odbc = await import('odbc')
+}
 
   const query = `SELECT TOP 10 ref_num AS Num_Incidencia, open_date AS FechaApertura, summary AS Resumen FROM call_req ORDER BY open_date DESC;`
 
@@ -46,6 +51,10 @@ WHERE inc.open_date >= 1704067200
 ORDER BY inc.ref_num, grp.last_name;`
 
 export async function getServideskData() {
+  if (os.platform() !== 'win32') {
+    return []
+  }
+
   try {
     const connection = await odbc.connect("DSN=CA_SERVICEDESK;UID=SA;PWD=Cartago01");
     const result = await connection.query(query3);

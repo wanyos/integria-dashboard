@@ -1,35 +1,69 @@
 <template>
- <section class="main-container container-report">
-
+  <section class="main-container container-report">
     <article class="section-header">
       <div class="div-datepicker">
         <DateFilter @set-date="selectDate" />
-        <!-- <p> {{ datesSearch }} </p> -->
       </div>
-      <button @click="search" :disabled="dates.initDate === null" class="btn__search" :class="isDisabled" >Search</button>
+      <button
+        @click="search"
+        :disabled="dates.initDate === null"
+        class="btn__search"
+        :class="isDisabled"
+      >
+        Search
+      </button>
     </article>
 
-   <article class="chart-base container-incidents">
-    <p>{{ datesIntegria }}</p>
-    <TableChart v-if="incidents.length !== 0"
+    <article class="chart-base container-incidents">
+      <p>{{ datesIntegria }}</p>
+      <TableChart
+        v-if="incidents.length !== 0"
         title="Summary total resolutor incidents Integria"
         :data-column="columns"
         :data-row="incidents"
       />
-   </article>
+    </article>
 
-   <article class="chart-base container-servidesk">
-    <TableChart
-    title="Summary total incidents servidesk"
-    :data-column="columnsServidesk"
-    />
-   </article>
+    <article class="chart-base container-servidesk">
+      <p>{{ datesServidesk }}</p>
+      <TableChart
+        v-if="issIncidents.length !== 0"
+        title="Summary total incidents servidesk"
+        :data-column="columnsServidesk"
+      />
+    </article>
+    <div class="chart-base container-files">
+      <CardFile
+        title="Iss Fuencarral"
+        :icon="IconExcel"
+        @drag-start="(e) => handleFileDragStart(e, file)"
+      />
+      <CardFile
+        title="Iss Fuencarral"
+        :icon="IconExcel"
+        @drag-start="(e) => handleFileDragStart(e, file)"
+      />
+      <CardFile
+        title="Iss Fuencarral"
+        :icon="IconExcel"
+        @drag-start="(e) => handleFileDragStart(e, file)"
+      />
+      <CardFile
+        title="Iss Fuencarral"
+        :icon="IconExcel"
+        @drag-start="(e) => handleFileDragStart(e, file)"
+      />
+      <CardFile
+        title="Iss Fuencarral"
+        :icon="IconExcel"
+        @drag-start="(e) => handleFileDragStart(e, file)"
+      />
+    </div>
 
-   <section class="section__footer">
-    <button @click="sendGmail" class="btn__search btn__send" >Send Reports</button>
-   </section>
-
- </section>
+    <section class="section__footer">
+      <button @click="sendGmail" class="btn__search btn__send">Send Reports</button>
+    </section>
+  </section>
 </template>
 
 <script setup>
@@ -38,30 +72,38 @@ import { onMounted, ref, reactive, computed } from 'vue'
 import { useAuthenticationStore } from '@/stores/authentication'
 import TableChart from '@/components/TableChart.vue'
 import DateFilter from '@/components/DateFilter.vue'
+import CardFile from '@/components/global-components/CardFile.vue'
+import IconExcel from '@/assets/img/img-excel.webp'
 import dayjs from 'dayjs'
 
 const columns = ['Resolutor', 'Incidents', 'Email']
-const columnsServidesk = []
+const columnsServidesk = ['Location', 'Incidents', 'Email']
 
 const incidents = ref([])
-// const issIncidents = ref([])
+const issIncidents = ref([])
 const integriaInit = ref(dayjs('2023-01-01'))
 
 const authStore = useAuthenticationStore()
 let token = null
-const dates = reactive({
-  initDate: null,
-  endDate: null
-})
+const dates = reactive({ initDate: null, endDate: null })
 
 const selectDate = (date) => {
-  dates.endDate = dayjs(date);
+  dates.endDate = dayjs(date)
   dates.initDate = dates.endDate.subtract(6, 'day')
 }
 
-const isDisabled = computed(() =>  dates.initDate === null ? 'btnDisabled' : 'btnEnabled' )
+const isDisabled = computed(() => (dates.initDate === null ? 'btnDisabled' : 'btnEnabled'))
 // const datesSearch = computed(() => dates.initDate !== null ? `Dates week: ${dates.initDate.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}` : '')
-const datesIntegria = computed(() => dates.endDate !== null ? `Dates integria: ${integriaInit.value.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}` : '')
+const datesServidesk = computed(() =>
+  dates.endDate !== null
+    ? `Dates servidesk 01 Jan, 2024 -- ${dates.endDate.format('DD MMM,YYYY')}`
+    : '',
+)
+const datesIntegria = computed(() =>
+  dates.endDate !== null
+    ? `Dates integria: ${integriaInit.value.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}`
+    : '',
+)
 
 onMounted(async () => {
   try {
@@ -75,57 +117,56 @@ onMounted(async () => {
 })
 
 const search = async () => {
-  const endDate = dayjs(dates.endDate).format('YYYY-MM-DD');
+  const endDate = dayjs(dates.endDate).format('YYYY-MM-DD')
 
   // incidents intgria
-  const incIntegria = await IncidentsApi.getIncExternalResolutor(integriaInit, endDate, token);
+  const incIntegria = await IncidentsApi.getIncExternalResolutor(integriaInit, endDate, token)
   incidents.value = Object.entries(incIntegria).map(([resolutor, incidents]) => ({
-  resolutor,
-  total: incidents.length
-}));
+    resolutor,
+    total: incidents.length,
+  }))
 
-// incidents servidesk
-const incIss = await IncidentsApi.getIssIncidents(token);
-console.log('instalaciones servicios', incIss);
-
+  // incidents servidesk
+  const incIss = await IncidentsApi.getIssIncidents(token)
+  console.log('instalaciones servicios', incIss)
 
   // issIncidents.value = await IncidentsApi.getIssIncidents(token)
   // incidents.value = await IncidentsApi.getIncidents(token)
 }
 
+const handleFileDragStart = ({ nativeEvent }, file) => {
+  // Lógica específica para el archivo Excel
+  const blob = new Blob([file.content], { type: file.type })
+  const dataTransfer = nativeEvent.dataTransfer
 
+  dataTransfer.items.clear()
+  dataTransfer.items.add(new File([blob], file.name))
+  dataTransfer.effectAllowed = 'copy'
+}
 
 const sendGmail = async () => {
-  const email = 'juanjor99@gmail.com, JuanJose.Romero@emtmadrid.es';
-  const title = 'Subject of the email';
-  const comment = 'Total incidents';
+  const email = 'juanjor99@gmail.com, JuanJose.Romero@emtmadrid.es'
+  const title = 'Subject of the email'
+  const comment = 'Total incidents'
 
   try {
     const res = await fetch('http://localhost:8022/send-gmail', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token.value,
-    },
-    body: JSON.stringify({
-      email,
-      title,
-      comment,
-      incidents: incidents.value
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: token.value },
+      body: JSON.stringify({ email, title, comment, incidents: incidents.value }),
     })
-  })
 
-    const result = await res.text();
-    console.log(result);
+    const result = await res.text()
+    console.log(result)
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending email:', error)
   }
 }
-
 </script>
 
 <style lang="css" scoped>
 .container-report {
+  min-height: 95%;
   margin-top: 15px;
   border-radius: 15px;
   padding: 10px 15px;
@@ -167,12 +208,26 @@ const sendGmail = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+}
+
+.container-servidesk {
+  grid-column: 4 / 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container-files {
+  grid-column: 4 / 7;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  place-items: center;
 }
 
 .section__footer {
   padding: 1rem;
- grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .div-datepicker {
@@ -208,5 +263,4 @@ const sendGmail = async () => {
 .btnDisabled {
   cursor: not-allowed;
 }
-
 </style>
