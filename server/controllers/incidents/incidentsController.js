@@ -23,6 +23,17 @@ export default class IncidentsController {
     }
   }
 
+  static async getIncIntegriaTechnology(req, res, next) {
+    const { startDate, endDate } = req.params
+    try {
+      const { status, incidents } = await IncidentsService.getAllIntegriaTechnology(startDate, endDate);
+      return res.status(status).json(incidents)
+    } catch(error) {
+      console.error(error)
+      next(error)
+    }
+  }
+
   static async getIssIncidents(req, res, next) {
     try {
       const { status, incidents } = await IssIncidentsService.getIssIncidents()
@@ -32,5 +43,6 @@ export default class IncidentsController {
       next(error)
     }
   }
+
 
 }

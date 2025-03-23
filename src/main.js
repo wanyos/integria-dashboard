@@ -20,6 +20,7 @@ import App from './App.vue'
 import router from './router'
 import Vue3Toastify from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+// import VuejsDatepicker from 'vuejs3-datepicker';
 
 addIcons(
   BiArrowLeft,
@@ -36,6 +37,14 @@ addIcons(
 )
 
 const app = createApp(App)
+
+// app.component('DatePicker', VuejsDatepicker);
+// app.config.globalProperties.$datepickerConfig = {
+//   touchListeners: {
+//     passive: false,
+//     capture: true
+//   }
+// };
 
 app.use(createPinia())
 app.use(router)

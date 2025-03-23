@@ -26,6 +26,11 @@ const selectDate = (date) => {
 
 <style lang="css" scoped>
 
+:deep(.vuejs3-datepicker) {
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+
 :deep(.vuejs3-datepicker__calendar) {
   touch-action: none;
 }

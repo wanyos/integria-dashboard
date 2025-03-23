@@ -15,6 +15,12 @@
     </article>
 
     <article class="chart-base container-incidents">
+      <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="'#1565C0'"
+    />
       <p>{{ datesIntegria }}</p>
       <TableChart
         v-if="incidents.length !== 0"
@@ -25,43 +31,49 @@
     </article>
 
     <article class="chart-base container-servidesk">
+      <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="'#1565C0'"
+    />
       <p>{{ datesServidesk }}</p>
       <TableChart
         v-if="issIncidents.length !== 0"
-        title="Summary total incidents servidesk"
+        title="Summary of incidents at ISS Servidersk"
         :data-column="columnsServidesk"
+        :data-row="issIncidents"
+      />
+      <TableChart
+        v-if="integriaTechnology.length !== 0"
+        title="Summary of incidents in integria technology"
+        :data-column="columnsIntegriaTec"
+        :data-row="integriaTechnology"
+        class="tableTecIntegria"
       />
     </article>
+
     <div class="chart-base container-files">
       <CardFile
-        title="Iss Fuencarral"
+        v-for="(file, index) in filesIss" :key="index"
+        :title="file.name"
         :icon="IconExcel"
+        :size="file.content.byteLength"
         @drag-start="(e) => handleFileDragStart(e, file)"
       />
+
       <CardFile
-        title="Iss Fuencarral"
+       v-for="(file, index) in filesIntegria" :key="index"
+        :title="file.name"
         :icon="IconExcel"
-        @drag-start="(e) => handleFileDragStart(e, file)"
-      />
-      <CardFile
-        title="Iss Fuencarral"
-        :icon="IconExcel"
-        @drag-start="(e) => handleFileDragStart(e, file)"
-      />
-      <CardFile
-        title="Iss Fuencarral"
-        :icon="IconExcel"
-        @drag-start="(e) => handleFileDragStart(e, file)"
-      />
-      <CardFile
-        title="Iss Fuencarral"
-        :icon="IconExcel"
+        :size="file.content.byteLength"
         @drag-start="(e) => handleFileDragStart(e, file)"
       />
     </div>
 
     <section class="section__footer">
       <button @click="sendGmail" class="btn__search btn__send">Send Reports</button>
+      <button @click="startProcess" class="btn__search btn__send" :class="isArrayFiles">Start process</button>
     </section>
   </section>
 </template>
@@ -75,17 +87,29 @@ import DateFilter from '@/components/DateFilter.vue'
 import CardFile from '@/components/global-components/CardFile.vue'
 import IconExcel from '@/assets/img/img-excel.webp'
 import dayjs from 'dayjs'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
+import { createFileIss, createFileIntegria } from '../utils/create_files.js'
 
 const columns = ['Resolutor', 'Incidents', 'Email']
 const columnsServidesk = ['Location', 'Incidents', 'Email']
+const columnsIntegriaTec = ['Type', 'Incidents', 'Email']
 
 const incidents = ref([])
 const issIncidents = ref([])
-const integriaInit = ref(dayjs('2023-01-01'))
+const integriaTechnology = ref([])
 
+const filesIss = ref([]);
+const filesIntegria = ref([])
+
+const integriaInit = ref(dayjs('2024-01-01'))
+const isLoading = ref(false)
 const authStore = useAuthenticationStore()
 let token = null
 const dates = reactive({ initDate: null, endDate: null })
+
+let incIss = null;
+let integriaTec = null;
 
 const selectDate = (date) => {
   dates.endDate = dayjs(date)
@@ -105,6 +129,8 @@ const datesIntegria = computed(() =>
     : '',
 )
 
+const isArrayFiles = computed(() => issIncidents.value.length === 0 ? 'btnDisabled' : 'btnEnabled');
+
 onMounted(async () => {
   try {
     token = authStore.isAuthenticated
@@ -117,32 +143,55 @@ onMounted(async () => {
 })
 
 const search = async () => {
+  isLoading.value = true;
   const endDate = dayjs(dates.endDate).format('YYYY-MM-DD')
 
-  // incidents intgria
-  const incIntegria = await IncidentsApi.getIncExternalResolutor(integriaInit, endDate, token)
+  // incidents integria resolutor externo
+  const incIntegria = await IncidentsApi.getIncExternalResolutor(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
   incidents.value = Object.entries(incIntegria).map(([resolutor, incidents]) => ({
     resolutor,
     total: incidents.length,
   }))
 
   // incidents servidesk
-  const incIss = await IncidentsApi.getIssIncidents(token)
-  console.log('instalaciones servicios', incIss)
+  incIss = await IncidentsApi.getIssIncidents(token)
+  issIncidents.value = Object.entries(incIss).map(([location, incidents]) => ({
+    location,
+    total: incidents.length,
+  }))
 
-  // issIncidents.value = await IncidentsApi.getIssIncidents(token)
-  // incidents.value = await IncidentsApi.getIncidents(token)
+  // incidents integria tecnologia
+integriaTec = await IncidentsApi.getIncidentsTechnology(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
+integriaTechnology.value = Object.entries(integriaTec).map(([type, incidents]) => ({
+    type,
+    total: incidents.length,
+  }))
+
+  isLoading.value = false;
 }
 
 const handleFileDragStart = ({ nativeEvent }, file) => {
-  // Lógica específica para el archivo Excel
-  const blob = new Blob([file.content], { type: file.type })
-  const dataTransfer = nativeEvent.dataTransfer
+    try {
+        const blob = new Blob([file.content], { type: file.type });
+       const url = URL.createObjectURL(blob);
+        const dt = nativeEvent.dataTransfer;
+        dt.clearData();
 
-  dataTransfer.items.clear()
-  dataTransfer.items.add(new File([blob], file.name))
-  dataTransfer.effectAllowed = 'copy'
-}
+        // Configurar para todos los navegadores
+        dt.setData('text/plain', file.name);
+
+        dt.setData('DownloadURL', `${file.type}:${file.name}:${url}`);
+
+        // Añadir archivo real
+        dt.items.add(new File([blob], file.name, { type: file.type }));
+
+        // Limpiar memoria después de 30s
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+    } catch (error) {
+        console.error('Error en dragstart:', error);
+        nativeEvent.preventDefault();
+    }
+};
 
 const sendGmail = async () => {
   const email = 'juanjor99@gmail.com, JuanJose.Romero@emtmadrid.es'
@@ -161,6 +210,21 @@ const sendGmail = async () => {
   } catch (error) {
     console.error('Error sending email:', error)
   }
+}
+
+const startProcess = async () => {
+  const openDate = dayjs(dates.initDate, 'DD/MM/YYYY');
+  const closeDate = dayjs(dates.endDate, 'DD/MM/YYYY');
+
+  filesIss.value = await createFileIss(incIss, openDate, closeDate);
+  filesIntegria.value = await createFileIntegria(integriaTec, openDate, closeDate);
+
+  // console.log('Validación:', {
+  //       name: filesIss.value[0].name,
+  //       type: filesIss.value[0].type,
+  //       sizeBytes: filesIss.value[0].content.byteLength, // Debe ser > 0
+  //       isUint8Array: filesIss.value[0].content instanceof Uint8Array // true
+  //   });
 }
 </script>
 
@@ -203,7 +267,8 @@ const sendGmail = async () => {
 }
 
 .container-incidents {
-  min-height: 35rem;
+ position: relative;
+  min-height: 30rem;
   grid-column: 1 / 4;
   display: flex;
   flex-direction: column;
@@ -211,10 +276,15 @@ const sendGmail = async () => {
 }
 
 .container-servidesk {
+  position: relative;
   grid-column: 4 / 7;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.container-servidesk .tableTecIntegria {
+  margin-top: 25px;
 }
 
 .container-files {
@@ -228,6 +298,9 @@ const sendGmail = async () => {
 .section__footer {
   padding: 1rem;
   grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .div-datepicker {

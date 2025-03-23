@@ -2,6 +2,7 @@ import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
 import { decodeHtmlEntities } from '../../util/formattingText.js'
 
+
 export default class IncidentsService {
   static async getIncidents() {
     try {
@@ -322,6 +323,48 @@ export default class IncidentsService {
       return { status: 200, incidents: groupedIncidents }
     } catch(error) {
       console.error('Database error getAllExternalResolutor:', error)
+      throw new Error('Failed to fetch incidents from the database')
+    }
+  }
+
+  static async getAllIntegriaTechnology(startDate, endDate) {
+    try {
+    const [incIntegriaTec] = await pool.query(QUERIES.allIncTechnology, [startDate, endDate])
+
+    const transformedData = incIntegriaTec.map(row => {
+      row.Usuario = decodeHtmlEntities(row.Usuario);
+      row.Resumen = decodeHtmlEntities(row.Resumen);
+      row.Grupo = decodeHtmlEntities(row.Grupo);
+      row.Tecnico_Asignado = decodeHtmlEntities(row.Tecnico_Asignado);
+      row.Descripcion_Tipo = decodeHtmlEntities(row.Descripcion_Tipo);
+      row.Localizacion = decodeHtmlEntities(row.Localizacion);
+      return row;
+    });
+
+    // separar las incidencias entre movilidad y tecnologia
+    const movilidad = [];
+    const tecnologia = [];
+
+    const dataIntegria = {
+        apliMovilidadd: '6.02 APLIC MOVILIDAD',
+        etralux: 'MOV ETRALUX',
+        siepark: 'MOV SIEPARK'
+    }
+
+    transformedData.forEach((item) => {
+        if(item.Grupo) {
+            const grupoNormalizado = item.Grupo.trim().toLowerCase();
+            const isMovilidad = Object.keys(dataIntegria).some(key => dataIntegria[key].trim().toLowerCase() === grupoNormalizado);
+            isMovilidad ? movilidad.push(item) : tecnologia.push(item);
+        }
+    })
+
+    const integriaInc = { movilidad, tecnologia }
+
+    return { status: 200, incidents: integriaInc };
+
+    } catch(error) {
+      console.error('Database error:', error.message)
       throw new Error('Failed to fetch incidents from the database')
     }
   }

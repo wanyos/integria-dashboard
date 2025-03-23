@@ -185,7 +185,31 @@ allExternalResolutor:
 FROM tincidencia I
 LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
 WHERE I.id_incident_type = 7  AND I.inicio BETWEEN ? AND ? and I.cierre < '0001-01-01'
-ORDER BY G.id_grupo asc;`
+ORDER BY G.id_grupo asc;`,
+
+   // incidencias tecnologia
+   allIncTechnology: `SELECT DISTINCT
+      I.id_incidencia AS Num_Incidencia,
+      S.name AS Estado,
+      DATE_FORMAT(I.inicio,"%d/%m/%Y") AS FechaApertura,
+      DATE_FORMAT(I.cierre,"%d/%m/%Y") AS FechaCierre,
+      U.nombre_real AS Usuario,
+      E.telefono AS Extension,
+      I.Titulo AS Resumen,
+      G.nombre AS Grupo,
+      E.nombre_real AS Tecnico_Asignado,
+      T.name AS Descripcion_Tipo,
+      DATE_FORMAT(I.actualizacion,"%d/%m/%Y") AS "Ultima_actuacion",
+      R.data AS Localizacion
+FROM tincident_field_data R
+LEFT JOIN tincidencia I ON R.id_incident_field IN (98,103,109,114) AND (R.id_incident = I.id_incidencia)
+LEFT JOIN tincident_status S ON I.estado = S.id
+LEFT JOIN tusuario U ON I.id_creator = U.id_usuario
+LEFT JOIN tusuario E ON I.id_usuario = E.id_usuario
+LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
+LEFT JOIN tincident_type T ON I.id_incident_type = T.id
+WHERE (I.inicio >= ?) AND (I.inicio <= ?)
+ORDER BY I.id_incidencia;`
 
 }
 
