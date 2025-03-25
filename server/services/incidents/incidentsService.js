@@ -360,7 +360,6 @@ export default class IncidentsService {
     })
 
     const integriaInc = { movilidad, tecnologia }
-
     return { status: 200, incidents: integriaInc };
 
     } catch(error) {

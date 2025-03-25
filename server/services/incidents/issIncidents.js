@@ -13,18 +13,18 @@ const data = {
 }
 
 const convertTimestampToDate = (timestamp) => {
-  return dayjs.unix(timestamp).format('DD/MM/YYYY');
+  return dayjs.unix(timestamp);
 }
 
  // crea array con los grupos de instalaciones y sus incidencias
 const getServideskInc = async (issInc) => {
   const groupedByGrupo = {};
-
   if(issInc.length > 0) {
       issInc.forEach((item) => {
           const grupo = item.Grupo;
-          item.FechaApertura = item.FechaApertura ? convertTimestampToDate(item.FechaApertura) : '';
-          item.FechaCierre = item.FechaCierre ? convertTimestampToDate(item.FechaCierre) : '';
+
+          item.FechaApertura = item.FechaApertura ? convertTimestampToDate(item.FechaApertura) : null;
+          item.FechaCierre = item.FechaCierre ? convertTimestampToDate(item.FechaCierre) : null;
 
            const clave = Object.keys(data).find(key => data[key] === grupo);
 

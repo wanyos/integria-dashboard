@@ -1,9 +1,30 @@
 import os from 'node:os'
+import sql from 'mssql';
 
-let odbc
-if (os.platform() === 'win32') {
-  odbc = await import('odbc')
-}
+// let odbc
+// if (os.platform() === 'win32') {
+//   odbc = await import('odbc')
+// }
+
+// export async function getServideskData() {
+//   if (os.platform() !== 'win32') {
+//     return []
+//   }
+
+//   try {
+//     const connection = await odbc.connect("DSN=CA_SERVICEDESK;UID=SA;PWD=Cartago01");
+//     const result = await connection.query(query3);
+//     await connection.close();
+//     return result;
+//   } catch (err) {
+//     console.error("Error en la consulta ODBC:", err);
+//     throw err;
+//   }
+// }
+
+  // ejecutarConsultaODBC(query3)
+  // .then((data) => console.log(data))
+  // .catch((err) => console.error(err));
 
   const query = `SELECT TOP 10 ref_num AS Num_Incidencia, open_date AS FechaApertura, summary AS Resumen FROM call_req ORDER BY open_date DESC;`
 
@@ -50,22 +71,38 @@ WHERE inc.open_date >= 1704067200
   AND inc.open_date <= 1767221999
 ORDER BY inc.ref_num, grp.last_name;`
 
+  const config = {
+    server: 'moncau2',
+    database: 'mdb',
+    user: 'SA',
+    password: 'Cartago01',
+    port: 1433,
+    options: {
+        encrypt: false,
+        trustServerCertificate: true,
+        enableArithAbort: true,
+        tdsVersion: '7_1',       // <--- Versión TDS (prueba con 7_1, 7_2, 7_3, 7_4)
+        useUTC: false            // Necesario para versiones muy antiguas
+    }
+};
+
 export async function getServideskData() {
   if (os.platform() !== 'win32') {
     return []
   }
 
+  let pool;
+
   try {
-    const connection = await odbc.connect("DSN=CA_SERVICEDESK;UID=SA;PWD=Cartago01");
-    const result = await connection.query(query3);
-    await connection.close();
-    return result;
+    pool = await sql.connect(config);
+    const result = await pool.request().query(query3);
+    return result.recordset;
   } catch (err) {
     console.error("Error en la consulta ODBC:", err);
     throw err;
+  } finally {
+    if (pool) {
+      await pool.close();
+    }
   }
 }
-
-  // ejecutarConsultaODBC(query3)
-  // .then((data) => console.log(data))
-  // .catch((err) => console.error(err));

@@ -162,6 +162,10 @@ const search = async () => {
 
   // incidents integria tecnologia
 integriaTec = await IncidentsApi.getIncidentsTechnology(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
+// integriaTec = await IncidentsApi.getIncidentsTechnology(dates.initDate.format('YYYY-MM-DD'), endDate, token)
+
+// console.log('all incidents tecnologia', integriaTec);
+
 integriaTechnology.value = Object.entries(integriaTec).map(([type, incidents]) => ({
     type,
     total: incidents.length,
@@ -213,10 +217,10 @@ const sendGmail = async () => {
 }
 
 const startProcess = async () => {
-  const openDate = dayjs(dates.initDate, 'DD/MM/YYYY');
-  const closeDate = dayjs(dates.endDate, 'DD/MM/YYYY');
+  const openDate = dayjs(dates.initDate);
+  const closeDate = dayjs(dates.endDate);
 
-  filesIss.value = await createFileIss(incIss, openDate, closeDate);
+  filesIss.value = await createFileIss(incIss, dates.initDate, dates.endDate);
   filesIntegria.value = await createFileIntegria(integriaTec, openDate, closeDate);
 
   // console.log('Validación:', {

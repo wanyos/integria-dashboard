@@ -3,4 +3,3 @@ export default (o, c, d) => {
       return this.isBefore(d(date), unit) || this.isSame(d(date), unit);
     };
   };
-  
