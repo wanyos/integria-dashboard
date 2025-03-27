@@ -22,13 +22,13 @@ import sql from 'mssql';
 //   }
 // }
 
-  // ejecutarConsultaODBC(query3)
-  // .then((data) => console.log(data))
-  // .catch((err) => console.error(err));
+// ejecutarConsultaODBC(query3)
+// .then((data) => console.log(data))
+// .catch((err) => console.error(err));
 
-  const query = `SELECT TOP 10 ref_num AS Num_Incidencia, open_date AS FechaApertura, summary AS Resumen FROM call_req ORDER BY open_date DESC;`
+const query = `SELECT TOP 10 ref_num AS Num_Incidencia, open_date AS FechaApertura, summary AS Resumen FROM call_req ORDER BY open_date DESC;`
 
-  const getIncidents = `SELECT inc.ref_num AS Num_Incidencia, est.sym AS Estado, inc.open_date AS FechaApertura, inc.close_date AS FechaCierre, [ca_contact].[middle_name] & " " & [ca_contact].[last_name] & " " & [ca_contact].[first_name] AS Usuario, ca_contact.pri_phone_number AS Extension, inc.summary AS Resumen, grp.last_name AS Grupo, [con].[middle_name] & " " & [con].[last_name] & " " & [con].[first_name] AS Tecnico_Asignado, prob.sym AS Tipo_Inc, prob.description AS Descripcion_Tipo INTO EMT_Incidencias
+const getIncidents = `SELECT inc.ref_num AS Num_Incidencia, est.sym AS Estado, inc.open_date AS FechaApertura, inc.close_date AS FechaCierre, [ca_contact].[middle_name] & " " & [ca_contact].[last_name] & " " & [ca_contact].[first_name] AS Usuario, ca_contact.pri_phone_number AS Extension, inc.summary AS Resumen, grp.last_name AS Grupo, [con].[middle_name] & " " & [con].[last_name] & " " & [con].[first_name] AS Tecnico_Asignado, prob.sym AS Tipo_Inc, prob.description AS Descripcion_Tipo INTO EMT_Incidencias
 FROM ((((((call_req AS inc LEFT JOIN ca_contact AS grp ON inc.group_id = grp.contact_uuid) LEFT JOIN ca_contact AS con ON inc.assignee = con.contact_uuid) LEFT JOIN prob_ctg AS prob ON inc.category = prob.persid) LEFT JOIN cr_stat AS est ON inc.status = est.code) LEFT JOIN ca_contact ON inc.customer = ca_contact.contact_uuid) LEFT JOIN ca_resource_cost_center ON ca_contact.cost_center = ca_resource_cost_center.id) LEFT JOIN EMT_Origen ON inc.severity = EMT_Origen.Origen
 WHERE inc.open_date >= 1704067200
   AND inc.open_date <= 1767221999
@@ -71,19 +71,19 @@ WHERE inc.open_date >= 1704067200
   AND inc.open_date <= 1767221999
 ORDER BY inc.ref_num, grp.last_name;`
 
-  const config = {
-    server: 'moncau2',
-    database: 'mdb',
-    user: 'SA',
-    password: 'Cartago01',
-    port: 1433,
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        enableArithAbort: true,
-        tdsVersion: '7_1',       // <--- Versión TDS (prueba con 7_1, 7_2, 7_3, 7_4)
-        useUTC: false            // Necesario para versiones muy antiguas
-    }
+const config = {
+  server: 'moncau2',
+  database: 'mdb',
+  user: 'SA',
+  password: 'Cartago01',
+  port: 1433,
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+    enableArithAbort: true,
+    tdsVersion: '7_1',       // <--- Versión TDS (prueba con 7_1, 7_2, 7_3, 7_4)
+    useUTC: false            // Necesario para versiones muy antiguas
+  }
 };
 
 export async function getServideskData() {
@@ -98,8 +98,9 @@ export async function getServideskData() {
     const result = await pool.request().query(query3);
     return result.recordset;
   } catch (err) {
-    console.error("Error en la consulta ODBC:", err);
-    throw err;
+    console.log('');
+    console.error("Error en la consulta ODBC:", err.message);
+    throw new Error("Error retrieving data from Servidesk.Possible database connection failure...");
   } finally {
     if (pool) {
       await pool.close();

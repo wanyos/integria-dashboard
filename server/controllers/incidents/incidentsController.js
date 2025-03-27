@@ -17,7 +17,7 @@ export default class IncidentsController {
     try {
       const { status, incidents } = await IncidentsService.getAllExternalResolutor(startDate, endDate)
       return res.status(status).json(incidents)
-    } catch(error) {
+    } catch (error) {
       console.log(error)
       next(error)
     }
@@ -28,7 +28,7 @@ export default class IncidentsController {
     try {
       const { status, incidents } = await IncidentsService.getAllIntegriaTechnology(startDate, endDate);
       return res.status(status).json(incidents)
-    } catch(error) {
+    } catch (error) {
       console.error(error)
       next(error)
     }
@@ -36,10 +36,14 @@ export default class IncidentsController {
 
   static async getIssIncidents(req, res, next) {
     try {
-      const { status, incidents } = await IssIncidentsService.getIssIncidents()
-      return res.status(status).json(incidents)
+      const result = await IssIncidentsService.getIssIncidents();
+      if (!result) {
+        return res.status(500).json({ error: 'Failed to fetch incidents from issServidesk...' });
+      }
+      const { status, incidents } = result;
+      return res.status(status).json(incidents);
     } catch (error) {
-      console.error(error)
+      console.error(error.message)
       next(error)
     }
   }

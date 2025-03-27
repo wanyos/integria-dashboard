@@ -16,28 +16,28 @@ const convertTimestampToDate = (timestamp) => {
   return dayjs.unix(timestamp);
 }
 
- // crea array con los grupos de instalaciones y sus incidencias
+// crea array con los grupos de instalaciones y sus incidencias
 const getServideskInc = async (issInc) => {
   const groupedByGrupo = {};
-  if(issInc.length > 0) {
-      issInc.forEach((item) => {
-          const grupo = item.Grupo;
+  if (issInc.length > 0) {
+    issInc.forEach((item) => {
+      const grupo = item.Grupo;
 
-          item.FechaApertura = item.FechaApertura ? convertTimestampToDate(item.FechaApertura) : null;
-          item.FechaCierre = item.FechaCierre ? convertTimestampToDate(item.FechaCierre) : null;
+      item.FechaApertura = item.FechaApertura ? convertTimestampToDate(item.FechaApertura) : null;
+      item.FechaCierre = item.FechaCierre ? convertTimestampToDate(item.FechaCierre) : null;
 
-           const clave = Object.keys(data).find(key => data[key] === grupo);
+      const clave = Object.keys(data).find(key => data[key] === grupo);
 
-           if (clave) {
-              if (!groupedByGrupo[clave]) {
-                  groupedByGrupo[clave] = [];
-              }
-              groupedByGrupo[clave].push(item);
-          }
-      });
-      return groupedByGrupo;
-   }
+      if (clave) {
+        if (!groupedByGrupo[clave]) {
+          groupedByGrupo[clave] = [];
+        }
+        groupedByGrupo[clave].push(item);
+      }
+    });
+    return groupedByGrupo;
   }
+}
 
 export default class IssIncidentsService {
   static async getIssIncidents() {
@@ -46,8 +46,7 @@ export default class IssIncidentsService {
       const grouoIncidents = await getServideskInc(iss_incidents)
       return { status: 200, incidents: grouoIncidents }
     } catch (error) {
-      console.error('Database error:', error.message)
-      throw new Error('Failed to fetch incidents from the database')
+      console.error('Database error issIncidentsService:', error.message)
     }
   }
 }

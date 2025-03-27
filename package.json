@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve:express": "cross-env NODE_ENV=development node --watch server/app.js",
+    "serve:express": "cross-env NODE_ENV=development node server/app.js",
     "serve:test": "cross-env NODE_ENV=test node server/app.js",
     "connect-db": "cross-env NODE_ENV=development node server/db/mysql.js",
     "serve:db": "npm run connect-db & npm run serve:express",
