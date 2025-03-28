@@ -18,18 +18,20 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "json-2-csv": "^5.5.8",
     "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
     "mssql": "^11.0.1",
     "mysql2": "^3.12.0",
+    "nodemailer": "^6.10.0",
     "odbc": "^2.4.9",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "vitest": "^2.1.8"
   }
 }

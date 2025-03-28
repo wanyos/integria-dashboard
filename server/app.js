@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
+import morgan from 'morgan'
 import { fileURLToPath } from 'url'
 import usersRouter from './routers/usersRoutes.js'
 import incidentsRouter from './routers/incidentsRoutes.js'
@@ -48,6 +49,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 app.use(express.json())
+app.use(morgan('dev'));
 
 //login
 app.use('/api', loginRouter)

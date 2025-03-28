@@ -1,4 +1,4 @@
-name: CI
+name: CI INTEGRIA-PROJECT
 
 on:
   push:
@@ -32,28 +32,38 @@ jobs:
         with:
           node-version: '22'
 
-      - name: 'Install dependencies'
+      # 3. Install backend dependencies (Express)
+      - name: 'Install backend dependencies'
+        working-directory: ./server
+        run: npm install
+
+      # 4. Run backend tests (if any)
+      - name: 'Run backend tests'
+        working-directory: ./server
+        run: npm run test
+        env:
+          NODE_ENV: test
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root1712@fll
+          DB_NAME: integria_backup
+          DB_PORT: 3306
+
+      # 5. Install frontend dependencies (Vue 3)
+      - name: 'Install frontend dependencies'
+        working-directory: ./src
         run: npm install
 
       - name: 'Run Vitest tests'
         run: npm run test:unit
-        env:
-          NODE_ENV: test
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: integria_backup
-          DB_PORT: 3306
 
       - name: 'Run Cypress tests'
         run: npm run test:all
-        env:
-          NODE_ENV: test
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: integria_backup
-          DB_PORT: 3306
+
+      # 7. Build frontend (if needed)
+      - name: 'Build frontend'
+        working-directory: ./src
+        run: npm run build
 
       - name: 'Display messages'
-        run: echo "Init jobs...!"
+        run: echo "CI pipeline completed successfully!"
