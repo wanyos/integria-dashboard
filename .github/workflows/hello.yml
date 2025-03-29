@@ -28,25 +28,58 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      # Configuración inicial
       - name: 'Create email config dummy'
         working-directory: ./server
         run: |
           mkdir -p email-config
-          echo "export const sendGmail = () => {}; export default { user: 'test', pass: 'test' }" > email-config/gmail-config.js
+          echo "export const sendGmail = () => Promise.resolve();" > email-config/gmail-config.js
 
+      # Base de datos
       - name: 'Wait for MySQL'
         run: |
           timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
           echo "✅ MySQL listo!"
 
+      - name: 'Run DB migrations'
+        working-directory: ./server
+        run: npm run migrate # Asegúrate de tener este script en package.json
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+
+      - name: 'Seed test data'
+        working-directory: ./server
+        run: npm run seed # Script para poblar datos de prueba
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+
+      # Backend
       - name: 'Install backend dependencies'
         working-directory: ./server
         run: npm install
 
+      - name: 'Run backend tests'
+        working-directory: ./server
+        run: npm run test
+
+      # Frontend
       - name: 'Install frontend dependencies'
         working-directory: ./src
         run: npm install
 
+      - name: 'Run frontend unit tests'
+        working-directory: ./src
+        run: npm run test:unit
+
+      - name: 'Build frontend'
+        working-directory: ./src
+        run: npm run build
+
+      # Cypress
       - name: 'Run Cypress tests'
         working-directory: ./src
         run: npm run test:all
@@ -55,15 +88,9 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: integria_backup
-          DB_PORT: 3306
           NODE_ENV: test
           CI: true
 
-      - name: 'Wait for Express server'
-        run: |
-          npx wait-on http://localhost:8022 || true
-          echo "✅ Servidor Express listo"
-
       - name: 'Completion message'
         if: always()
-        run: echo "🚀 Proceso de CI finalizado"
+        run: echo "🚀 CI completo - Todos los tests ejecutados"

@@ -7,7 +7,9 @@
     "serve": "cross-env NODE_ENV=development node app.js",
     "connect-db": "cross-env NODE_ENV=development node db/mysql.js",
     "serve:start": "cross-env NODE_ENV=production node app.js",
-    "test": "cross-env NODE_ENV=test vitest"
+    "test": "cross-env NODE_ENV=test vitest",
+    "migrate": "mysql -h 127.0.0.1 -u root -proot integria_backup < ./db/migrations/schema.sql",
+    "seed": "mysql -h 127.0.0.1 -u root -proot integria_backup < ./db/seeders/test_data.sql"
   },
   "keywords": [],
   "author": "",
