@@ -89,10 +89,11 @@ app.post('/send-gmail', async (req, res) => {
 
 app.use(globalMiddleware)
 
+let server;
 function startServer(port) {
   let actualPort = ''
   try {
-    const server = app.listen(port, async () => {
+    server = app.listen(port, async () => {
       actualPort = server.address().port
       console.log(`Server listening on port ${actualPort}`)
     })
@@ -110,10 +111,28 @@ function startServer(port) {
   }
 }
 
-process.on('SIGTERM', () => {
-  console.info('SIGTERM signal received.')
-  console.log('close the servers success !!!')
-  process.exit(0)
-})
+export const stopProcess = (signal) => {
+  console.log(`\nReceived ${signal}. Closing server...`);
+  if (server) {
+    server.close((err) => {
+      if (err) {
+        console.error('Error closing server:', err);
+      } else {
+        console.log('Server closed successfully.');
+      }
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
+
+process.on('SIGTERM', stopProcess);
+process.on('SIGINT', stopProcess);
+process.on('uncaughtException', stopProcess);
+process.on('unhandledRejection', stopProcess);
+process.on('exit', (code) => {
+  console.log(`Process exited with code: ${code}`);
+});
 
 startServer(PORT)
