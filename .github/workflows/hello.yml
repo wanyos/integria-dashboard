@@ -9,20 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: integria_backup
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: 'Checkout code'
         uses: actions/checkout@v2
@@ -32,35 +18,28 @@ jobs:
         with:
           node-version: '22'
 
-      # 3. Install backend dependencies (Express)
+      # Backend (Express)
       - name: 'Install backend dependencies'
         working-directory: ./server
         run: npm install
 
-      # 4. Run backend tests (if any)
       - name: 'Run backend tests'
         working-directory: ./server
         run: npm run test
-        env:
-          NODE_ENV: test
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root1712@fll
-          DB_NAME: integria_backup
-          DB_PORT: 3306
 
-      # 5. Install frontend dependencies (Vue 3)
+      # Frontend (Vue 3)
       - name: 'Install frontend dependencies'
         working-directory: ./src
         run: npm install
 
-      - name: 'Run Vitest tests'
+      - name: 'Run Vitest unit tests'
+        working-directory: ./src
         run: npm run test:unit
 
       - name: 'Run Cypress tests'
+        working-directory: ./src
         run: npm run test:all
 
-      # 7. Build frontend (if needed)
       - name: 'Build frontend'
         working-directory: ./src
         run: npm run build
