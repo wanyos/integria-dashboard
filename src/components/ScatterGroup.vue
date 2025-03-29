@@ -171,7 +171,7 @@ const chartOptions = ref({
 
 watch(
   () => props.allIncidents,
-   (newIncidents) => {
+  (newIncidents) => {
     seriesData.value = newIncidents
   },
   { immediate: true },

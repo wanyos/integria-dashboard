@@ -45,32 +45,42 @@ function getGroupName(groupId) {
 
 export function generateHeatmapData(incidents) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
 
   // Usar un Map para agrupar datos por meses
-  const groupedData = new Map();
-  months.forEach(month => {
-    groupedData.set(month, new Array(31).fill(null)); // Preasignar 31 días (máximo)
-  });
+  const groupedData = new Map()
+  months.forEach((month) => {
+    groupedData.set(month, new Array(31).fill(null)) // Preasignar 31 días (máximo)
+  })
 
   // Procesar los incidentes
   incidents.forEach(({ date, count }) => {
-    const incidentDate = new Date(date);
-    const month = months[incidentDate.getMonth()]; // Nombre del mes
-    const day = incidentDate.getDate() - 1; // Día del mes como índice (0-30)
+    const incidentDate = new Date(date)
+    const month = months[incidentDate.getMonth()] // Nombre del mes
+    const day = incidentDate.getDate() - 1 // Día del mes como índice (0-30)
 
     if (groupedData.has(month)) {
-      groupedData.get(month)[day] = { x: (day + 1).toString(), y: count };
+      groupedData.get(month)[day] = { x: (day + 1).toString(), y: count }
     }
-  });
+  })
 
   // Transformar a un array de series para el heatmap
   return months.map((month) => ({
     name: month,
-    data: groupedData.get(month).filter(day => day !== null), // Filtrar días nulos
-  }));
+    data: groupedData.get(month).filter((day) => day !== null), // Filtrar días nulos
+  }))
 }
 
 /****************        generate objects serie for chart scatter distribution groups days open incidents      ******************/
@@ -138,34 +148,57 @@ export function generateDataStakedBar(allIncidentsGroup) {
 /****************        generate objects serie for chart areabar incidents by months      ******************/
 export const generateAreapData = (incidents) => {
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
 
   // Inicializar un array para almacenar el total de incidencias por mes
-  const totalMonths = new Array(12).fill(0);
+  const totalMonths = new Array(12).fill(0)
 
   // Calcular el total de incidencias por mes
   incidents.forEach(({ date, count }) => {
-    const month = new Date(date).getMonth(); // Obtener el mes (0-11)
-    totalMonths[month] += Number(count); // Sumar el conteo al mes correspondiente
-  });
+    const month = new Date(date).getMonth() // Obtener el mes (0-11)
+    totalMonths[month] += Number(count) // Sumar el conteo al mes correspondiente
+  })
 
   // Convertir los datos al formato requerido por el gráfico
   const seriesData = totalMonths.map((count, month) => ({
     x: monthNames[month], // Nombre del mes
     y: count, // Total de incidencias
-  }));
+  }))
 
   return [
     {
       name: 'Incidents',
       data: seriesData,
     },
-  ];
-};
+  ]
+}
 
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
 
 /****************        generate donut avg incidents by months all years      ******************/
 export const getAvgByMonths = (incidents) => {
@@ -182,21 +215,21 @@ export const getAvgByMonths = (incidents) => {
     10: { total: 0, count: 0 },
     11: { total: 0, count: 0 },
     12: { total: 0, count: 0 },
-  };
+  }
 
   // Sumar los valores de count y contar las ocurrencias para cada mes
   incidents.forEach(({ year, month, count }) => {
     if (totalMonths[month]) {
-      totalMonths[month].total += count;
-      totalMonths[month].count += 1;
+      totalMonths[month].total += count
+      totalMonths[month].count += 1
     }
-  });
+  })
 
   // Calcular el promedio para cada mes
   const values = Object.keys(totalMonths).map((month) => {
-    const { total, count } = totalMonths[month];
-    return count > 0 ? Math.round(total / count) : 0;
-  });
+    const { total, count } = totalMonths[month]
+    return count > 0 ? Math.round(total / count) : 0
+  })
 
   //console.log('values procesor', values);
   //console.log('labels procesor', monthNames)
@@ -210,17 +243,17 @@ export const getAvgByMonths = (incidents) => {
 
 const createMonthsArray = () => {
   return monthNames.map((month) => ({
-    counts: {}
+    counts: {},
   }))
 }
 
 export const getRowsTableByMonths = (incidents) => {
   const monthsArray = createMonthsArray()
-  const years = new Set(incidents.map(incident => incident.year))
+  const years = new Set(incidents.map((incident) => incident.year))
 
   // Inicializar todos los meses con 0 para cada año
-  monthsArray.forEach(monthObj => {
-    years.forEach(year => {
+  monthsArray.forEach((monthObj) => {
+    years.forEach((year) => {
       monthObj.counts[year] = 0
     })
   })
@@ -268,8 +301,8 @@ export const generateDataDonnut = (incidents) => {
       }
     })
   }
-// console.log('labels', labels)
-// console.log('values', values)
+  // console.log('labels', labels)
+  // console.log('values', values)
   return {
     labels: Array.from(labels),
     values: Array.from(values),
@@ -286,9 +319,9 @@ export const generateDataGradient = (incidents) => {
 
 export const generateDataBarchart = (incidents) => {
   const values = []
- incidents.forEach((inc) => {
-  values.push(inc.count)
- })
+  incidents.forEach((inc) => {
+    values.push(inc.count)
+  })
   return { values }
 }
 
@@ -308,7 +341,7 @@ export const getRowsTableYears = (incidents) => {
       year: incidents[a].year,
       inc: incidents[a].count,
       tase: diff,
-      percent: per
+      percent: per,
     }
     rows.push(row)
   }

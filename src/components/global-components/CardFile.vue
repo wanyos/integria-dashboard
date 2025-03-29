@@ -21,21 +21,21 @@ const props = defineProps({
   title: { type: String, default: '' },
   file: { type: Object, default: () => ({}) },
   icon: { type: String, default: '' },
-  size: { type: Number, default: 0}
+  size: { type: Number, default: 0 },
 })
 
 const emit = defineEmits(['drag-start', 'drag-end'])
 
 const formattedSize = computed(() => {
-  const bytes = props.size;
-  if (bytes === 0) return '0 Bytes';
+  const bytes = props.size
+  if (bytes === 0) return '0 Bytes'
 
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-});
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+})
 
 const handleDragStart = (event) => {
   // if (!props.file?.content) {
@@ -43,30 +43,29 @@ const handleDragStart = (event) => {
   //   return;
   // }
   // Necesario para Firefox
-  event.dataTransfer.setData('text/plain', props.file.name);
+  event.dataTransfer.setData('text/plain', props.file.name)
 
   // Establecer imagen de arrastre
   // const dragIcon = event.target.cloneNode(true);
   // dragIcon.style.opacity = '0.5';
   // dragIcon.style.with = '100px'
- // event.dataTransfer.setDragImage(dragIcon, event.offsetX, event.offsetY);
+  // event.dataTransfer.setDragImage(dragIcon, event.offsetX, event.offsetY);
 
   emit('drag-start', {
     nativeEvent: event,
-    file: props.file
-  });
-};
+    file: props.file,
+  })
+}
 
 const handleDragEnd = (event) => {
-  event.preventDefault();
-  event.dataTransfer.clearData();
+  event.preventDefault()
+  event.dataTransfer.clearData()
   emit('drag-end')
 }
 
 const handleDrag = (event) => {
-  event.preventDefault();
-};
-
+  event.preventDefault()
+}
 </script>
 
 <style lang="css" scoped>
@@ -118,7 +117,7 @@ p {
   width: 150px;
   height: 90px;
   background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #2196F3;
+  border: 2px solid #2196f3;
   border-radius: 8px;
   display: flex;
   flex-direction: column;

@@ -11,24 +11,24 @@ const mockHandleMouseLeave = vi.fn()
 vi.mock('@/composables/useChartUtils', () => ({
   useChartUtils: () => ({
     chartRef: ref(null),
-    handleMouseLeave: mockHandleMouseLeave
-  })
+    handleMouseLeave: mockHandleMouseLeave,
+  }),
 }))
 
 // Mock de vue3-apexcharts para evitar problemas de renderizado en tests
 vi.mock('vue3-apexcharts', () => ({
   default: {
     name: 'VueApexCharts',
-    render: () => { }
-  }
+    render: () => {},
+  },
 }))
 
 // Mock de vue-loading-overlay
 vi.mock('vue-loading-overlay', () => ({
   default: {
     name: 'Loading',
-    render: () => { }
-  }
+    render: () => {},
+  },
 }))
 
 describe('HeatmapChart', () => {
@@ -44,18 +44,18 @@ describe('HeatmapChart', () => {
         data: [
           { x: '1', y: 5 },
           { x: '2', y: 10 },
-          { x: '3', y: 15 }
-        ]
+          { x: '3', y: 15 },
+        ],
       },
       {
         name: 'Feb',
         data: [
           { x: '1', y: 12 },
           { x: '2', y: 25 },
-          { x: '3', y: 30 }
-        ]
-      }
-    ]
+          { x: '3', y: 30 },
+        ],
+      },
+    ],
   }
 
   beforeEach(() => {
@@ -67,9 +67,9 @@ describe('HeatmapChart', () => {
       global: {
         stubs: {
           VueApexCharts: true,
-          Loading: true
-        }
-      }
+          Loading: true,
+        },
+      },
     })
   })
 
@@ -102,9 +102,9 @@ describe('HeatmapChart', () => {
         name: 'Mar',
         data: [
           { x: '1', y: 50 },
-          { x: '2', y: 75 }
-        ]
-      }
+          { x: '2', y: 75 },
+        ],
+      },
     ]
 
     await wrapper.setProps({ incidents: newIncidents })
@@ -118,13 +118,13 @@ describe('HeatmapChart', () => {
     const newIncidents = [
       {
         name: 'Mar',
-        data: [{ x: '1', y: 50 }]
-      }
+        data: [{ x: '1', y: 50 }],
+      },
     ]
 
     await wrapper.setProps({
       subtitle: '2025',
-      incidents: newIncidents
+      incidents: newIncidents,
     })
 
     await wrapper.vm.$nextTick()
@@ -139,11 +139,11 @@ describe('HeatmapChart', () => {
         stubs: {
           VueApexCharts: {
             template: '<div class="vue-apex-charts" @mouseleave="$emit(\'mouse-leave\')"></div>',
-            props: ['options', 'series']
+            props: ['options', 'series'],
           },
-          Loading: true
-        }
-      }
+          Loading: true,
+        },
+      },
     })
 
     // Simular el evento mouse-leave
@@ -163,7 +163,17 @@ describe('HeatmapChart', () => {
     const colorRanges = wrapper.vm.chartOptionsHeat.plotOptions.heatmap.colorScale.ranges
     expect(colorRanges).toHaveLength(6)
     expect(colorRanges[0]).toEqual({ from: 0, to: 10, color: defaultProps.colors[0], name: '0-10' })
-    expect(colorRanges[4]).toEqual({ from: 61, to: 100, color: defaultProps.colors[3], name: '61-100' })
-    expect(colorRanges[5]).toEqual({ from: 101, to: 400, color: defaultProps.colors[4], name: '+100' })
+    expect(colorRanges[4]).toEqual({
+      from: 61,
+      to: 100,
+      color: defaultProps.colors[3],
+      name: '61-100',
+    })
+    expect(colorRanges[5]).toEqual({
+      from: 101,
+      to: 400,
+      color: defaultProps.colors[4],
+      name: '+100',
+    })
   })
 })

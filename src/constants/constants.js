@@ -6,7 +6,7 @@ export const SELECT_PERIOD = [
   'Last 4 Months',
   'Last 7 Months',
   'This Year',
-  'Last Year'
+  'Last Year',
 ]
 
 export const LOCATION = [
@@ -78,5 +78,5 @@ export const EMAIL_LIST = {
   documenta: [],
   aplic_general: [],
   navega_madrid: [],
-  aplic_agencia: []
+  aplic_agencia: [],
 }

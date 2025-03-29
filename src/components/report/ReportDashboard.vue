@@ -50,7 +50,6 @@
         :options="{ colors: COLORS1 }"
       />
     </div>
-
   </section>
 </template>
 
@@ -118,7 +117,6 @@ onMounted(() => {
   const initYear = dayjs().subtract(1, 'year').year()
   setDataForYear(initYear, 'init')
 })
-
 </script>
 
 <style lang="css" scoped>
@@ -166,5 +164,4 @@ onMounted(() => {
   grid-column: 5 / 7;
   grid-row: 2 / 3;
 }
-
 </style>

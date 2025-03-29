@@ -9,16 +9,16 @@ class IncidentsApi extends ApiBase {
 
   async getIncExternalResolutor(startDate, endDate, token) {
     const needToken = true
-     const endpoint = `/api/incidents/external-resolutor/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    const endpoint = `/api/incidents/external-resolutor/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
     ApiBase._setToken(token)
-    return await this.get(endpoint, needToken);
+    return await this.get(endpoint, needToken)
   }
 
   async getIncidentsTechnology(startDate, endDate, token) {
-    const needToken = true;
-      const endpoint = `/api/incidents/integria-technology/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
-    ApiBase._setToken(token);
-    return await this.get(endpoint, needToken);
+    const needToken = true
+    const endpoint = `/api/incidents/integria-technology/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
+    ApiBase._setToken(token)
+    return await this.get(endpoint, needToken)
   }
 
   async getIssIncidents(token) {

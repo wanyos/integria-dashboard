@@ -21,11 +21,9 @@ const emit = defineEmits(['setDate'])
 const selectDate = (date) => {
   emit('setDate', date)
 }
-
 </script>
 
 <style lang="css" scoped>
-
 :deep(.vuejs3-datepicker) {
   touch-action: none;
   -webkit-touch-callout: none;
