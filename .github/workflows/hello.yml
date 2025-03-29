@@ -25,7 +25,7 @@ jobs:
 
       - name: 'Run backend tests'
         working-directory: ./server
-        run: npm run test
+        run: npm run test # Asegúrate de que esto ejecute vitest correctamente
 
       # Frontend (Vue 3)
       - name: 'Install frontend dependencies'
@@ -44,5 +44,5 @@ jobs:
         working-directory: ./src
         run: npm run build
 
-      - name: 'Display messages'
-        run: echo "CI pipeline completed successfully!"
+      - name: 'Display success'
+        run: echo "✅ CI completado!"
