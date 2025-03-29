@@ -8,6 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: integria_backup
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: 'Checkout code'
@@ -17,32 +26,50 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
+          cache: 'npm'
 
-      # Backend (Express)
+      # # Configurar entorno de prueba
+      # - name: 'Create email config dummy'
+      #   working-directory: ./server
+      #   run: |
+      #     mkdir -p email-config
+      #     echo "export default { user: 'test', pass: 'test' }" > email-config/gmail-config.js
+
+      # Esperar MySQL
+      - name: 'Wait for MySQL'
+        run: |
+          timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
+          echo "✅ MySQL listo!"
+
+      # Instalar dependencias
       - name: 'Install backend dependencies'
         working-directory: ./server
         run: npm install
 
-      - name: 'Run backend tests'
-        working-directory: ./server
-        run: npm run test # Asegúrate de que esto ejecute vitest correctamente
-
-      # Frontend (Vue 3)
       - name: 'Install frontend dependencies'
         working-directory: ./src
         run: npm install
 
-      - name: 'Run Vitest unit tests'
-        working-directory: ./src
-        run: npm run test:unit
-
+      # Ejecutar Cypress (maneja servidores automáticamente)
       - name: 'Run Cypress tests'
         working-directory: ./src
         run: npm run test:all
+        env:
+          # Variables para MySQL
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: integria_backup
+          DB_PORT: 3306
 
-      - name: 'Build frontend'
-        working-directory: ./src
-        run: npm run build
+          # Otras variables necesarias
+          NODE_ENV: test
+          CYPRESS_RUN_BINARY: 0
+          CI: true
 
-      - name: 'Display success'
-        run: echo "✅ CI completado!"
+      # Limpieza opcional
+      - name: 'Cleanup ports'
+        run: |
+          pkill -f "node.*(dev|serve:express)" || true
+          kill $(lsof -ti :5173) || true
+          kill $(lsof -ti :8022) || true

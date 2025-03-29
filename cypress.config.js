@@ -255,5 +255,6 @@ export default defineConfig({
   viewportWidth: 1640,
   viewportHeight: 1600,
   video: false,
-  reporter: 'dot'
+  reporter: 'dot',
+  chromeWebSecurity: false,
 })
