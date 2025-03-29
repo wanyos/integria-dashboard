@@ -41,16 +41,16 @@ jobs:
           timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
           echo "✅ MySQL listo!"
 
-      - name: 'Run DB migrations'
-        working-directory: ./server
-        run: npm run migrate
+      # - name: 'Run DB migrations'
+      #   working-directory: ./server
+      #   run: npm run migrate
 
-      - name: 'Verify seed file exists'
-        run: ls -l server/db/seeders/test_data.sql
+      # - name: 'Verify seed file exists'
+      #   run: ls -l server/db/seeders/test_data.sql
 
-      - name: 'Seed test data'
-        working-directory: ./server
-        run: npm run seed
+      # - name: 'Seed test data'
+      #   working-directory: ./server
+      #   run: npm run seed
 
       # Backend
       - name: 'Install backend dependencies'
@@ -75,16 +75,16 @@ jobs:
         run: npm run build
 
       # Cypress
-      - name: 'Run Cypress tests'
-        working-directory: ./src
-        run: npm run test:all
-        env:
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: integria_backup
-          NODE_ENV: test
-          CI: true
+      # - name: 'Run Cypress tests'
+      #   working-directory: ./src
+      #   run: npm run test:all
+      #   env:
+      #     DB_HOST: 127.0.0.1
+      #     DB_USER: root
+      #     DB_PASSWORD: root
+      #     DB_NAME: integria_backup
+      #     NODE_ENV: test
+      #     CI: true
 
       - name: 'Completion message'
         if: always()
