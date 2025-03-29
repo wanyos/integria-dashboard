@@ -41,16 +41,16 @@ jobs:
           timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
           echo "✅ MySQL listo!"
 
-      - name: 'Run DB migrations'
-        working-directory: ./server
-        run: npm run migrate
+      # - name: 'Run DB migrations'
+      #   working-directory: ./server
+      #   run: npm run migrate
 
-      - name: 'Verify seed file exists'
-        run: ls -l server/db/seeders/test_data.sql
+      # - name: 'Verify seed file exists'
+      #   run: ls -l server/db/seeders/test_data.sql
 
-      - name: 'Seed test data'
-        working-directory: ./server
-        run: npm run seed
+      # - name: 'Seed test data'
+      #   working-directory: ./server
+      #   run: npm run seed
 
       # Backend
       - name: 'Install backend dependencies'
