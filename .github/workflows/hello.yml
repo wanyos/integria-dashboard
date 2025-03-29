@@ -8,6 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: integria_backup
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: 'Checkout code'
@@ -18,31 +27,58 @@ jobs:
         with:
           node-version: '22'
 
-      # Backend (Express)
+      # Configuración dummy para email
+      - name: 'Create email config dummy'
+        working-directory: ./server
+        run: |
+          mkdir -p email-config
+          echo "export default { user: 'test', pass: 'test' }" > email-config/gmail-config.js
+
+      # Esperar MySQL
+      - name: 'Wait for MySQL'
+        run: |
+          timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
+          echo "✅ MySQL listo!"
+
+      # Backend
       - name: 'Install backend dependencies'
         working-directory: ./server
         run: npm install
 
-      - name: 'Run backend tests'
+      - name: 'Start Express server'
         working-directory: ./server
-        run: npm run test # Asegúrate de que esto ejecute vitest correctamente
+        run: npm run dev &
+        env:
+          NODE_ENV: test
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: integria_backup
+          DB_PORT: 3306
 
-      # Frontend (Vue 3)
+      # Frontend
       - name: 'Install frontend dependencies'
         working-directory: ./src
         run: npm install
-
-      - name: 'Run Vitest unit tests'
-        working-directory: ./src
-        run: npm run test:unit
-
-      - name: 'Run Cypress tests'
-        working-directory: ./src
-        run: npm run test:all
 
       - name: 'Build frontend'
         working-directory: ./src
         run: npm run build
 
-      - name: 'Display success'
-        run: echo "✅ CI completado!"
+      - name: 'Start Vite server'
+        working-directory: ./src
+        run: npm run dev &
+
+      - name: 'Wait for servers'
+        run: |
+          npx wait-on http://localhost:5173 http://localhost:8022
+          echo "✅ Servidores listos!"
+
+      # Tests
+      - name: 'Run Cypress tests'
+        working-directory: ./src
+        run: npm run test:all
+
+      - name: 'Cleanup servers'
+        run: |
+          pkill -f "node.*dev" || true
