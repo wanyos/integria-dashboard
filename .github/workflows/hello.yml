@@ -20,20 +20,28 @@ jobs:
 
     steps:
       - name: 'Checkout code'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Setup Node.js'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '22'
           cache: 'npm'
 
-      # Configurar entorno de prueba
-      # - name: 'Create email config dummy'
-      #   working-directory: ./server
-      #   run: |
-      #     mkdir -p email-config
-      #     echo "export default { user: 'test', pass: 'test' }" > email-config/gmail-config.js
+      - name: 'Cache Cypress'
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/Cypress
+            **/node_modules
+          key: cypress-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
+      # Configuración dummy para email
+      - name: 'Create email config dummy'
+        working-directory: ./server
+        run: |
+          mkdir -p email-config
+          echo "export default { user: 'test', pass: 'test' }" > email-config/gmail-config.js
 
       # Esperar MySQL
       - name: 'Wait for MySQL'
@@ -48,28 +56,22 @@ jobs:
 
       - name: 'Install frontend dependencies'
         working-directory: ./src
-        run: npm install
+        run: npm install --force # Fuerza instalación de Cypress
 
-      # Ejecutar Cypress (maneja servidores automáticamente)
+      # Tests Cypress
       - name: 'Run Cypress tests'
         working-directory: ./src
         run: npm run test:all
         env:
-          # Variables para MySQL
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: integria_backup
           DB_PORT: 3306
-
-          # Otras variables necesarias
           NODE_ENV: test
-          CYPRESS_RUN_BINARY: 0
-          CI: true
+          CI: true # Solo esta variable necesaria para Cypress en CI
 
-      # Limpieza opcional
-      - name: 'Cleanup ports'
-        run: |
-          pkill -f "node.*(dev|serve:express)" || true
-          kill $(lsof -ti :5173) || true
-          kill $(lsof -ti :8022) || true
+      # Paso final con mensaje
+      - name: 'Display completion message'
+        if: always() # Se ejecuta siempre, incluso con errores
+        run: echo "🏁 GitHub Actions CI - Proceso completado"
