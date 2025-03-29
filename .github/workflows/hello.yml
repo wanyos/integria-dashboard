@@ -28,7 +28,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      # # Configurar entorno de prueba
+      # Configurar entorno de prueba
       # - name: 'Create email config dummy'
       #   working-directory: ./server
       #   run: |
