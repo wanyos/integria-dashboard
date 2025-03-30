@@ -6,7 +6,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly
-      # and run all Cypress tests
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install express server
+        working-directory: ./server
+        run: npm install
+
+      - name: Test express server
+        working-directory: ./server
+        run: npm run test
+
+      - name: Install frontend dependencies
+        working-directory: ./src
+        run: npm install
+
+      - name: 'Create email config dummy'
+        working-directory: ./server
+        run: |
+          mkdir -p email-config
+          echo "export const sendGmail = () => Promise.resolve();" > email-config/gmail-config.js
+
+      - name: Test unit tests
+        working-directory: ./src
+        run: npm run test:unit
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
