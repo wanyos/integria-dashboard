@@ -70,9 +70,21 @@ jobs:
         working-directory: ./src
         run: npm run test:unit
 
+      - name: 'Verify lint and format scripts'
+        run: |
+          if ! npm run | grep -q "lint"; then
+            echo "❌ Script 'lint' no definido en package.json";
+            exit 1;
+          fi
+          if ! npm run | grep -q "format"; then
+            echo "❌ Script 'format' no definido en package.json";
+            exit 1;
+          fi
+
       - name: 'Run linter and format'
-        run: npm run lint
-        run: npm run format
+        run: |
+          npm run lint
+          npm run format
 
       - name: 'Build frontend'
         working-directory: ./src
