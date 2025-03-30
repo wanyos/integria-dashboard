@@ -8,15 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: integria_backup
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+    # services:
+    #   mysql:
+    #     image: mysql:8.0
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: root
+    #       MYSQL_DATABASE: integria_backup
+    #     ports:
+    #       - 3306:3306
+    #     options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: 'Checkout code'
@@ -28,18 +28,18 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      # Configuración inicial
-      - name: 'Create email config dummy'
-        working-directory: ./server
-        run: |
-          mkdir -p email-config
-          echo "export const sendGmail = () => Promise.resolve();" > email-config/gmail-config.js
+      # # Configuración inicial
+      # - name: 'Create email config dummy'
+      #   working-directory: ./server
+      #   run: |
+      #     mkdir -p email-config
+      #     echo "export const sendGmail = () => Promise.resolve();" > email-config/gmail-config.js
 
-      # Base de datos
-      - name: 'Wait for MySQL'
-        run: |
-          timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
-          echo "✅ MySQL listo!"
+      # # Base de datos
+      # - name: 'Wait for MySQL'
+      #   run: |
+      #     timeout 60 bash -c 'while ! nc -z 127.0.0.1 3306; do sleep 1; done'
+      #     echo "✅ MySQL listo!"
 
       # - name: 'Run DB migrations'
       #   working-directory: ./server
