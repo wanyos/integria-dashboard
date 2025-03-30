@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 <template>
   <section class="main-container container-report">
     <article class="section-header">

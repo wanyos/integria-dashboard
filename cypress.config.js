@@ -68,16 +68,6 @@
 //   reporter: 'dot'
 // })
 
-
-
-
-
-
-
-
-
-
-
 import { defineConfig } from 'cypress'
 import { execSync, spawn } from 'child_process'
 import { platform } from 'os'

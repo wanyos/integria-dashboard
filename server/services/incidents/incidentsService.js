@@ -2,7 +2,6 @@ import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
 import { decodeHtmlEntities } from '../../util/formattingText.js'
 
-
 export default class IncidentsService {
   static async getIncidents() {
     try {

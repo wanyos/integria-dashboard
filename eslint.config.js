@@ -12,6 +12,7 @@ export default [
     languageOptions: {
       globals: {
         process: 'readonly',
+        console: 'readonly',
       },
     },
   },
@@ -44,7 +45,7 @@ export default [
       'vue/multi-word-component-names': 0,
       'no-multiple-empty-lines': ['warn', { max: 1, maxEOF: 0 }],
       // 'quotes': ['error', 'single'],
-      // 'no-undef': 'error'
+      'no-undef': 'off'
     },
   },
 ]
