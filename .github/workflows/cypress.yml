@@ -4,24 +4,24 @@ jobs:
   cypress-run:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
+      - name: 'Checkout'
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 'Setup Node.js'
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install express server
+      - name: 'Install express server'
         working-directory: ./server
         run: npm install
 
-      - name: Test express server
+      - name: 'Test express server'
         working-directory: ./server
         run: npm run test
 
-      - name: Install frontend dependencies
+      - name: 'Install frontend dependencies'
         working-directory: ./src
         run: npm install
 
@@ -31,9 +31,9 @@ jobs:
           mkdir -p email-config
           echo "export const sendGmail = () => Promise.resolve();" > email-config/gmail-config.js
 
-      - name: Test unit tests
+      - name: 'Test unit tests frontend'
         working-directory: ./src
         run: npm run test:unit
 
-      - name: Cypress run
+      - name: 'Cypress run'
         uses: cypress-io/github-action@v6

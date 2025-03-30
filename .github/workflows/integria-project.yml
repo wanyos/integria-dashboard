@@ -70,6 +70,10 @@ jobs:
         working-directory: ./src
         run: npm run test:unit
 
+      - name: 'Run linter and format'
+        run: npm run lint
+        run: npm run format
+
       - name: 'Build frontend'
         working-directory: ./src
         run: npm run build
