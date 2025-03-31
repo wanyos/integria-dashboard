@@ -35,9 +35,11 @@ const corsOption = {
     'http://127.0.0.1:5173',
     'http://10.10.14.37:5173',
     'http://10.10.14.137:5173',
-    'http://10.10.14.137'
+    'http://10.10.14.137',
+    'http://192.168.1.133:8080',
+    'http://192.168.1.133'
   ],
-  method: ['GET'],
+  method: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   optionsSuccessStatus: 200,
 }
