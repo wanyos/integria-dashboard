@@ -162,10 +162,6 @@ const search = async () => {
 
   // incidents integria tecnologia
 integriaTec = await IncidentsApi.getIncidentsTechnology(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
-// integriaTec = await IncidentsApi.getIncidentsTechnology(dates.initDate.format('YYYY-MM-DD'), endDate, token)
-
-// console.log('all incidents tecnologia', integriaTec);
-
 integriaTechnology.value = Object.entries(integriaTec).map(([type, incidents]) => ({
     type,
     total: incidents.length,
@@ -183,7 +179,6 @@ const handleFileDragStart = ({ nativeEvent }, file) => {
 
         // Configurar para todos los navegadores
         dt.setData('text/plain', file.name);
-
         dt.setData('DownloadURL', `${file.type}:${file.name}:${url}`);
 
         // Añadir archivo real
@@ -222,7 +217,6 @@ const startProcess = async () => {
 
   filesIss.value = await createFileIss(incIss, dates.initDate, dates.endDate);
   filesIntegria.value = await createFileIntegria(integriaTec, openDate, closeDate);
-
   // console.log('Validación:', {
   //       name: filesIss.value[0].name,
   //       type: filesIss.value[0].type,
@@ -272,7 +266,7 @@ const startProcess = async () => {
 
 .container-incidents {
  position: relative;
-  min-height: 30rem;
+  min-height: 25rem;
   grid-column: 1 / 4;
   display: flex;
   flex-direction: column;
