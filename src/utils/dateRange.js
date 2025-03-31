@@ -11,7 +11,7 @@ export default class DateRangeCalculator {
     'Last 7 Months': 'last6Months',
     'Last 4 Months': 'last3Months',
     'This Year': 'thisYear',
-    'Last Year': 'lastyear'
+    'Last Year': 'lastyear',
   }
 
   static getDateRange(selection, currentYear) {
@@ -63,9 +63,9 @@ export default class DateRangeCalculator {
         // startDate = currentDate.subtract(1, 'year').startOf('year')
         endDate = currentDate.endOf('year')
         break
-        case 'lastyear':
-          startDate = currentDate.subtract(1, 'year').startOf('year')
-          endDate = currentDate.subtract(1, 'year').endOf('year')
+      case 'lastyear':
+        startDate = currentDate.subtract(1, 'year').startOf('year')
+        endDate = currentDate.subtract(1, 'year').endOf('year')
         break
       default:
         startDate = currentDate.startOf('day')

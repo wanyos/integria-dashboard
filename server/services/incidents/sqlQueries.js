@@ -87,7 +87,7 @@ const QUERIES = {
     INNER JOIN tincidencia I ON R.id_incident = I.id_incidencia
     WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
 
-    allIncParkingRange: ` SELECT
+  allIncParkingRange: ` SELECT
     SUM(CASE WHEN R.data LIKE '%ALMAGRO%' THEN 1 ELSE 0 END) AS Almagro,
     SUM(CASE WHEN R.data LIKE '%AVD PORTUGAL%' THEN 1 ELSE 0 END) AS AvdPortugal,
     SUM(CASE WHEN R.data LIKE '%CANALEJAS%' THEN 1 ELSE 0 END) AS Canalejas,
@@ -153,7 +153,7 @@ WHERE inicio >= ? AND inicio <= DATE_ADD(?, INTERVAL 1 DAY);`,
     AND id_grupo IN (2, 7, 8, 148, 19, 84, 86, 87, 122, 126, 149, 141, 21, 85, 20, 23, 40, 90, 91, 101, 43, 147, 22, 24, 28, 31, 56, 154, 50, 52, 59, 32)
       GROUP BY grupo;`,
 
-      // incidencias desde el 2015 hasta año anterior, cantidad por meses
+  // incidencias desde el 2015 hasta año anterior, cantidad por meses
   allIncByMonths: `SELECT
     YEAR(cierre) AS year,
     MONTH(cierre) AS month,
@@ -171,9 +171,9 @@ ORDER BY
     YEAR(cierre),
     MONTH(cierre);`,
 
-      // incidencias entre fechas resolutor externo, todos
-allExternalResolutor:
-`SELECT
+  // incidencias entre fechas resolutor externo, todos
+  allExternalResolutor:
+    `SELECT
   I.id_incidencia,
     DATE_FORMAT(inicio, '%Y-%m-%d') AS inicio,
     DATE_FORMAT(cierre, '%Y-%m-%d') AS cierre,
@@ -184,11 +184,11 @@ allExternalResolutor:
     G.nombre AS resolutor
 FROM tincidencia I
 LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
-WHERE I.id_incident_type = 7  AND I.inicio BETWEEN ? AND ? and I.cierre < '0001-01-01'
+WHERE I.id_incident_type = 7  AND I.inicio BETWEEN ? AND ? and I.cierre < '0001-01-01' and estado <> 7
 ORDER BY G.id_grupo asc;`,
 
-   // incidencias tecnologia
-   allIncTechnology: `SELECT DISTINCT
+  // incidencias tecnologia
+  allIncTechnology: `SELECT DISTINCT
       I.id_incidencia AS Num_Incidencia,
       S.name AS Estado,
       I.inicio AS FechaApertura,
@@ -241,16 +241,16 @@ export default QUERIES
 
 // totalIncidents: `SELECT * FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)`,
 
-   //   avgIncidents: `
-  //      SELECT
-  //       FLOOR(media_horas) AS horas,
-  //       ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos
-  //       FROM (
-  //       SELECT
-  //       AVG(TIMESTAMPDIFF(HOUR, inicio, cierre)) AS media_horas
-  //       FROM tincidencia
-  //       WHERE cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
-  //       ) AS subquery`,
+//   avgIncidents: `
+//      SELECT
+//       FLOOR(media_horas) AS horas,
+//       ROUND((media_horas - FLOOR(media_horas)) * 60) AS minutos
+//       FROM (
+//       SELECT
+//       AVG(TIMESTAMPDIFF(HOUR, inicio, cierre)) AS media_horas
+//       FROM tincidencia
+//       WHERE cierre > '0001-01-01' AND inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY)
+//       ) AS subquery`,
 
 // openIncidentsGr: `SELECT id_incidencia, inicio, id_grupo FROM tincidencia WHERE (cierre IS NULL OR cierre < '0001-01-01 00:00:00') AND id_grupo IN (2, 7, 8, 148);`,
 
@@ -306,20 +306,20 @@ export default QUERIES
 // WHERE I.inicio >= ?
 //   AND I.inicio < DATE_ADD(?, INTERVAL 1 DAY);`,
 
- // Todas incidencias por rango de fechas y grupos, abiertas
-  // allIncOpenOperadores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 2;`,
-  // allIncOpenTecnicos: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 7;`,
-  // allIncOpenAdministradores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 8;`,
-  // allIncOpenCiberseguridad: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 148;`,
-  // allIncOpenHorizontales: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo IN (19,84,86,87,122,126,149,141,21);`,
-  // allIncOpenNegocio: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo IN (85,20,23,40,90,91,101,43,147);`,
+// Todas incidencias por rango de fechas y grupos, abiertas
+// allIncOpenOperadores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 2;`,
+// allIncOpenTecnicos: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 7;`,
+// allIncOpenAdministradores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 8;`,
+// allIncOpenCiberseguridad: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo = 148;`,
+// allIncOpenHorizontales: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo IN (19,84,86,87,122,126,149,141,21);`,
+// allIncOpenNegocio: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo IN (85,20,23,40,90,91,101,43,147);`,
 // allIncOpenExterno: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND id_grupo IN (22,24,28,31,56,154,50,52,59,32);`,
 
 // Todas incidencias por rango de fechas y grupos, cerradas
-  // allIncCloseOperadores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 2;`,
-  // allIncCloseTecnicos: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 7;`,
-  // allIncCloseAdministradores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 8;`,
-  // allIncCloseCiberseguridad: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 148;`,
-  // allIncCloseHorizontales: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (19,84,86,87,122,126,149,141,21);`,
-  // allIncCloseNegocio: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (85,20,23,40,90,91,101,43,147);`,
-  // allIncCloseExterno: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (22,24,28,31,56,154,50,52,59,32);`,
+// allIncCloseOperadores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 2;`,
+// allIncCloseTecnicos: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 7;`,
+// allIncCloseAdministradores: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 8;`,
+// allIncCloseCiberseguridad: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo = 148;`,
+// allIncCloseHorizontales: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (19,84,86,87,122,126,149,141,21);`,
+// allIncCloseNegocio: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (85,20,23,40,90,91,101,43,147);`,
+// allIncCloseExterno: `SELECT COUNT(*) as count FROM tincidencia WHERE inicio >= ? AND inicio < DATE_ADD(?, INTERVAL 1 DAY) AND cierre > '0001-01-01' AND id_grupo IN (22,24,28,31,56,154,50,52,59,32);`,

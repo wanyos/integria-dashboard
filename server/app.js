@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
+import morgan from 'morgan'
 import { fileURLToPath } from 'url'
 import usersRouter from './routers/usersRoutes.js'
 import incidentsRouter from './routers/incidentsRoutes.js'
@@ -34,9 +35,11 @@ const corsOption = {
     'http://127.0.0.1:5173',
     'http://10.10.14.37:5173',
     'http://10.10.14.137:5173',
-    'http://10.10.14.137'
+    'http://10.10.14.137',
+    'http://192.168.1.133:8080',
+    'http://192.168.1.133'
   ],
-  method: ['GET'],
+  method: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   optionsSuccessStatus: 200,
 }
@@ -48,6 +51,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 app.use(express.json())
+app.use(morgan('dev'));
 
 //login
 app.use('/api', loginRouter)
@@ -87,10 +91,11 @@ app.post('/send-gmail', async (req, res) => {
 
 app.use(globalMiddleware)
 
+let server;
 function startServer(port) {
   let actualPort = ''
   try {
-    const server = app.listen(port, async () => {
+    server = app.listen(port, async () => {
       actualPort = server.address().port
       console.log(`Server listening on port ${actualPort}`)
     })
@@ -108,10 +113,28 @@ function startServer(port) {
   }
 }
 
-process.on('SIGTERM', () => {
-  console.info('SIGTERM signal received.')
-  console.log('close the servers success !!!')
-  process.exit(0)
-})
+export const stopProcess = (signal) => {
+  console.log(`\nReceived ${signal}. Closing server...`);
+  if (server) {
+    server.close((err) => {
+      if (err) {
+        console.error('Error closing server:', err);
+      } else {
+        console.log('Server closed successfully.');
+      }
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
+
+process.on('SIGTERM', stopProcess);
+process.on('SIGINT', stopProcess);
+process.on('uncaughtException', stopProcess);
+process.on('unhandledRejection', stopProcess);
+process.on('exit', (code) => {
+  console.log(`Process exited with code: ${code}`);
+});
 
 startServer(PORT)

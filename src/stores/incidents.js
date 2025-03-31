@@ -18,17 +18,17 @@ export const useIncidentsStore = defineStore('incidents', () => {
   const totalIncidentsYears = ref([])
   const allIncByMonths = ref([])
 
-  const fetchIncAnual = async(yearValue) => {
-     //dashboard
-     totalIncidentsYears.value = await ReportApi.getTotalIncYears(yearValue)
-     allIncByMonths.value = await ReportApi.getIncBymonths()
+  const fetchIncAnual = async (yearValue) => {
+    //dashboard
+    totalIncidentsYears.value = await ReportApi.getTotalIncYears(yearValue)
+    allIncByMonths.value = await ReportApi.getIncBymonths()
   }
 
   const fetchIncYear = async (yearValue) => {
     allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
-   }
+  }
 
-   const fetchIncDates = async (startDate, endDate) => {
+  const fetchIncDates = async (startDate, endDate) => {
     try {
       const [
         incidentsRangeData,
@@ -48,21 +48,21 @@ export const useIncidentsStore = defineStore('incidents', () => {
         ReportApi.getIncParkingRange(startDate, endDate),
         ReportApi.getIncByHours(startDate, endDate),
         ReportApi.getIncByWeekdays(startDate, endDate),
-      ]);
+      ])
 
       // Asignar los datos a las referencias reactivas
-      incidentsRange.value = incidentsRangeData;
-      openIncidentsGroup.value = openIncidentsGroupData;
-      allIncidentsGroup.value = allIncidentsGroupData;
-      allIncLocationRange.value = allIncLocationRangeData;
-      allIncBasesRange.value = allIncBasesRangeData;
-      alIncParkingRange.value = alIncParkingRangeData;
-      allIncByHours.value = allIncByHoursData;
-      allIncByWeekdays.value = allIncByWeekdaysData;
+      incidentsRange.value = incidentsRangeData
+      openIncidentsGroup.value = openIncidentsGroupData
+      allIncidentsGroup.value = allIncidentsGroupData
+      allIncLocationRange.value = allIncLocationRangeData
+      allIncBasesRange.value = allIncBasesRangeData
+      alIncParkingRange.value = alIncParkingRangeData
+      allIncByHours.value = allIncByHoursData
+      allIncByWeekdays.value = allIncByWeekdaysData
     } catch (error) {
-      console.error('Error fetching incident data:', error);
+      console.error('Error fetching incident data:', error)
     }
-  };
+  }
 
   // const fetchIncDates = async (startDate, endDate) => {
   //   // console.log('year value store', yearValue)
@@ -117,6 +117,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allIncByHoursRangeData,
     allIncByWeekdaysRangeData,
     totalIncidentsYears,
-    allIncByMonths
+    allIncByMonths,
   }
 })

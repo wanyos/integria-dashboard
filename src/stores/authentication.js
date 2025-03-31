@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 import { ref, computed, reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import LoginApi from '@/api/login_api'
@@ -29,20 +29,20 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   }
 
   const isAuthenticated = computed(() => {
-    const isValid = dayjs().isBefore(dayjs(tokenExpiration.value));
+    const isValid = dayjs().isBefore(dayjs(tokenExpiration.value))
     // console.log('tokenExpire', tokenExpiration.value);
     // console.log('is valid token: ', isValid);
     // console.log('token', token.value);
     // Retorna null si el token no es válido, de lo contrario retorna el token
-    return isValid ? token.value : null;
-  });
+    return isValid ? token.value : null
+  })
 
   // Observar cambios en isAuthenticated
   watch(isAuthenticated, (newValue) => {
     if (newValue === null) {
-      logout();
+      logout()
     }
-  });
+  })
 
   const setDataToken = (res) => {
     token.value = res.token
@@ -52,8 +52,8 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     const expire = dayjs().add(res.expirationTime, 'second').toDate()
     tokenExpiration.value = expire
 
-   $cookies.set('tokenExpiration', `${expire}`, `${expire}`);
-   $cookies.set('token', token.value, `${expire}`)
+    $cookies.set('tokenExpiration', `${expire}`, `${expire}`)
+    $cookies.set('token', token.value, `${expire}`)
   }
 
   const login = async () => {

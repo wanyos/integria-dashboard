@@ -15,7 +15,6 @@
       </thead>
 
       <tbody>
-
         <tr v-for="(row, rowIndex) in props.dataRow" :key="rowIndex">
           <td v-if="props.firstColumn.length > 0">{{ props.firstColumn[rowIndex] }}</td>
           <td
@@ -26,7 +25,6 @@
             {{ value }}
           </td>
         </tr>
-
       </tbody>
     </table>
   </section>
@@ -40,7 +38,7 @@ const props = defineProps({
   },
   firstColumn: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   dataColumn: {
     type: Array,

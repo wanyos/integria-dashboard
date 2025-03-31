@@ -7,7 +7,9 @@
     "serve": "cross-env NODE_ENV=development node app.js",
     "connect-db": "cross-env NODE_ENV=development node db/mysql.js",
     "serve:start": "cross-env NODE_ENV=production node app.js",
-    "test": "cross-env NODE_ENV=test vitest"
+    "test": "cross-env NODE_ENV=test vitest",
+    "migrate": "mysql --defaults-extra-file=./db/migrations/.my.cnf integria_backup < ./db/migrations/schema.sql",
+    "seed": "mysql --defaults-extra-file=./db/migrations/.my.cnf integria_backup < ./db/seeders/test_data.sql"
   },
   "keywords": [],
   "author": "",
@@ -18,18 +20,20 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
-    "json-2-csv": "^5.5.8",
+    "json-2-csv": "^5.5.9",
     "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
     "mssql": "^11.0.1",
-    "mysql2": "^3.12.0",
+    "mysql2": "^3.14.0",
+    "nodemailer": "^6.10.0",
     "odbc": "^2.4.9",
-    "zod": "^3.24.1"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.9"
   }
 }

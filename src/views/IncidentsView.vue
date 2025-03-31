@@ -16,11 +16,11 @@
 
     <article class="chart-base container-incidents">
       <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-      :is-full-page="false"
-      :color="'#1565C0'"
-    />
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :is-full-page="false"
+        :color="'#1565C0'"
+      />
       <p>{{ datesIntegria }}</p>
       <TableChart
         v-if="incidents.length !== 0"
@@ -32,11 +32,11 @@
 
     <article class="chart-base container-servidesk">
       <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-      :is-full-page="false"
-      :color="'#1565C0'"
-    />
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :is-full-page="false"
+        :color="'#1565C0'"
+      />
       <p>{{ datesServidesk }}</p>
       <TableChart
         v-if="issIncidents.length !== 0"
@@ -55,7 +55,8 @@
 
     <div class="chart-base container-files">
       <CardFile
-        v-for="(file, index) in filesIss" :key="index"
+        v-for="(file, index) in filesIss"
+        :key="index"
         :title="file.name"
         :icon="IconExcel"
         :size="file.content.byteLength"
@@ -63,7 +64,8 @@
       />
 
       <CardFile
-       v-for="(file, index) in filesIntegria" :key="index"
+        v-for="(file, index) in filesIntegria"
+        :key="index"
         :title="file.name"
         :icon="IconExcel"
         :size="file.content.byteLength"
@@ -73,7 +75,9 @@
 
     <section class="section__footer">
       <button @click="sendGmail" class="btn__search btn__send">Send Reports</button>
-      <button @click="startProcess" class="btn__search btn__send" :class="isArrayFiles">Start process</button>
+      <button @click="startProcess" class="btn__search btn__send" :class="isArrayFiles">
+        Start process
+      </button>
     </section>
   </section>
 </template>
@@ -99,7 +103,7 @@ const incidents = ref([])
 const issIncidents = ref([])
 const integriaTechnology = ref([])
 
-const filesIss = ref([]);
+const filesIss = ref([])
 const filesIntegria = ref([])
 
 const integriaInit = ref(dayjs('2024-01-01'))
@@ -108,8 +112,8 @@ const authStore = useAuthenticationStore()
 let token = null
 const dates = reactive({ initDate: null, endDate: null })
 
-let incIss = null;
-let integriaTec = null;
+let incIss = null
+let integriaTec = null
 
 const selectDate = (date) => {
   dates.endDate = dayjs(date)
@@ -129,7 +133,9 @@ const datesIntegria = computed(() =>
     : '',
 )
 
-const isArrayFiles = computed(() => issIncidents.value.length === 0 ? 'btnDisabled' : 'btnEnabled');
+const isArrayFiles = computed(() =>
+  issIncidents.value.length === 0 && integriaTechnology.value === 0 ? 'btnDisabled' : 'btnEnabled',
+)
 
 onMounted(async () => {
   try {
@@ -143,54 +149,69 @@ onMounted(async () => {
 })
 
 const search = async () => {
-  isLoading.value = true;
+  isLoading.value = true
   const endDate = dayjs(dates.endDate).format('YYYY-MM-DD')
 
   // incidents integria resolutor externo
-  const incIntegria = await IncidentsApi.getIncExternalResolutor(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
+  const incIntegria = await IncidentsApi.getIncExternalResolutor(
+    integriaInit.value.format('YYYY-MM-DD'),
+    endDate,
+    token,
+  )
   incidents.value = Object.entries(incIntegria).map(([resolutor, incidents]) => ({
     resolutor,
     total: incidents.length,
-  }))
-
-  // incidents servidesk
-  incIss = await IncidentsApi.getIssIncidents(token)
-  issIncidents.value = Object.entries(incIss).map(([location, incidents]) => ({
-    location,
-    total: incidents.length,
+    email: 'yes',
   }))
 
   // incidents integria tecnologia
-integriaTec = await IncidentsApi.getIncidentsTechnology(integriaInit.value.format('YYYY-MM-DD'), endDate, token)
-integriaTechnology.value = Object.entries(integriaTec).map(([type, incidents]) => ({
+  integriaTec = await IncidentsApi.getIncidentsTechnology(
+    integriaInit.value.format('YYYY-MM-DD'),
+    endDate,
+    token,
+  )
+  integriaTechnology.value = Object.entries(integriaTec).map(([type, incidents]) => ({
     type,
     total: incidents.length,
   }))
 
-  isLoading.value = false;
+  // incidents servidesk
+  try {
+    incIss = await IncidentsApi.getIssIncidents(token)
+    issIncidents.value = Object.entries(incIss).map(([location, incidents]) => ({
+      location,
+      total: incidents.length,
+    }))
+  } catch (error) {
+    issIncidents.value = [{ location: 'No data', total: 0 }]
+    console.error('Error fetching incidents:', error)
+  }
+
+  isLoading.value = false
 }
 
 const handleFileDragStart = ({ nativeEvent }, file) => {
-    try {
-        const blob = new Blob([file.content], { type: file.type });
-       const url = URL.createObjectURL(blob);
-        const dt = nativeEvent.dataTransfer;
-        dt.clearData();
+  try {
+    const blob = new Blob([file.content], { type: file.type })
+    const url = URL.createObjectURL(blob)
+    const dt = nativeEvent.dataTransfer
+    dt.clearData()
 
-        // Configurar para todos los navegadores
-        dt.setData('text/plain', file.name);
-        dt.setData('DownloadURL', `${file.type}:${file.name}:${url}`);
+    // Configurar para todos los navegadores
+    dt.setData('text/plain', file.name)
 
-        // Añadir archivo real
-        dt.items.add(new File([blob], file.name, { type: file.type }));
+    dt.setData('DownloadURL', `${file.type}:${file.name}:${url}`)
 
-        // Limpiar memoria después de 30s
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
-    } catch (error) {
-        console.error('Error en dragstart:', error);
-        nativeEvent.preventDefault();
-    }
-};
+    // Añadir archivo real
+    dt.items.add(new File([blob], file.name, { type: file.type }))
+
+    // Limpiar memoria después de 30s
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  } catch (error) {
+    console.error('Error en dragstart:', error)
+    nativeEvent.preventDefault()
+  }
+}
 
 const sendGmail = async () => {
   const email = 'juanjor99@gmail.com, JuanJose.Romero@emtmadrid.es'
@@ -212,11 +233,15 @@ const sendGmail = async () => {
 }
 
 const startProcess = async () => {
-  const openDate = dayjs(dates.initDate);
-  const closeDate = dayjs(dates.endDate);
+  const openDate = dayjs(dates.initDate)
+  const closeDate = dayjs(dates.endDate)
 
-  filesIss.value = await createFileIss(incIss, dates.initDate, dates.endDate);
-  filesIntegria.value = await createFileIntegria(integriaTec, openDate, closeDate);
+  if (incIss) {
+    filesIss.value = await createFileIss(incIss, dates.initDate, dates.endDate)
+  }
+  if (integriaTec) {
+    filesIntegria.value = await createFileIntegria(integriaTec, openDate, closeDate)
+  }
   // console.log('Validación:', {
   //       name: filesIss.value[0].name,
   //       type: filesIss.value[0].type,
@@ -265,8 +290,8 @@ const startProcess = async () => {
 }
 
 .container-incidents {
- position: relative;
-  min-height: 25rem;
+  position: relative;
+  min-height: 30rem;
   grid-column: 1 / 4;
   display: flex;
   flex-direction: column;

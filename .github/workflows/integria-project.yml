@@ -1,0 +1,62 @@
+name: CI INTEGRIA-PROJECT
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v3
+
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # Backend
+      - name: 'Install backend dependencies'
+        working-directory: ./server
+        run: npm install
+
+      - name: 'Run backend tests'
+        working-directory: ./server
+        run: npm run test
+
+      # Frontend
+      - name: 'Install frontend dependencies'
+        working-directory: ./src
+        run: npm install
+
+      - name: 'Run frontend unit tests'
+        working-directory: ./src
+        run: npm run test:unit
+
+      - name: 'Verify lint and format scripts'
+        run: |
+          if ! npm run | grep -q "lint"; then
+            echo "❌ Script 'lint' no definido en package.json";
+            exit 1;
+          fi
+          if ! npm run | grep -q "format"; then
+            echo "❌ Script 'format' no definido en package.json";
+            exit 1;
+          fi
+
+      - name: 'Run linter and format'
+        run: |
+          npm run lint
+          npm run format
+
+      - name: 'Build frontend'
+        working-directory: ./src
+        run: npm run build
+
+      - name: 'Completion message'
+        if: always()
+        run: echo "🚀 CI completo - Todos los tests ejecutados"

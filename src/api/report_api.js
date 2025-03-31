@@ -49,7 +49,7 @@ class ReportApi extends ApiBase {
     return await this.get(endpoint, needToken)
   }
 
-  async getIncByHours(startDate, endDate){
+  async getIncByHours(startDate, endDate) {
     const endpoint = `/api/report/byhours/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`
     const needToken = false
     return await this.get(endpoint, needToken)

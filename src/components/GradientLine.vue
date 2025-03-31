@@ -1,5 +1,12 @@
 <template>
-  <VueApexCharts ref="chartRef" type="line" width="100%" height="100%" :options="chartOptions" :series="series" />
+  <VueApexCharts
+    ref="chartRef"
+    type="line"
+    width="100%"
+    height="100%"
+    :options="chartOptions"
+    :series="series"
+  />
 </template>
 
 <script setup>
@@ -14,16 +21,16 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: ''
+    default: '',
   },
   subtitle: {
-     type: String,
-    default: ''
+    type: String,
+    default: '',
   },
   incidents: {
     type: Object,
-    default: () => {}
-  }
+    default: () => {},
+  },
 })
 
 const { chartRef } = useChartUtils()
@@ -41,8 +48,8 @@ const { chartRef } = useChartUtils()
 const series = ref([
   {
     name: 'Total Inc',
-    data: []
-  }
+    data: [],
+  },
 ])
 
 const chartOptions = ref({
@@ -141,7 +148,7 @@ const chartOptions = ref({
   },
 })
 
-const defaulValues = [0,0,0,0,0,0,0,0,0]
+const defaulValues = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 watch(
   () => props.incidents,
@@ -155,14 +162,13 @@ watch(
         text: `${String(props.subtitle)}`,
       },
       yaxis: {
-        max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100
-      }
+        max: values.length ? Math.ceil(Math.max(...values)) + 50 : 100,
+      },
     }
     series.value[0].data = values.length ? [...values] : defaulValues
   },
   { immediate: true },
 )
-
 </script>
 
 <style lang="css" scoped></style>
