@@ -43,8 +43,8 @@ export default class IncidentsController {
       const { status, incidents } = result;
       return res.status(status).json(incidents);
     } catch (error) {
-      console.error(error.message)
-      next(error)
+      console.error('Error in getIssIncidents:', error.message);
+      next(error);
     }
   }
 

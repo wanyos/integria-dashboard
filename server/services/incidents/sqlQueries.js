@@ -171,7 +171,7 @@ ORDER BY
     YEAR(cierre),
     MONTH(cierre);`,
 
-  // incidencias entre fechas resolutor externo, todos
+  // incidencias abiertas para informe semanal
   allExternalResolutor:
     `SELECT
   I.id_incidencia,
@@ -180,11 +180,12 @@ ORDER BY
     I.titulo AS titulo,
     I.descripcion AS descripcion,
     I.id_creator,
-    g.id_grupo as id_resolutor,
+    G.id_grupo as id_resolutor,
     G.nombre AS resolutor
 FROM tincidencia I
 LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
-WHERE I.id_incident_type = 7  AND I.inicio BETWEEN ? AND ? and I.cierre < '0001-01-01' and estado <> 7
+WHERE I.inicio BETWEEN ? AND ? AND I.cierre < '0001-01-01' AND estado <> 7
+AND G.id_grupo NOT IN (2, 7, 8, 9, 42, 148)
 ORDER BY G.id_grupo asc;`,
 
   // incidencias tecnologia

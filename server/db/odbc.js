@@ -73,7 +73,7 @@ ORDER BY inc.ref_num, grp.last_name;`
   import sql from 'mssql';
 
 const config = {
-  server: 'moncau2',
+  server: '10.5.14.232', // Dirección IP de la base de datos moncau2
   database: 'mdb',
   user: 'SA',
   password: 'Cartago01',
@@ -88,9 +88,9 @@ const config = {
 };
 
 export async function getServideskData() {
-  if (os.platform() !== 'win32') {
-    return [];
-  }
+  // if (os.platform() !== 'win32') {
+  //   return [];
+  // }
 
   let pool;
 
@@ -109,18 +109,3 @@ export async function getServideskData() {
     }
   }
 }
-
-// export async function getServideskData() {
-//   if (os.platform() !== 'win32') {
-//     return []
-//   }
-//   try {
-//     let pool = await sql.connect(config);
-//     const result = await pool.request().query(query3);
-//     console.log("Conexión exitosa", result.recordset);
-//     return result;
-//   } catch (err) {
-//     console.error("Error en la consulta ODBC:", err);
-//     throw err;
-//   }
-// }
