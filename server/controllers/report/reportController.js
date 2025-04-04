@@ -167,5 +167,4 @@ export default class ReportController {
       next(error)
     }
   }
-
 }

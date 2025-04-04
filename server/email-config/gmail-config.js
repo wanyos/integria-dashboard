@@ -1,14 +1,14 @@
 import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: "juanjor99@gmail.com",
-    pass: "wiso dlec oblp qoon",
+    user: 'juanjor99@gmail.com',
+    pass: 'wiso dlec oblp qoon',
   },
-});
+})
 
 export const sendGmail = async (options) => {
   const gm = await transporter.sendMail({
@@ -20,9 +20,9 @@ export const sendGmail = async (options) => {
     attachments: [
       {
         filename: options?.fileName,
-        content: options?.fileData
-      }
-    ]
+        content: options?.fileData,
+      },
+    ],
   })
   console.log('message sent...', gm.messageId)
 }

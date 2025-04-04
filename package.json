@@ -20,7 +20,7 @@
     "__test:e2e:dev__": "start-server-and-test 'vite dev --port 5173' http://localhost:5173 'cypress open --e2e'",
     "__test:cypress__": "npx cypress run",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/ server/ cypress/"
   },
   "dependencies": {
     "apexcharts": "^4.5.0",

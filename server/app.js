@@ -10,8 +10,8 @@ import inventoryRouter from './routers/inventoryRoutes.js'
 import reportRouter from './routers/reportRoutes.js'
 import loginRouter from './routers/loginRoutes.js'
 import { globalMiddleware, authMiddleware } from './middelware.js'
-import { sendGmail } from './email-config/gmail-config.js';
-import { json2csv } from 'json-2-csv';
+import { sendGmail } from './email-config/gmail-config.js'
+import { json2csv } from 'json-2-csv'
 import { convertJsonToExcel } from './email-config/conver_excel.js'
 
 const app = express()
@@ -41,7 +41,7 @@ const corsOption = {
     'http://192.168.1.133:8080',
     'http://192.168.1.133',
     'http://10.9.14.80:8080',
-    'http://10.9.14.80'
+    'http://10.9.14.80',
   ],
   method: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
@@ -55,7 +55,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 app.use(express.json())
-app.use(morgan('dev'));
+app.use(morgan('dev'))
 
 //login
 app.use('/api', loginRouter)
@@ -67,9 +67,9 @@ app.use('/api/incidents', authMiddleware, incidentsRouter)
 app.use('/api/inventory', authMiddleware, inventoryRouter)
 
 app.post('/send-gmail', async (req, res) => {
-  const { email, title, comment, incidents } = req.body;
+  const { email, title, comment, incidents } = req.body
   if (!incidents) {
-    return res.status(400).send('No incidents data provided.');
+    return res.status(400).send('No incidents data provided.')
   }
 
   // const csv = await json2csv(incidents);
@@ -80,22 +80,21 @@ app.post('/send-gmail', async (req, res) => {
     subject: title,
     text: comment,
     fileName: 'export.xlsx',
-    fileData: excel
+    fileData: excel,
   }
 
   try {
-    const result = await sendGmail(options);
-    res.status(200).json(result);
+    const result = await sendGmail(options)
+    res.status(200).json(result)
   } catch (error) {
-    console.error('Error en /send-email:', error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error en /send-email:', error)
+    res.status(500).json({ success: false, error: error.message })
   }
-
 })
 
 app.use(globalMiddleware)
 
-let server;
+let server
 function startServer(port) {
   let actualPort = ''
   try {
@@ -118,27 +117,27 @@ function startServer(port) {
 }
 
 export const stopProcess = (signal) => {
-  console.log(`\nReceived ${signal}. Closing server...`);
+  console.log(`\nReceived ${signal}. Closing server...`)
   if (server) {
     server.close((err) => {
       if (err) {
-        console.error('Error closing server:', err);
+        console.error('Error closing server:', err)
       } else {
-        console.log('Server closed successfully.');
+        console.log('Server closed successfully.')
       }
-      process.exit(0);
-    });
+      process.exit(0)
+    })
   } else {
-    process.exit(0);
+    process.exit(0)
   }
-};
+}
 
-process.on('SIGTERM', stopProcess);
-process.on('SIGINT', stopProcess);
-process.on('uncaughtException', stopProcess);
-process.on('unhandledRejection', stopProcess);
+process.on('SIGTERM', stopProcess)
+process.on('SIGINT', stopProcess)
+process.on('uncaughtException', stopProcess)
+process.on('unhandledRejection', stopProcess)
 process.on('exit', (code) => {
-  console.log(`Process exited with code: ${code}`);
-});
+  console.log(`Process exited with code: ${code}`)
+})
 
 startServer(PORT)

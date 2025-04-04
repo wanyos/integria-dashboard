@@ -1,4 +1,3 @@
-
 const QUERIES = {
   allIncidents: 'SELECT * FROM tincidencia LIMIT 100',
   getTenIncidents: `SELECT id_incidencia, inicio, id_creator FROM tincidencia ORDER BY id_incidencia DESC LIMIT 10;`,
@@ -172,8 +171,7 @@ ORDER BY
     MONTH(cierre);`,
 
   // incidencias abiertas para informe semanal
-  allExternalResolutor:
-    `SELECT
+  allExternalResolutor: `SELECT
   I.id_incidencia,
     DATE_FORMAT(inicio, '%Y-%m-%d') AS inicio,
     DATE_FORMAT(cierre, '%Y-%m-%d') AS cierre,
@@ -210,8 +208,7 @@ LEFT JOIN tusuario E ON I.id_usuario = E.id_usuario
 LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
 LEFT JOIN tincident_type T ON I.id_incident_type = T.id
 WHERE (I.inicio >= ?) AND (I.inicio <= ?)
-ORDER BY I.id_incidencia;`
-
+ORDER BY I.id_incidencia;`,
 }
 
 export default QUERIES

@@ -66,11 +66,11 @@ ORDER BY inc.ref_num, grp.last_name;`
 //   }
 // }
 
-  // ejecutarConsultaODBC(query3)
-  // .then((data) => console.log(data))
-  // .catch((err) => console.error(err));
+// ejecutarConsultaODBC(query3)
+// .then((data) => console.log(data))
+// .catch((err) => console.error(err));
 
-  import sql from 'mssql';
+import sql from 'mssql'
 
 const config = {
   server: '10.5.14.232', // Dirección IP de la base de datos moncau2
@@ -82,30 +82,30 @@ const config = {
     encrypt: false,
     trustServerCertificate: true,
     enableArithAbort: true,
-    tdsVersion: '7_1',       // <--- Versión TDS (prueba con 7_1, 7_2, 7_3, 7_4)
-    useUTC: false            // Necesario para versiones muy antiguas
-  }
-};
+    tdsVersion: '7_1', // <--- Versión TDS (prueba con 7_1, 7_2, 7_3, 7_4)
+    useUTC: false, // Necesario para versiones muy antiguas
+  },
+}
 
 export async function getServideskData() {
   // if (os.platform() !== 'win32') {
   //   return [];
   // }
 
-  let pool;
+  let pool
 
   try {
-    pool = await sql.connect(config);
+    pool = await sql.connect(config)
     console.log('Database servidesk connection is active...')
-    const result = await pool.request().query(query3);
-    return result.recordset;
+    const result = await pool.request().query(query3)
+    return result.recordset
   } catch (err) {
-    console.log('');
-    console.error("Error en la consulta ODBC:", err.message);
-    throw new Error("Error retrieving data from Servidesk.Possible database connection failure...");
+    console.log('')
+    console.error('Error en la consulta ODBC:', err.message)
+    throw new Error('Error retrieving data from Servidesk.Possible database connection failure...')
   } finally {
     if (pool) {
-      await pool.close();
+      await pool.close()
     }
   }
 }

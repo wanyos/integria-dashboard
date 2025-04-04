@@ -5,8 +5,6 @@
     "email": "juanjor99@gmail.com",
     "hashPassword": "$2b$10$1Nlbde/PfE/JllWmP7oF.OvsC/kwG3EQqFGXJAU1hu8dbnJK7nNqi",
     "createAt": "2025-01-28T19:56:54.640Z",
-    "roles": [
-      "user"
-    ]
+    "roles": ["user"]
   }
 ]

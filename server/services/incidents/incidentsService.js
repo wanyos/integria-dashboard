@@ -18,14 +18,14 @@ export default class IncidentsService {
     try {
       let summary = []
       let initYear = 2015
-      while(initYear <= lastYear) {
-        const startDate = `${initYear-1}-12-31`
-        const endDate = `${initYear+1}-01-01`
+      while (initYear <= lastYear) {
+        const startDate = `${initYear - 1}-12-31`
+        const endDate = `${initYear + 1}-01-01`
         const [result] = await pool.query(QUERIES.openIncidents, [startDate, endDate])
-        summary.push({ 'year': initYear, 'count': result[0]?.count || 0})
+        summary.push({ year: initYear, count: result[0]?.count || 0 })
         initYear++
       }
-      return { status: 200, incidents: summary}
+      return { status: 200, incidents: summary }
     } catch (error) {
       console.error('Database error getTotalIncYears:', error)
       throw new Error('Failed to fetch incidents from the database')
@@ -134,8 +134,8 @@ export default class IncidentsService {
   // incidencias abiertas / cerradas por rango de fechas y grupo, solo cantidades
   static async getAllIncidentsGroup(startDate, endDate) {
     try {
-      const [openByGroup] = await pool.query(QUERIES.allIncOpenByGroup, [startDate, endDate]);
-      const [closeByGroup] = await pool.query(QUERIES.allIncCloseByGroup, [startDate, endDate]);
+      const [openByGroup] = await pool.query(QUERIES.allIncOpenByGroup, [startDate, endDate])
+      const [closeByGroup] = await pool.query(QUERIES.allIncCloseByGroup, [startDate, endDate])
       const incidentsSummary = {
         open: {
           operadores: 0,
@@ -158,28 +158,28 @@ export default class IncidentsService {
       }
 
       const groupMapping = {
-        'Operadores': 'operadores',
-        'Tecnicos': 'tecnicos',
-        'Administradores': 'administradores',
-        'Ciberseguridad': 'ciberseguridad',
+        Operadores: 'operadores',
+        Tecnicos: 'tecnicos',
+        Administradores: 'administradores',
+        Ciberseguridad: 'ciberseguridad',
         'Apl.Horizontales': 'horizontales',
         'Apl.Negocio': 'negocio',
         'Tec.Externo': 'externo',
-      };
+      }
 
-      openByGroup.forEach(row => {
-        const groupKey = groupMapping[row.grupo];
+      openByGroup.forEach((row) => {
+        const groupKey = groupMapping[row.grupo]
         if (groupKey) {
-          incidentsSummary.open[groupKey] = row.count;
+          incidentsSummary.open[groupKey] = row.count
         }
-      });
+      })
 
-      closeByGroup.forEach(row => {
-        const groupKey = groupMapping[row.grupo];
+      closeByGroup.forEach((row) => {
+        const groupKey = groupMapping[row.grupo]
         if (groupKey) {
-          incidentsSummary.close[groupKey] = row.count;
+          incidentsSummary.close[groupKey] = row.count
         }
-      });
+      })
 
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
@@ -191,7 +191,7 @@ export default class IncidentsService {
   // incidencias abiertas en rango de fechas por localizacion, cantidad de cada localización
   static async getAllIncLocationRange(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allIncLocationRange, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allIncLocationRange, [startDate, endDate])
 
       const incidentsSummary = {
         pacifico: results[0]?.pacifico || 0,
@@ -200,7 +200,7 @@ export default class IncidentsService {
         carabanchel: results[0]?.carabanchel || 0,
         entrevias: results[0]?.entrevias || 0,
         sanchinarro: results[0]?.sanchinarro || 0,
-      };
+      }
 
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
@@ -212,17 +212,17 @@ export default class IncidentsService {
   // incidencias abiertas en rango de fechas por bases, cantidad de cada base
   static async getAllIncBasesRange(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allIncBasesRange, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allIncBasesRange, [startDate, endDate])
 
-    const incidentsSummary = {
-      colon: results[0]?.Colon || 0,
-      escuadron: results[0]?.Escuadron || 0,
-      mediodia2: results[0]?.Mediodia2 || 0,
-      mediodia3: results[0]?.Mediodia3 || 0,
-      recuerdo: results[0]?.Recuerdo || 0,
-      imperial: results[0]?.Imperial || 0,
-      vicalvaro: results[0]?.Vicalvaro || 0,
-    };
+      const incidentsSummary = {
+        colon: results[0]?.Colon || 0,
+        escuadron: results[0]?.Escuadron || 0,
+        mediodia2: results[0]?.Mediodia2 || 0,
+        mediodia3: results[0]?.Mediodia3 || 0,
+        recuerdo: results[0]?.Recuerdo || 0,
+        imperial: results[0]?.Imperial || 0,
+        vicalvaro: results[0]?.Vicalvaro || 0,
+      }
 
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
@@ -234,7 +234,7 @@ export default class IncidentsService {
   // incidencias abiertas en rango de fechas por aparcamientos, cantidad de ellas
   static async getAllIncParkingRange(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allIncParkingRange, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allIncParkingRange, [startDate, endDate])
 
       const incidentsSummary = {
         almagro: results[0]?.Almagro || 0,
@@ -255,10 +255,10 @@ export default class IncidentsService {
         olavide: results[0]?.Olavide || 0,
         metropolitano: results[0]?.Metropolitano || 0,
         fuenteMora: results[0]?.FuenteMora || 0,
-      };
+      }
 
       return { status: 200, incidents: incidentsSummary }
-    }catch (error) {
+    } catch (error) {
       console.error('Database error getAllIncParkingRange:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
@@ -267,7 +267,7 @@ export default class IncidentsService {
   // incidencias totales por horas del dia, rango de fechas
   static async getAllIncByHours(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allIncHours, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allIncHours, [startDate, endDate])
       return { status: 200, incidents: results }
     } catch (error) {
       console.error('Database error getAllIncByHours:', error)
@@ -278,9 +278,9 @@ export default class IncidentsService {
   // incidencias totales por dias, rango de fechas
   static async getAllIncByWeekdays(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allIncWeekDay, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allIncWeekDay, [startDate, endDate])
       return { status: 200, incidents: results }
-    } catch(error) {
+    } catch (error) {
       console.error('Database error getAllIncByWeekdays:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
@@ -289,9 +289,9 @@ export default class IncidentsService {
   // cantidad por meses desde el 2015
   static async getAllIncByMonths() {
     try {
-      const [results] = await pool.query(QUERIES.allIncByMonths);
+      const [results] = await pool.query(QUERIES.allIncByMonths)
       return { status: 200, incidents: results }
-    } catch(error) {
+    } catch (error) {
       console.error('Database error getAllIncByMonths:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
@@ -299,28 +299,28 @@ export default class IncidentsService {
 
   static async getAllExternalResolutor(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allExternalResolutor, [startDate, endDate]);
+      const [results] = await pool.query(QUERIES.allExternalResolutor, [startDate, endDate])
       const formatIncidentData = (incident) => ({
         ...incident,
         titulo: decodeHtmlEntities(incident.titulo),
         descripcion: decodeHtmlEntities(incident.descripcion),
         resolutor: decodeHtmlEntities(incident.resolutor),
-        cierre: incident.cierre === '0000-00-00' ? null : incident.cierre
-      });
+        cierre: incident.cierre === '0000-00-00' ? null : incident.cierre,
+      })
 
-       // Formatear y agrupar las incidencias por resolutor
-    const groupedIncidents = results.reduce((acc, incident) => {
-      const formattedIncident = formatIncidentData(incident);
-      const resolutor = formattedIncident.resolutor;
-      if (!acc[resolutor]) {
-        acc[resolutor] = [];
-      }
-      acc[resolutor].push(formattedIncident);
-      return acc;
-    }, {});
+      // Formatear y agrupar las incidencias por resolutor
+      const groupedIncidents = results.reduce((acc, incident) => {
+        const formattedIncident = formatIncidentData(incident)
+        const resolutor = formattedIncident.resolutor
+        if (!acc[resolutor]) {
+          acc[resolutor] = []
+        }
+        acc[resolutor].push(formattedIncident)
+        return acc
+      }, {})
 
       return { status: 200, incidents: groupedIncidents }
-    } catch(error) {
+    } catch (error) {
       console.error('Database error getAllExternalResolutor:', error)
       throw new Error('Failed to fetch incidents from the database')
     }
@@ -328,43 +328,43 @@ export default class IncidentsService {
 
   static async getAllIntegriaTechnology(startDate, endDate) {
     try {
-    const [incIntegriaTec] = await pool.query(QUERIES.allIncTechnology, [startDate, endDate])
+      const [incIntegriaTec] = await pool.query(QUERIES.allIncTechnology, [startDate, endDate])
 
-    const transformedData = incIntegriaTec.map(row => {
-      row.Usuario = decodeHtmlEntities(row.Usuario);
-      row.Resumen = decodeHtmlEntities(row.Resumen);
-      row.Grupo = decodeHtmlEntities(row.Grupo);
-      row.Tecnico_Asignado = decodeHtmlEntities(row.Tecnico_Asignado);
-      row.Descripcion_Tipo = decodeHtmlEntities(row.Descripcion_Tipo);
-      row.Localizacion = decodeHtmlEntities(row.Localizacion);
-      return row;
-    });
+      const transformedData = incIntegriaTec.map((row) => {
+        row.Usuario = decodeHtmlEntities(row.Usuario)
+        row.Resumen = decodeHtmlEntities(row.Resumen)
+        row.Grupo = decodeHtmlEntities(row.Grupo)
+        row.Tecnico_Asignado = decodeHtmlEntities(row.Tecnico_Asignado)
+        row.Descripcion_Tipo = decodeHtmlEntities(row.Descripcion_Tipo)
+        row.Localizacion = decodeHtmlEntities(row.Localizacion)
+        return row
+      })
 
-    // separar las incidencias entre movilidad y tecnologia
-    const movilidad = [];
-    const tecnologia = [];
+      // separar las incidencias entre movilidad y tecnologia
+      const movilidad = []
+      const tecnologia = []
 
-    const dataIntegria = {
+      const dataIntegria = {
         apliMovilidadd: '6.02 APLIC MOVILIDAD',
         etralux: 'MOV ETRALUX',
-        siepark: 'MOV SIEPARK'
-    }
+        siepark: 'MOV SIEPARK',
+      }
 
-    transformedData.forEach((item) => {
-        if(item.Grupo) {
-            const grupoNormalizado = item.Grupo.trim().toLowerCase();
-            const isMovilidad = Object.keys(dataIntegria).some(key => dataIntegria[key].trim().toLowerCase() === grupoNormalizado);
-            isMovilidad ? movilidad.push(item) : tecnologia.push(item);
+      transformedData.forEach((item) => {
+        if (item.Grupo) {
+          const grupoNormalizado = item.Grupo.trim().toLowerCase()
+          const isMovilidad = Object.keys(dataIntegria).some(
+            (key) => dataIntegria[key].trim().toLowerCase() === grupoNormalizado,
+          )
+          isMovilidad ? movilidad.push(item) : tecnologia.push(item)
         }
-    })
+      })
 
-    const integriaInc = { movilidad, tecnologia }
-    return { status: 200, incidents: integriaInc };
-
-    } catch(error) {
+      const integriaInc = { movilidad, tecnologia }
+      return { status: 200, incidents: integriaInc }
+    } catch (error) {
       console.error('Database error:', error.message)
       throw new Error('Failed to fetch incidents from the database')
     }
   }
-
 }
