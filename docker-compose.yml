@@ -3,18 +3,19 @@ version: '3.9'
 services:
   integriadb:
     build:
-      context: C:\Users\jjrr.13923\OneDrive - emtmadrid.es\Escritorio\projects-emt\container-db
+      # context: C:\Users\jjrr.13923\OneDrive - emtmadrid.es\Escritorio\projects-emt\container-db
+      context: /Users/wanyos/container-db
       dockerfile: Dockerfile
     image: juanjo99/integriadb:v1
     container_name: integriadb
     ports:
-      - "3360:3306"
+      - '3360:3306'
     networks:
       - integria-network
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,22 +27,27 @@ services:
     image: juanjo99/integria-server:v1
     container_name: integria-server
     ports:
-      - "8022:8022"
+      - '8022:8022'
     depends_on:
       integriadb:
         condition: service_healthy
     networks:
       - integria-network
-    entrypoint: ["sh", "-c", "until nc -z integriadb 3306; do echo 'Waiting for DB...'; sleep 2; done; npm run serve:start"]
+    entrypoint:
+      [
+        'sh',
+        '-c',
+        "until nc -z integriadb 3306; do echo 'Waiting for DB...'; sleep 2; done; npm run serve:start",
+      ]
 
   integria-frontend:
     build:
-      context: . 
+      context: .
       dockerfile: Dockerfile
     image: juanjo99/integria-frontend:v1
     container_name: integria-frontend
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - integria-server
     networks:
