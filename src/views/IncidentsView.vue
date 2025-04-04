@@ -22,12 +22,23 @@
         :color="'#1565C0'"
       />
       <p>{{ datesIntegria }}</p>
-      <TableChart
+
+      <CardItem
+        v-for="(item, index) in incidents"
+        :key="index"
+        :title="item.resolutor"
+        :count="item.totalIncidents"
+        :emails-to="item.emailsTo"
+        :emails-cc="item.emailsCc"
+        @button-click="handleButtonClick(item)"
+      />
+
+      <!-- <TableChart
         v-if="incidents.length !== 0"
         title="Summary total resolutor incidents Integria"
         :data-column="columns"
         :data-row="incidents"
-      />
+      /> -->
     </article>
 
     <article class="chart-base container-servidesk">
@@ -90,6 +101,7 @@ import TableChart from '@/components/TableChart.vue'
 import DateFilter from '@/components/DateFilter.vue'
 import CardFile from '@/components/global-components/CardFile.vue'
 import IconExcel from '@/assets/img/img-excel.webp'
+import CardItem from '@/components/global-components/CardItem.vue'
 import dayjs from 'dayjs'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
@@ -121,7 +133,6 @@ const selectDate = (date) => {
 }
 
 const isDisabled = computed(() => (dates.initDate === null ? 'btnDisabled' : 'btnEnabled'))
-// const datesSearch = computed(() => dates.initDate !== null ? `Dates week: ${dates.initDate.format('DD MMM,YYYY')} -- ${dates.endDate.format('DD MMM,YYYY')}` : '')
 const datesServidesk = computed(() =>
   dates.endDate !== null
     ? `Dates servidesk 01 Jan, 2024 -- ${dates.endDate.format('DD MMM,YYYY')}`
@@ -160,8 +171,19 @@ const search = async () => {
   )
   incidents.value = Object.entries(incIntegria).map(([resolutor, incidents]) => ({
     resolutor,
-    total: incidents.length,
-    email: 'yes',
+    totalIncidents: incidents.length,
+    emailsTo: [
+      'juanjor99@gmail.com',
+      'juanjose.romero@emtmadrid.es',
+      'wanyos99@gmail.com',
+      'juanjoromero9@gmail.com',
+    ],
+    emailsCc: [
+      'juanjor99@gmail.com',
+      'juanjose.romero@emtmadrid.es',
+      'wanyos99@gmail.com',
+      'juanjoromero9@gmail.com',
+    ],
   }))
 
   // incidents integria tecnologia
@@ -215,8 +237,9 @@ const handleFileDragStart = ({ nativeEvent }, file) => {
 
 const sendGmail = async () => {
   const email = 'juanjor99@gmail.com, JuanJose.Romero@emtmadrid.es'
-  const title = 'Subject of the email'
-  const comment = 'Total incidents'
+  const title = `EMT - Seguimiento de incidencias `
+  const comment =
+    'Buenos dias. \n\n Debido a que estamos realizando el seguimiento de las incidencias, necesitamos conocer el estado en que se encuentran las que se adjuntan en el archivo. \n\n Saludos.'
 
   try {
     const res = await fetch('http://localhost:8022/send-gmail', {
@@ -227,6 +250,28 @@ const sendGmail = async () => {
 
     const result = await res.text()
     console.log(result)
+  } catch (error) {
+    console.error('Error sending email:', error)
+  }
+}
+
+const handleButtonClick = async (item) => {
+  const email = item.emailsTo.join(',')
+  const cc = item.emailsCc.join(',')
+  const title = `EMT - Seguimiento de incidencias ${item.resolutor}`
+  const comment =
+    'Buenos dias. \n\n Debido a que estamos realizando el seguimiento de las incidencias, necesitamos conocer el estado en que se encuentran las que se adjuntan en el archivo. \n\nSaludos.'
+
+  try {
+    const res = await fetch('http://localhost:8022/send-gmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: token.value },
+      body: JSON.stringify({ email, cc, title, comment, incidents: incidents.value }),
+    })
+
+    const result = await res.text()
+    console.log('res', res.status)
+    console.log('res', res.statusText)
   } catch (error) {
     console.error('Error sending email:', error)
   }
@@ -291,16 +336,16 @@ const startProcess = async () => {
 
 .container-incidents {
   position: relative;
-  min-height: 30rem;
-  grid-column: 1 / 4;
+  min-height: 20rem;
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 1rem;
 }
 
 .container-servidesk {
   position: relative;
-  grid-column: 4 / 7;
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   align-items: center;
