@@ -35,7 +35,7 @@ jobs:
       # Paso 5: Construir y etiquetar las imágenes
       - name: Build and tag Docker images
         run: |
-          docker-compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml build
           docker tag juanjo99/integriadb:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integriadb:latest
           docker tag juanjo99/integria-server:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integria-server:latest
           docker tag juanjo99/integria-frontend:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integria-frontend:latest
