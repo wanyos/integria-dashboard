@@ -3,8 +3,8 @@ version: '3.9'
 services:
   integriadb:
     build:
-      # context: C:\Users\jjrr.13923\OneDrive - emtmadrid.es\Escritorio\projects-emt\container-db
-      context: /Users/wanyos/container-db
+      context: C:\Users\jjrr.13923\OneDrive - emtmadrid.es\Escritorio\projects-emt\container-db
+      # context: /Users/wanyos/container-db
       dockerfile: Dockerfile
     image: juanjo99/integriadb:v1
     container_name: integriadb
