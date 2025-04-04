@@ -21,8 +21,12 @@ jobs:
           echo "PAT=${{ secrets.PAT }}" >> $GITHUB_ENV
 
       # Paso 3: Configurar Docker Compose
-      - name: Set up Docker Compose
-        uses: docker/setup-buildx-action@v2
+      - name: Install Docker Compose
+        run: |
+          mkdir -p ~/.docker/cli-plugins/
+          curl -SL https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+          chmod +x ~/.docker/cli-plugins/docker-compose
+          docker compose version
 
       # Paso 4: Log in to GitHub Container Registry
       - name: Log in to GitHub Container Registry
