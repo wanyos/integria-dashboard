@@ -1,6 +1,7 @@
 import { pool } from '../../db/mysql.js'
 import QUERIES from './sqlQueries.js'
 import { decodeHtmlEntities } from '../../util/formattingText.js'
+import { DatabaseError } from '../../util/errors.js'
 
 export default class IncidentsService {
   static async getIncidents() {
@@ -8,8 +9,8 @@ export default class IncidentsService {
       const [rows] = await pool.query(QUERIES.getTenIncidents)
       return { status: 200, incidents: rows }
     } catch (error) {
-      console.error('Database error:', error.message)
-      throw new Error('Failed to fetch incidents from the database')
+      console.error('Database error getIncidents:', error.message)
+      throw new DatabaseError('Failed to getIncidents')
     }
   }
 
@@ -27,8 +28,8 @@ export default class IncidentsService {
       }
       return { status: 200, incidents: summary }
     } catch (error) {
-      console.error('Database error getTotalIncYears:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      console.error('Database error getTotalIncYears:', error.message)
+      throw new DatabaseError('Failed to fetch inventory from the database')
     }
   }
 
@@ -87,7 +88,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getIncidentsRange:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -116,7 +117,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getIncidentsYear:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -127,7 +128,7 @@ export default class IncidentsService {
       return { status: 200, incidents: rows }
     } catch (error) {
       console.error('Database error getOpenIncidentsGroup:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -184,7 +185,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncidentsGroup:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -205,7 +206,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncLocationRange:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -227,7 +228,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncBasesRange:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -260,7 +261,7 @@ export default class IncidentsService {
       return { status: 200, incidents: incidentsSummary }
     } catch (error) {
       console.error('Database error getAllIncParkingRange:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -271,7 +272,7 @@ export default class IncidentsService {
       return { status: 200, incidents: results }
     } catch (error) {
       console.error('Database error getAllIncByHours:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -282,7 +283,7 @@ export default class IncidentsService {
       return { status: 200, incidents: results }
     } catch (error) {
       console.error('Database error getAllIncByWeekdays:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -293,7 +294,7 @@ export default class IncidentsService {
       return { status: 200, incidents: results }
     } catch (error) {
       console.error('Database error getAllIncByMonths:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -322,7 +323,7 @@ export default class IncidentsService {
       return { status: 200, incidents: groupedIncidents }
     } catch (error) {
       console.error('Database error getAllExternalResolutor:', error)
-      throw new Error('Failed to fetch incidents from the database')
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 
@@ -363,8 +364,8 @@ export default class IncidentsService {
       const integriaInc = { movilidad, tecnologia }
       return { status: 200, incidents: integriaInc }
     } catch (error) {
-      console.error('Database error:', error.message)
-      throw new Error('Failed to fetch incidents from the database')
+      console.error('Database error getAllIntegriaTechnology:', error.message)
+      throw new DatabaseError('Failed to fetch incidents from the database')
     }
   }
 }

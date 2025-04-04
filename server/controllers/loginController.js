@@ -2,7 +2,7 @@ import LoginService from '../services/login/loginService.js'
 import jwt from 'jsonwebtoken'
 
 export default class LoginController {
-  static async postLogin(req, res) {
+  static async postLogin(req, res, next) {
     const { username, password } = req.body
     try {
       const { status, message, user } = await LoginService.postLogin(username, password)
@@ -22,11 +22,11 @@ export default class LoginController {
         expirationTime: expiresIn,
       })
     } catch (error) {
-      return res.status(500).json({ message: 'Internal server error login...' })
+      next(error)
     }
   }
 
-  static async postRegister(req, res) {
+  static async postRegister(req, res, next) {
     const { username, password, email } = req.body
     try {
       const { status, message, user } = await LoginService.postRegister(username, password, email)
@@ -46,16 +46,16 @@ export default class LoginController {
         expirationTime: expiresIn,
       })
     } catch (error) {
-      return res.status(500).json({ message: 'Internal server error register...' })
+      next(error)
     }
   }
 
-  static async postLogout(req, res) {
+  static async postLogout(req, res, next) {
     const { username, password } = req.body
     try {
       return res.status(200).json({ name: username, pass: password })
     } catch (error) {
-      return res.status(403).json({ message: 'error logout...' })
+      next(error)
     }
   }
 

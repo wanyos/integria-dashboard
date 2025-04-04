@@ -5,6 +5,7 @@ import fs from 'node:fs/promises'
 import crypto from 'node:crypto'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { ValidationError, UnauthorizedError, InternalServerError } from '../../util/errors.js'
 
 // Convierte la URL en una ruta de archivo válida
 const __filename = fileURLToPath(import.meta.url)
@@ -45,10 +46,10 @@ const findUsers = async (username) => {
 export default class UsersService {
   static async postLogin(username, password) {
     const validationResult = await this.#validateLogin(username, password)
-    if (!validationResult.success) return { status: 400, message: validationResult.errors }
+    if (!validationResult.success) throw new ValidationError(validationResult.errors.join(', '))
 
     const users = await findUsers(username)
-    if (users.length === 0) return { status: 400, message: 'User does not exist...' }
+    if (users.length === 0) throw new UnauthorizedError('User does not exist')
 
     let validUser = null
     for (const usr of users) {
@@ -59,21 +60,21 @@ export default class UsersService {
           break
         }
       } catch (error) {
-        return { status: 400, message: `Error compare bcrypt: ${error}` }
+        throw new InternalServerError(`Error comparing bcrypt: ${error.message}`)
       }
     }
-    if (!validUser) return { status: 400, message: 'Password is invalid...' }
+    if (!validUser) throw new UnauthorizedError('Password is invalid')
 
     return { status: 200, user: validUser }
   }
 
   static async postRegister(username, password, email) {
     const validationResult = await this.#validateRegister(username, password, email)
-    if (!validationResult.success) return { status: 400, message: validationResult.errors }
+    if (!validationResult.success) throw new ValidationError(validationResult.errors.join(', '))
 
     const existingUser = await findUser(username, email)
     if (existingUser) {
-      return { status: 403, message: 'User already exists...' }
+      throw new ValidationError('User already exists')
     }
 
     const newUser = {

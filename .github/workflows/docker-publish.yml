@@ -17,24 +17,24 @@ jobs:
       # Paso 2: Configurar las variables de entorno desde el archivo .env
       - name: Load environment variables
         run: |
-          echo "GITHUB_USERNAME=${{ secrets.GITHUB_USERNAME }}" >> $GITHUB_ENV
+          echo "GITHUB_USERNAME=${{ secrets.GH_USERNAME }}" >> $GITHUB_ENV
           echo "PAT=${{ secrets.PAT }}" >> $GITHUB_ENV
 
       # Paso 3: Log in to GitHub Container Registry
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.PAT }}" | docker login ghcr.io -u "${{ secrets.GITHUB_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.PAT }}" | docker login ghcr.io -u "${{ secrets.GH_USERNAME }}" --password-stdin
 
       # Paso 4: Construir y etiquetar las imágenes
       - name: Build and tag Docker images
         run: |
           docker-compose -f docker-compose.yml build
-          docker tag juanjo99/integriadb:v1 ghcr.io/${{ secrets.GITHUB_USERNAME }}/integriadb:latest
-          docker tag juanjo99/integria-server:v1 ghcr.io/${{ secrets.GITHUB_USERNAME }}/integria-server:latest
-          docker tag juanjo99/integria-frontend:v1 ghcr.io/${{ secrets.GITHUB_USERNAME }}/integria-frontend:latest
+          docker tag juanjo99/integriadb:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integriadb:latest
+          docker tag juanjo99/integria-server:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integria-server:latest
+          docker tag juanjo99/integria-frontend:v1 ghcr.io/${{ secrets.GH_USERNAME }}/integria-frontend:latest
 
       # Paso 5: Subir las imágenes al GitHub Container Registry
       - name: Push Docker images to GitHub Container Registry
         run: |
-          docker push ghcr.io/${{ secrets.GITHUB_USERNAME }}/integriadb:latest
-          docker push ghcr.io/${{ secrets.GITHUB_USERNAME }}/integria-server:latest
-          docker push ghcr.io/${{ secrets.GITHUB_USERNAME }}/integria-frontend:latest
+          docker push ghcr.io/${{ secrets.GH_USERNAME }}/integriadb:latest
+          docker push ghcr.io/${{ secrets.GH_USERNAME }}/integria-server:latest
+          docker push ghcr.io/${{ secrets.GH_USERNAME }}/integria-frontend:latest

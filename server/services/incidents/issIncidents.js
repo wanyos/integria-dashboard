@@ -1,5 +1,6 @@
 import { getServideskData } from '../../db/odbc.js'
 import dayjs from 'dayjs'
+import { DatabaseError } from '../../util/errors.js'
 
 const data = {
   iss_fuencarral: 'NIVEL 0 IISS FUENCARRAL',
@@ -45,7 +46,8 @@ export default class IssIncidentsService {
       const grouoIncidents = await getServideskInc(iss_incidents)
       return { status: 200, incidents: grouoIncidents }
     } catch (error) {
-      console.error('Database error issIncidentsService:', error.message)
+      console.error('Database error servidesk:', error.message)
+      throw new DatabaseError('Failed to fetch servidesk from the database')
     }
   }
 }

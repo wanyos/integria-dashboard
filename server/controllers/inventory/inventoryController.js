@@ -7,7 +7,7 @@ export default class InventoryController {
       return res.status(status).json(inventory)
     } catch (error) {
       console.error(error)
-      next(error) // Pasar el error al middleware de manejo de errores
+      next(error)
     }
   }
 }

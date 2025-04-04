@@ -8,6 +8,7 @@ export const useIncidentsStore = defineStore('incidents', () => {
     current: { open: 0, close: 0, pending: 0, avg: { hour: 0, minute: 0 } },
     lastYear: { open: 0, close: 0, pending: 0, avg: { hour: 0, minute: 0 } },
   })
+  const errorMessage = ref('') 
   const openIncidentsGroup = ref([])
   const allIncidentsGroup = ref([])
   const allIncLocationRange = ref([])
@@ -20,12 +21,23 @@ export const useIncidentsStore = defineStore('incidents', () => {
 
   const fetchIncAnual = async (yearValue) => {
     //dashboard
-    totalIncidentsYears.value = await ReportApi.getTotalIncYears(yearValue)
-    allIncByMonths.value = await ReportApi.getIncBymonths()
+    try {
+       totalIncidentsYears.value = await ReportApi.getTotalIncYears(yearValue)
+      allIncByMonths.value = await ReportApi.getIncBymonths()
+    } catch (error) { 
+       console.error('Error fetching incident anual:', error)
+      errorMessage.value = error.message || 'Ocurrió un error al obtener los datos'
+    }
+   
   }
 
   const fetchIncYear = async (yearValue) => {
-    allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
+    try {
+      allIncidentsYear.value = await ReportApi.getAllIncidentsYear(yearValue)
+    } catch (error) { 
+       console.error('Error fetching incident year:', error)
+      errorMessage.value = error.message || 'Ocurrió un error al obtener los datos'
+    }
   }
 
   const fetchIncDates = async (startDate, endDate) => {
@@ -61,34 +73,9 @@ export const useIncidentsStore = defineStore('incidents', () => {
       allIncByWeekdays.value = allIncByWeekdaysData
     } catch (error) {
       console.error('Error fetching incident data:', error)
+      errorMessage.value = error.message || 'Ocurrió un error al obtener los datos'
     }
   }
-
-  // const fetchIncDates = async (startDate, endDate) => {
-  //   // console.log('year value store', yearValue)
-  //   // incidentsRange.value = await IncidentsApi.getIncidentsRange(startDate, endDate)
-  //   // allIncidentsYear.value = await IncidentsApi.getAllIncidentsYear(yearValue)
-  //   // openIncidentsGroup.value = await IncidentsApi.getOpenIncidentsGroup()
-  //   // allIncidentsGroup.value = await IncidentsApi.getAllIncidentsGroup(startDate, endDate)
-  //   // allIncLocationRange.value = await IncidentsApi.getIncLocationRange(startDate, endDate)
-
-  //   incidentsRange.value = await ReportApi.getIncidentsRange(startDate, endDate)
-  //   openIncidentsGroup.value = await ReportApi.getOpenIncidentsGroup()
-  //   allIncidentsGroup.value = await ReportApi.getAllIncidentsGroup(startDate, endDate)
-  //   allIncLocationRange.value = await ReportApi.getIncLocationRange(startDate, endDate)
-  //   allIncBasesRange.value = await ReportApi.getIncBasesRange(startDate, endDate)
-  //   alIncParkingRange.value = await ReportApi.getIncParkingRange(startDate, endDate)
-  //   allIncByHours.value = await ReportApi.getIncByHours(startDate, endDate)
-  //   allIncByWeekdays.value = await ReportApi.getIncByWeekdays(startDate, endDate)
-
-  //   // console.log('store range', incidentsRange.value)
-  //   // console.log('store year', allIncidentsYear.value)
-  //   // console.log('store open', openIncidentsGroup.value)
-  //   // console.log('store group', allIncidentsGroup.value)
-  //   // console.log('inc store location', allIncLocationRange.value)
-  // }
-
-  // Getters para encapsular datos procesados
 
   const openIncidentsYear = computed(() => allIncidentsYear.value.openInc || [])
   const closedIncidentsYear = computed(() => allIncidentsYear.value.closeInc || [])
@@ -118,5 +105,6 @@ export const useIncidentsStore = defineStore('incidents', () => {
     allIncByWeekdaysRangeData,
     totalIncidentsYears,
     allIncByMonths,
+    errorMessage
   }
 })

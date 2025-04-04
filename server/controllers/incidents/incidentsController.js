@@ -7,7 +7,6 @@ export default class IncidentsController {
       const { status, incidents } = await IncidentsService.getIncidents()
       return res.status(status).json(incidents)
     } catch (error) {
-      console.error(error)
       next(error)
     }
   }
@@ -21,7 +20,6 @@ export default class IncidentsController {
       )
       return res.status(status).json(incidents)
     } catch (error) {
-      console.log(error)
       next(error)
     }
   }
@@ -35,7 +33,6 @@ export default class IncidentsController {
       )
       return res.status(status).json(incidents)
     } catch (error) {
-      console.error(error)
       next(error)
     }
   }
@@ -43,13 +40,9 @@ export default class IncidentsController {
   static async getIssIncidents(req, res, next) {
     try {
       const result = await IssIncidentsService.getIssIncidents()
-      if (!result) {
-        return res.status(500).json({ error: 'Failed to fetch incidents from issServidesk...' })
-      }
       const { status, incidents } = result
       return res.status(status).json(incidents)
     } catch (error) {
-      console.error('Error in getIssIncidents:', error.message)
       next(error)
     }
   }
