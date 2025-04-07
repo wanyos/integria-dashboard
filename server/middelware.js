@@ -14,7 +14,7 @@ export const authMiddleware = (req, res, next) => {
   }
 }
 
-export const globalMiddleware = (err, req, res, next) => {
+export const globalMiddleware = (err, req, res) => {
   console.error(err.stack)
 
   const errorResponse = {
@@ -22,20 +22,15 @@ export const globalMiddleware = (err, req, res, next) => {
     message: err.message || 'Internal server error',
   }
 
-  // Manejo de errores de validación general
   if (err.name === 'ValidationError') {
     errorResponse.status = 400
     errorResponse.message = err.message
   }
 
-  // Manejo de errores de autorización
   if (err.name === 'UnauthorizedError') {
     errorResponse.status = 401
-    errorResponse.message = 'Unauthorized access'
+    errorResponse.message = err.message
   }
 
-  // Respuesta general para errores no manejados
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-  })
+  res.status(errorResponse.status).json(errorResponse)
 }
