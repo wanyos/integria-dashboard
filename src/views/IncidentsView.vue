@@ -14,33 +14,6 @@
       </button>
     </article>
 
-    <article class="chart-base container-incidents">
-      <loading
-        v-model:active="isLoading"
-        :can-cancel="true"
-        :is-full-page="false"
-        :color="'#1565C0'"
-      />
-      <p>{{ datesIntegria }}</p>
-
-      <CardItem
-        v-for="(item, index) in incidents"
-        :key="index"
-        :title="item.resolutor"
-        :count="item.totalIncidents"
-        :emails-to="item.emailsTo"
-        :emails-cc="item.emailsCc"
-        @button-click="handleButtonClick(item)"
-      />
-
-      <!-- <TableChart
-        v-if="incidents.length !== 0"
-        title="Summary total resolutor incidents Integria"
-        :data-column="columns"
-        :data-row="incidents"
-      /> -->
-    </article>
-
     <article class="chart-base container-servidesk">
       <loading
         v-model:active="isLoading"
@@ -55,6 +28,16 @@
         :data-column="columnsServidesk"
         :data-row="issIncidents"
       />
+    </article>
+
+    <article class="chart-base container-integria ">
+      <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :is-full-page="false"
+        :color="'#1565C0'"
+      />
+      <p>{{ datesIntegria }}</p>
       <TableChart
         v-if="integriaTechnology.length !== 0"
         title="Summary of incidents in integria technology"
@@ -63,6 +46,13 @@
         class="tableTecIntegria"
       />
     </article>
+
+    <div class="div__process">
+      <button @click="startProcess" class="btn__search btn__send" :class="isArrayFiles">
+        Start process
+      </button>
+    </div>
+   
 
     <div class="chart-base container-files">
       <CardFile
@@ -84,8 +74,27 @@
       />
     </div>
 
+    <article class="chart-base container-incidents">
+      <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :is-full-page="false"
+        :color="'#1565C0'"
+      />
+      <p>{{ datesIntegria }}</p>
+
+      <CardItem
+        v-for="(item, index) in incidents"
+        :key="index"
+        :title="item.resolutor"
+        :count="item.totalIncidents"
+        :emails-to="item.emailsTo"
+        :emails-cc="item.emailsCc"
+        @button-click="handleButtonClick(item)"
+      />
+    </article>
+
     <section class="section__footer">
-      <button @click="sendGmail" class="btn__search btn__send">Send Reports</button>
       <button @click="startProcess" class="btn__search btn__send" :class="isArrayFiles">
         Start process
       </button>
@@ -106,10 +115,11 @@ import dayjs from 'dayjs'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import { createFileIss, createFileIntegria } from '../utils/create_files.js'
+import { EMAIL_LIST } from '@/constants/emailList.js'
 
 const columns = ['Resolutor', 'Incidents', 'Email']
-const columnsServidesk = ['Location', 'Incidents', 'Email']
-const columnsIntegriaTec = ['Type', 'Incidents', 'Email']
+const columnsServidesk = ['Location', 'Incidents']
+const columnsIntegriaTec = ['Type', 'Incidents']
 
 const incidents = ref([])
 const issIncidents = ref([])
@@ -169,22 +179,23 @@ const search = async () => {
     endDate,
     token,
   )
-  incidents.value = Object.entries(incIntegria).map(([resolutor, incidents]) => ({
-    resolutor,
-    totalIncidents: incidents.length,
-    emailsTo: [
-      'juanjor99@gmail.com',
-      'juanjose.romero@emtmadrid.es',
-      'wanyos99@gmail.com',
-      'juanjoromero9@gmail.com',
-    ],
-    emailsCc: [
-      'juanjor99@gmail.com',
-      'juanjose.romero@emtmadrid.es',
-      'wanyos99@gmail.com',
-      'juanjoromero9@gmail.com',
-    ],
-  }))
+
+  incidents.value = incIntegria.map((item) => {
+    let to = [];
+    let cc = [];
+    const obj = EMAIL_LIST.find((list) => item.id === list.id);
+    if(obj) {
+      to = obj.to
+      cc = obj.cc
+    }
+    return {
+      id: item.id,
+      resolutor: item.resolutor,
+      totalIncidents: item.incidents.length,
+      emailsTo: to,
+      emailsCc: cc
+    }
+  });
 
   // incidents integria tecnologia
   integriaTec = await IncidentsApi.getIncidentsTechnology(
@@ -221,9 +232,7 @@ const handleFileDragStart = ({ nativeEvent }, file) => {
 
     // Configurar para todos los navegadores
     dt.setData('text/plain', file.name)
-
     dt.setData('DownloadURL', `${file.type}:${file.name}:${url}`)
-
     // Añadir archivo real
     dt.items.add(new File([blob], file.name, { type: file.type }))
 
@@ -345,7 +354,15 @@ const startProcess = async () => {
 
 .container-servidesk {
   position: relative;
-  grid-column: 1 / -1;
+  grid-column: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container-integria {
+  position: relative;
+  grid-column: 4 / 7;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -369,6 +386,10 @@ const startProcess = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.div__process {
+  padding: 1rem;
 }
 
 .div-datepicker {

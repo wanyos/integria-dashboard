@@ -36,9 +36,9 @@
       <RouterView />
     </main>
 
-    <footer>
+    <!-- <footer>
       <p>CAU</p>
-    </footer>
+    </footer> -->
   </section>
 </template>
 
@@ -189,6 +189,7 @@ main {
 footer {
   grid-column: 1 / -1;
   grid-row: 3 / 4;
+  margin-top: 0.5rem;
   background-color: #edf0f6;
   display: flex;
   align-items: center;

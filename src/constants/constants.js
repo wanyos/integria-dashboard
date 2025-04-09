@@ -66,17 +66,3 @@ export const COLORS2 = [
   '#A3E4D7', // Verde pastel
   '#F5CBA7', // Naranja pastel
 ]
-
-export const EMAIL_LIST = {
-  elecnor: ['fermin@elecnor.com', 'nuevo@elecnor.com'],
-  etralux: [],
-  siepark: [],
-  jcdecaux: [],
-  seguridad_fisica: [],
-  web_interna: [],
-  aplic_movilidad: [],
-  documenta: [],
-  aplic_general: [],
-  navega_madrid: [],
-  aplic_agencia: [],
-}

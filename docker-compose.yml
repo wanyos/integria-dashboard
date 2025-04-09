@@ -6,7 +6,7 @@ services:
       context: C:\Users\jjrr.13923\OneDrive - emtmadrid.es\Escritorio\projects-emt\container-db
       # context: /Users/wanyos/container-db
       dockerfile: Dockerfile
-    image: juanjo99/integriadb:v1
+    image: juanjo99/integriadb:v2
     container_name: integriadb
     ports:
       - '3360:3306'
@@ -24,7 +24,7 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    image: juanjo99/integria-server:v1
+    image: juanjo99/integria-server:v2
     container_name: integria-server
     ports:
       - '8022:8022'
@@ -44,7 +44,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: juanjo99/integria-frontend:v1
+    image: juanjo99/integria-frontend:v2
     container_name: integria-frontend
     ports:
       - '8080:80'

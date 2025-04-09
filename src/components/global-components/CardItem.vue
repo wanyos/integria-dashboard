@@ -8,7 +8,9 @@
       <ButtonList title="Email To" :emails="props.emailsTo" />
       <ButtonList title="Email Cc" :emails="props.emailsCc" />
     </div>
-    <button @click="handleClick" class="btn__send">Send</button>
+    <div class="div__button">
+      <button @click="handleClick" class="btn__send">Send</button>
+    </div>
   </section>
 </template>
 
@@ -47,20 +49,19 @@ const props = defineProps({
   border-radius: 5px;
   padding: 0.5rem 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  justify-items: center;
-  gap: 1rem;
+  grid-template-columns: 1fr 2.5fr 1fr;
 }
 
 .div__container {
   display: flex;
+  justify-content: space-around;
   gap: 1rem;
 }
 
-.name-total {
-  width: 70%;
-  justify-content: space-between;
+.div__button  {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn__send {

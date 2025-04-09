@@ -1,23 +1,45 @@
 <template>
   <div class="card">
-    <h5>{{ props.title }}</h5>
-    <button class="email-button" @click="toggleTooltip">
+
+    <h5>{{ props.title }}   
+       <span v-if="props.emails.length > 0" @click="toggleTooltip" class="span__icon">
+          <v-icon name="fa-plus-circle"  animation="float" speed="slow" fill="#0088cc" />  
+        </span>
+      </h5>
+
+    <button class="email-button" >
       <span v-for="(email, index) in displayedEmails" :key="index">
         {{ email }}<span v-if="index < displayedEmails.length - 1">, </span>
       </span>
       <span v-if="emails.length > 2" class="more-text">...</span>
+   
     </button>
 
     <Transition name="fade">
       <div v-if="showTooltip" class="tooltip">
-        <p v-for="(email, index) in props.emails" :key="'tooltip-' + index">{{ email }}</p>
+        <div class="div__buttons">
+          <button @click="toggleEditMode">Edit</button>
+          <button @click="saveChanges">Save</button>
+        </div>
+
+        <div v-for="(email, index) in emailList" :key="'tooltip-' + index">
+        <p v-if="!isEditing">{{ email }}</p>
+        <input 
+          v-else
+          type="text"
+          v-model="editableEmailList[index]"
+          class="email-input"
+        />
+      </div>
+
+        <!-- <p v-for="(email, index) in emailList" :key="'tooltip-' + index">{{ email }}</p> -->
       </div>
     </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   title: {
@@ -30,12 +52,31 @@ const props = defineProps({
   },
 })
 
+const isEditing = ref(false)
 const showTooltip = ref(false)
 const displayedEmails = computed(() => props.emails.slice(0, 2))
+const emailList = ref([...props.emails])
+const editableEmailList = ref([])
+
+const toggleEditMode = () => {
+      isEditing.value = true;
+      editableEmailList.value = [...emailList].value;
+    }
+
+   const saveChanges = () => {
+      emailList.value = [...editableEmailList].value;
+      isEditing.value = false;
+    }
 
 const toggleTooltip = () => {
   showTooltip.value = !showTooltip.value
 }
+
+watch(() => emailList, (newValue, oldValue) => {
+  console.log('new', newValue)
+  console.log('old', oldValue)
+})
+
 </script>
 
 <style lang="css" scoped>
@@ -46,10 +87,27 @@ const toggleTooltip = () => {
 
 .card {
   width: 15rem;
-
   border-radius: 5px;
   position: relative;
   background: white;
+}
+
+.span__icon {
+  margin-left: 15px;
+  cursor: pointer;
+  padding: 1px;
+}
+
+.div__buttons {
+  display: flex;
+  justify-content: end;
+  gap: 0.5rem;
+}
+
+.div__buttons button {
+  cursor: pointer;
+  border: 1px solid #fff;
+  padding: 2px 3px;
 }
 
 h5 {
@@ -59,7 +117,6 @@ h5 {
 .email-button {
   background: linear-gradient(to right, white, rgba(255, 255, 255, 0.5));
   padding: 5px;
-
   cursor: pointer;
   text-align: left;
   position: relative;
@@ -79,9 +136,9 @@ span {
   top: 100%;
   left: 0;
   width: max-content;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--color-text);
   color: white;
-  padding: 5px;
+  padding: 1rem;
   border-radius: 5px;
   white-space: nowrap;
   z-index: 10;

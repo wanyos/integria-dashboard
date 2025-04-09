@@ -300,30 +300,39 @@ export default class IncidentsService {
 
   static async getAllExternalResolutor(startDate, endDate) {
     try {
-      const [results] = await pool.query(QUERIES.allExternalResolutor, [startDate, endDate])
+      const [results] = await pool.query(QUERIES.allExternalResolutor, [startDate, endDate]);
       const formatIncidentData = (incident) => ({
         ...incident,
         titulo: decodeHtmlEntities(incident.titulo),
         descripcion: decodeHtmlEntities(incident.descripcion),
         resolutor: decodeHtmlEntities(incident.resolutor),
         cierre: incident.cierre === '0000-00-00' ? null : incident.cierre,
-      })
+      });
 
-      // Formatear y agrupar las incidencias por resolutor
-      const groupedIncidents = results.reduce((acc, incident) => {
-        const formattedIncident = formatIncidentData(incident)
-        const resolutor = formattedIncident.resolutor
-        if (!acc[resolutor]) {
-          acc[resolutor] = []
+      // Crear un array de objetos con id, resolutor y incidents
+      const resolutorMap = new Map();
+
+      results.forEach((incident) => {
+        const formattedIncident = formatIncidentData(incident);
+        const { id_resolutor, resolutor } = formattedIncident;
+
+        if (!resolutorMap.has(id_resolutor)) {
+          resolutorMap.set(id_resolutor, {
+            id: id_resolutor,
+            resolutor,
+            incidents: [],
+          });
         }
-        acc[resolutor].push(formattedIncident)
-        return acc
-      }, {})
 
-      return { status: 200, incidents: groupedIncidents }
+        resolutorMap.get(id_resolutor).incidents.push(formattedIncident);
+      });
+
+      const groupedIncidents = Array.from(resolutorMap.values());
+
+      return { status: 200, incidents: groupedIncidents };
     } catch (error) {
-      console.error('Database error getAllExternalResolutor:', error)
-      throw new DatabaseError('Failed to fetch incidents from the database')
+      console.error('Database error getAllExternalResolutor:', error);
+      throw new DatabaseError('Failed to fetch incidents from the database');
     }
   }
 

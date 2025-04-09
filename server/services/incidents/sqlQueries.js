@@ -183,7 +183,7 @@ ORDER BY
 FROM tincidencia I
 LEFT JOIN tgrupo G ON I.id_grupo = G.id_grupo
 WHERE I.inicio BETWEEN ? AND ? AND I.cierre < '0001-01-01' AND estado <> 7
-AND G.id_grupo NOT IN (2, 7, 8, 9, 42, 148)
+AND G.id_grupo NOT IN (2, 5, 7, 8, 9, 42, 46, 157)
 ORDER BY G.id_grupo asc;`,
 
   // incidencias tecnologia
