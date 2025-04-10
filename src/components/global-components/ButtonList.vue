@@ -1,18 +1,17 @@
 <template>
   <div class="card">
+    <h5>
+      {{ props.title }}
+      <button v-if="props.emails.length > 0" @click="toggleTooltip" class="button__icon">
+        <v-icon name="fa-plus-circle" animation="float" speed="slow" fill="#0088cc" />
+      </button>
+    </h5>
 
-    <h5>{{ props.title }}   
-       <span v-if="props.emails.length > 0" @click="toggleTooltip" class="span__icon">
-          <v-icon name="fa-plus-circle"  animation="float" speed="slow" fill="#0088cc" />  
-        </span>
-      </h5>
-
-    <button class="email-button" >
+    <button class="email-button">
       <span v-for="(email, index) in displayedEmails" :key="index">
         {{ email }}<span v-if="index < displayedEmails.length - 1">, </span>
       </span>
       <span v-if="emails.length > 2" class="more-text">...</span>
-   
     </button>
 
     <Transition name="fade">
@@ -22,17 +21,15 @@
           <button @click="saveChanges">Save</button>
         </div>
 
-        <div v-for="(email, index) in emailList" :key="'tooltip-' + index">
-        <p v-if="!isEditing">{{ email }}</p>
-        <input 
-          v-else
-          type="text"
-          v-model="editableEmailList[index]"
-          class="email-input"
-        />
-      </div>
-
-        <!-- <p v-for="(email, index) in emailList" :key="'tooltip-' + index">{{ email }}</p> -->
+        <div v-for="(email, index) in emailList" :key="'tooltip-' + index" class="div__emails">
+          <input
+            type="text"
+            v-model="editableEmailList[index]"
+            :readonly="!isEditing"
+            :class="{ 'editable-input': isEditing }"
+            class="input__email"
+          />
+        </div>
       </div>
     </Transition>
   </div>
@@ -56,27 +53,36 @@ const isEditing = ref(false)
 const showTooltip = ref(false)
 const displayedEmails = computed(() => props.emails.slice(0, 2))
 const emailList = ref([...props.emails])
-const editableEmailList = ref([])
+const editableEmailList = ref([...emailList.value])
 
 const toggleEditMode = () => {
-      isEditing.value = true;
-      editableEmailList.value = [...emailList].value;
-    }
+  if (!isEditing.value) {
+    editableEmailList.value = [...emailList.value]
+  }
+  isEditing.value = !isEditing.value
+}
 
-   const saveChanges = () => {
-      emailList.value = [...editableEmailList].value;
-      isEditing.value = false;
-    }
+const saveChanges = () => {
+  if (isEditing.value) {
+    emailList.value = [...editableEmailList.value]
+    isEditing.value = false
+  }
+}
 
 const toggleTooltip = () => {
   showTooltip.value = !showTooltip.value
+  if (!showTooltip.value) {
+    isEditing.value = false
+  }
 }
 
-watch(() => emailList, (newValue, oldValue) => {
-  console.log('new', newValue)
-  console.log('old', oldValue)
-})
-
+watch(
+  () => emailList,
+  (newValue, oldValue) => {
+    console.log('new', newValue)
+    console.log('old', oldValue)
+  },
+)
 </script>
 
 <style lang="css" scoped>
@@ -92,7 +98,7 @@ watch(() => emailList, (newValue, oldValue) => {
   background: white;
 }
 
-.span__icon {
+.button__icon {
   margin-left: 15px;
   cursor: pointer;
   padding: 1px;
@@ -133,11 +139,11 @@ span {
 .tooltip {
   position: absolute;
   font-size: 12px;
-  top: 100%;
+  top: 2rem;
   left: 0;
-  width: max-content;
+  width: min-content;
   background: var(--color-text);
-  color: white;
+  color: #fff;
   padding: 1rem;
   border-radius: 5px;
   white-space: nowrap;
@@ -151,5 +157,18 @@ span {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.input__email {
+  color: #fff;
+  border-radius: 3px;
+  padding: 5px;
+  margin-top: 7px;
+  min-width: 15rem;
+}
+
+.input__email.editable-input {
+  border: 1px solid #fff;
+  cursor: text;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <section class="card-container">
-    <div class="div__container name-total">
+    <div class="div__container">
       <h5>{{ props.title }}</h5>
-      <h5>{{ props.count }}</h5>
+      <h5 class="name__total">{{ props.count }}</h5>
     </div>
     <div class="div__container">
       <ButtonList title="Email To" :emails="props.emailsTo" />
@@ -54,11 +54,15 @@ const props = defineProps({
 
 .div__container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   gap: 1rem;
 }
 
-.div__button  {
+.name__total {
+  margin-right: 3rem;
+}
+
+.div__button {
   display: flex;
   justify-content: center;
   align-items: center;
